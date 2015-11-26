@@ -386,7 +386,7 @@ void	menu_SampleSetup( void )
 		}
 	} while( ! done );
 }
-BOOL SampleFinishFState[SamplerNum_Max];	//	采样完成后进入查询的引导界面标志
+BOOL SampleShowState[SamplerNum_Max];	//	采样完成后进入查询的引导界面标志
 /********************************** 功能说明 ***********************************
 *  设置启动采样的控制参数，原则上每次采样前需要重新设置的参数，并启动采样
 *******************************************************************************/
@@ -537,7 +537,7 @@ static	struct uMenu  const  menuL[] =
 			{
 				uint8_t i;
 				for( i = 0; i < SamplerNum_Max; i++)
-					SampleFinishFState[i] = FALSE;		
+					SampleShowState[i] = FALSE;		
 			}
 			break;
 		}
@@ -549,9 +549,9 @@ static	struct uMenu  const  menuL[] =
 void	State_Finish( enum enumSamplerSelect SamplerSelect )
 {
 
-	if( (	Q_Sampler[SamplerSelect].state	== state_FINISH ) && SampleFinishFState[SamplerSelect] )
+	if( (	Q_Sampler[SamplerSelect].state	== state_FINISH ) && SampleShowState[SamplerSelect] )
 	{
-		SampleFinishFState[SamplerSelect] = FALSE;
+		SampleShowState[SamplerSelect] = FALSE;
 		cls();
 	// 	SamplerTypeShow( 0x0102u );
 		WBMP( 0x0290,0x0502, STROCK);
