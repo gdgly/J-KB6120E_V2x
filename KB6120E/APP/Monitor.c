@@ -257,7 +257,7 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 		Lputs ( 0x0E02u, "压   力:" 	);	ShowFP32 ( 0x0E11u, get_Pr( PumpSelect ), 0x0602u, "kPa" );
 		Lputs ( 0x1102u, "大气压力:" 	);	ShowFP32 ( 0x1111u, get_Ba(),             0x0602u, "kPa" );
 		Lputs ( 0x1402u, "剩余时间:" 	);	ShowTIME ( 0x1416u, p->timer );	
-		Lputs ( 0x1702u, "已采时间:" 	);	ShowTIME ( 0x1716u, pT->sum_time );
+		Lputs ( 0x1702u, "采样时间:" 	);	ShowTIME ( 0x1716u, pT->sum_time );
 		Lputs ( 0x1A02u, "当前次数:" 	);	ShowI16U ( 0x1A11u, p->loops, 0x0500u, NULL );
 	}
 // 	else
@@ -381,17 +381,15 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
  ****************************************/
 void Samplestate_Select( BOOL state )
 {
-       static	struct  uMenu	menu1[] =
+		static	struct  uMenu	menu1[] =
     {
-        { 0x0103u, "采样状态控制" },
-        { 0x0C02u, "暂停" },{ 0x0C0Eu, "停止" },{ 0x0C19u, "取消" }
-		
+			{ 0x0103u, "采样状态控制" },
+			{ 0x0C02u, "暂停" },{ 0x0C0Eu, "停止" },{ 0x0C19u, "取消" }		
     };
-		   static	struct  uMenu	menu2[] =
+		static	struct  uMenu	menu2[] =
     {
-        { 0x0103u, "采样状态控制" },
-        { 0x0C02u, "恢复" },{ 0x0C0Eu, "停止" },{ 0x0C1Bu, "取消" }
-		
+			{ 0x0103u, "采样状态控制" },
+			{ 0x0C02u, "恢复" },{ 0x0C0Eu, "停止" },{ 0x0C1Bu, "取消" }
     };
 		static	struct  uMenu	* menu[] = 
 		{
@@ -450,7 +448,7 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 	{
 		PumpSelect = PP_Max;
 	}
-	Sampler_Tdfilter();
+	Sampler_Tdfilter();//	流量滤波
 	if ( hitKey ( 100u ) )
 	{
 		switch ( getKey() )
@@ -749,7 +747,7 @@ void	monitor ( void )
 
 	while ( Sampler_isRunning( SamplerSelect ) )
 	{
-		SampleShowState[SamplerSelect] = TRUE;
+// 		SampleShowState[SamplerSelect] = TRUE;
 		cls();
 		switch ( SamplerSelect )
 		{
@@ -776,7 +774,7 @@ void	SamplerTypeShow( uint16_t yx )
 		case Q_R24: Lputs( yx, "<日均>" );	break;
 		case Q_SHI:	Lputs( yx, "<时均>" );	break;
 		case Q_AIR:	Lputs( yx, "<大气>" );	break;
-		default:	Lputs( yx, "<未知>" );	break;
+		default:		Lputs( yx, "<未知>" );	break;
 		}
 }
 

@@ -386,7 +386,7 @@ void	menu_SampleSetup( void )
 		}
 	} while( ! done );
 }
-BOOL SampleShowState[SamplerNum_Max];	//	采样完成后进入查询的引导界面标志
+// BOOL SampleShowState[SamplerNum_Max];	//	采样完成后进入查询的引导界面标志
 /********************************** 功能说明 ***********************************
 *  设置启动采样的控制参数，原则上每次采样前需要重新设置的参数，并启动采样
 *******************************************************************************/
@@ -534,11 +534,11 @@ static	struct uMenu  const  menuL[] =
 			SamplerTypeSwitch();
 			return	FALSE;
 		case	enumSelectESC:
-			{
-				uint8_t i;
-				for( i = 0; i < SamplerNum_Max; i++)
-					SampleShowState[i] = FALSE;		
-			}
+// 			{
+// 				uint8_t i;
+// 				for( i = 0; i < SamplerNum_Max; i++)
+// 					SampleShowState[i] = FALSE;		
+// 			}
 			break;
 		}
 	} while ( enumSelectESC != item );
@@ -546,38 +546,38 @@ static	struct uMenu  const  menuL[] =
 	return	TRUE;	//	返回，显示上级菜单
 }
 
-void	State_Finish( enum enumSamplerSelect SamplerSelect )
-{
+// void	State_Finish( enum enumSamplerSelect SamplerSelect )
+// {
 
-	if( (	Q_Sampler[SamplerSelect].state	== state_FINISH ) && SampleShowState[SamplerSelect] )
-	{
-		SampleShowState[SamplerSelect] = FALSE;
-		cls();
-	// 	SamplerTypeShow( 0x0102u );
-		WBMP( 0x0290,0x0502, STROCK);
-		WBMP( 0x0290,0x0514, STROCK);
+// 	if( (	Q_Sampler[SamplerSelect].state	== state_FINISH ) && SampleShowState[SamplerSelect] )
+// 	{
+// 		SampleShowState[SamplerSelect] = FALSE;
+// 		cls();
+// 	// 	SamplerTypeShow( 0x0102u );
+// 		WBMP( 0x0290,0x0502, STROCK);
+// 		WBMP( 0x0290,0x0514, STROCK);
 
-		switch( SamplerSelect )
-		{
-		case	Q_TSP: Lputs( 0x0102,  "TSP采样");	break;
-		case	Q_R24: Lputs( 0x0102, "日均采样");	break;
-		case	Q_SHI: Lputs( 0x0102, "时均采样");	break;
-		case	Q_AIR: Lputs( 0x0102, "大气采样");	break;
-		}
-		Lputs( 0x0A0C,	"采样完成!");
-		Lputs( 0x0F03,  "按确认键查询采样结果!");
-		do
-		{
-			Show_std_clock();
-		}while( !hitKey( 50 ) );
+// 		switch( SamplerSelect )
+// 		{
+// 		case	Q_TSP: Lputs( 0x0102,  "TSP采样");	break;
+// 		case	Q_R24: Lputs( 0x0102, "日均采样");	break;
+// 		case	Q_SHI: Lputs( 0x0102, "时均采样");	break;
+// 		case	Q_AIR: Lputs( 0x0102, "大气采样");	break;
+// 		}
+// 		Lputs( 0x0A0C,	"采样完成!");
+// 		Lputs( 0x0F03,  "按确认键查询采样结果!");
+// 		do
+// 		{
+// 			Show_std_clock();
+// 		}while( !hitKey( 50 ) );
 
-		switch( getKey() )
-		{
-		case K_OK:	menu_SampleQuery();	break;
-		default:	break;
-		}
-	}
-}
+// 		switch( getKey() )
+// 		{
+// 		case K_OK:	menu_SampleQuery();	break;
+// 		default:	break;
+// 		}
+// 	}
+// }
 /********************************** 功能说明 ***********************************
 *  主菜单访问设置程序的接口
 *******************************************************************************/
@@ -587,7 +587,7 @@ void	menu_SampleStart( void )
 	
 	do {
 		monitor();
-		State_Finish(	SamplerSelect );
+// 		State_Finish(	SamplerSelect );
 		done = SampleStart( SamplerSelect );
 	} while ( ! done );
 }
