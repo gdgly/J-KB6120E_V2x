@@ -21,7 +21,6 @@ void	delay( uint16_t	m_sec )
 	osDelay( m_sec );
 }
 
-
 /********************************** 功能说明 **********************************
 *  显示时间
 *******************************************************************************/
@@ -174,7 +173,7 @@ __task	int32_t	main( void )
   beep();
 	RTOS_Init();		//	尽早执行
   
-	EditionSelsct();
+	EditionSelsct();	//	型号选择
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行
@@ -188,7 +187,7 @@ __task	int32_t	main( void )
 	RTC_Init();			//	为避免启动过程中时钟失败造成的假死现象，放在显示初始化之后
 	SD_Init();				//	SD卡读写初始化，放在开关机存取之前
 	PowerLog_Init();	//	开关机存取，时间初始化之后
-
+	
 	delay( 1500u );		//配合下位机初始化
 	SENSOR_Init();		//	modbus通信初始化
 	
@@ -203,7 +202,7 @@ __task	int32_t	main( void )
 	
 	Sampler_BootResume();	//	时间配置完成之后，设置参数读入之后。
  	delay( 100u );
-
+	
 	SamplerSelect = Q_ALL;	//	初始化当前采样器为不合理的值，进行一次切换，切换到第一个合理的值。
 	SamplerTypeSwitch();
 	delay( 100u );

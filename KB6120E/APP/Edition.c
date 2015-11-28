@@ -9,18 +9,13 @@
 *******************************************************************************/
 #include "AppDEF.H"
 #include "BMP.H"
-#define	T_KB6120C
-// #define	T_KB6120B
-// #define	T_KB2400D
-// #define	T_KB2400
-
 extern	uint32_t	eDataValidMask; 
 void	EditionSelsct( void )
 {
-// #define	T_KB6120C
-// #define	T_KB6120B
-#define	T_KB2400D
-// #define	T_KB2400
+//	#define	T_KB6120C
+//	#define	T_KB6120B
+	#define	T_KB2400D
+//	#define	T_KB2400
 
 #ifdef	T_KB6120C
 	eDataValidMask = 0x5A3A;
@@ -89,7 +84,7 @@ void	Animation( void )
 {
 	switch( Configure.ExName )
   {
-	case  (enum enumExNameIdent) 1: 
+	case	Name_JSD: 
     WALL( WALL1 );
     break;
   default:

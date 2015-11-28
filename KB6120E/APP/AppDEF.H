@@ -301,7 +301,7 @@ extern	void	EditionSelsct( void );
 extern	void	menu_Select_Calc_Pbv( void );
 
 //	SampleSet.c
-extern	BOOL SampleFinishFState[SamplerNum_Max];
+// extern	BOOL SampleShowState[SamplerNum_Max];
 #include "SENSOR.H"
 #include "EEPROM.H"
 
