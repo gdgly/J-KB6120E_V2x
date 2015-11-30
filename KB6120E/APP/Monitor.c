@@ -76,7 +76,7 @@ void	show_battery( uint16_t yx )
 			BatVolState = BatVolStateFULL;
 			
 			i = get_Now() % BatVolStateFULL + 1;
-			}
+		}
 		
 		Lputs( yx, BatteryIdentify[i] );
 		}
@@ -101,7 +101,7 @@ void	show_env_state( void )
 		{
 			FP32	OutValue = get_HCBoxOutput();
 			FP32	RunTemp  = get_HCBoxTemp();
-			Lputs( 0x0F10u, "恒温箱:" );	ShowFP32( 0x1214u, RunTemp, 0x0501u, "℃" );
+			Lputs	 ( 0x0F10u, "恒温箱:" );		ShowFP32( 0x1214u, RunTemp, 0x0501u, "℃" );
 			if      ( OutValue > 0.0f )
 			{
 				Lputs( 0x1510u, "加 热: " );	ShowFP32( 0x1814u, OutValue, 0x0601u, "% " );
@@ -112,7 +112,7 @@ void	show_env_state( void )
 			}
 			else	//	OutValue == 0.0f
 			{			
-				Lputs( 0x1510u, "输 出:" );Lputs( 0x1814u," [关闭]    " );
+				Lputs( 0x1510u, "输 出:" );		Lputs( 0x1814u," [关闭]    " );
 			}
 		}
 		break;
@@ -135,7 +135,7 @@ void	show_env_state( void )
 			}
 			else
 			{
-				Lputs( 0x1510u, "输 出:");	Lputs( 0x1814u," [停用]    " );
+					Lputs( 0x1510u, "输 出:");	Lputs( 0x1814u," [停用]    " );
 			}
 		
 		}
@@ -292,17 +292,15 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 
 	if ( ! Q_Pump[PumpSelect].xp_state )
 	{
-		switch (PumpSelect )
+		switch ( PumpSelect )
 		{
 		case PP_TSP: // TSP_KB120F
-			Lputs( 0x0602u, "工况体积: "						);	ShowFP32 ( 0x0613u, p->vd,       0x0600u, "L" );
-			Lputs( 0x0902u, "标况体积: "						);	ShowFP32 ( 0x0913u, p->vnd,      0x0600u, "L" );
-			Lputs( 0x0C02u, "                   " );
-			Lputs( 0x0F02u, "                   " );
+			Lputs( 0x0602u, "工况体积: "						);	ShowFP32 ( 0x0613u, p->vd,   0x0600u, "L" );    
+			Lputs( 0x0A02u, "标况体积: "						);	ShowFP32 ( 0x0A13u, p->vnd,  0x0600u, "L" );    
+			Lputs( 0x0E02u, "                   " );
 			Lputs( 0x1202u, "    泵已关闭        "	);
-			Lputs( 0x1502u, "                   " );
-			Lputs( 0x1802u, "                   " );
-			Lputs( 0x1B02u, "                   " );
+			Lputs( 0x1602u, "                   "	);
+
 			return;
 		case PP_R24_A:
 		case PP_R24_B:
@@ -324,7 +322,7 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 		
 		FP32	OutValue = Pump_GetOutput( PumpSelect );
     fstd = ( fstdx[0][PumpSelect] + fstdx[1][PumpSelect] + fstdx[2][PumpSelect] + fstdx[3][PumpSelect] ) / 4; 
-		switch (PumpSelect )
+		switch ( PumpSelect )
 		{
 		case PP_TSP: // TSP_KB120F
 			{
@@ -332,10 +330,10 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 				FP32	Ba   = get_Ba();
 				FP32	flow;
 				flow = Calc_flow( fstd, Te, 0.0f, Ba, Q_TSP );
-				Lputs ( 0x0602u, "工况体积: " 	);		ShowFP32 ( 0x0613u, p->vd,       0x0600u, "L" );
-				Lputs ( 0x0A02u, "标况体积: " 	);		ShowFP32 ( 0x0A13u, p->vnd,      0x0600u, "L" );
-				Lputs ( 0x0E02u, "工   况: "	);		ShowFP32    ( 0x0E11u, flow, 0x0701u, "L/m" );
-				Lputs ( 0x1202u, "标   况: "	);		ShowFP32    ( 0x1211u, fstd, 0x0701u, "L/m" );	
+				Lputs ( 0x0602u, "工况体积: " 	);		ShowFP32    ( 0x0613u, p->vd,  0x0600u, "L" );
+				Lputs ( 0x0A02u, "标况体积: " 	);		ShowFP32    ( 0x0A13u, p->vnd, 0x0600u, "L" );
+				Lputs ( 0x0E02u, "工   况: "	);		ShowFP32    ( 0x0E11u, flow,   0x0701u, "L/m" );
+				Lputs ( 0x1202u, "标   况: "	);		ShowFP32    ( 0x1211u, fstd,   0x0701u, "L/m" );	
 				Lputs ( 0x1602u, "输   出:   ");	ShowPercent ( 0x1615u, OutValue );
 
 			}
@@ -345,7 +343,7 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 		case PP_SHI_C:
 		case PP_SHI_D:
 			Lputs ( 0x0602u, "标况体积: "	);		ShowFP32 ( 0x0611u, p->vnd,  0x0702u, "L" );
-			Lputs ( 0x0A02u, "标   况: "	);		ShowFP32    ( 0x0A13u, fstd, 0x0703u, "L/m" );
+			Lputs ( 0x0A02u, "标   况: "	);		ShowFP32 ( 0x0A13u, fstd,    0x0703u, "L/m" );
 			Lputs ( 0x0E02u, "输   出: "	);		ShowPercent ( 0x0E15u, OutValue );
 		switch ( Configure.HeaterType		)
 		{

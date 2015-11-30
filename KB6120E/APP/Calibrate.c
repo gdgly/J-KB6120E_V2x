@@ -1218,7 +1218,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 
 	uint16_t FlowKSave[4];
 	uint16_t	slope;
-	uint32_t Flow32;
+	uint32_t Flow32;// 编辑用流量
 	FP32  Flown,Flow = 0.0f;
 
 	//	暂存原始数据，包括所有点的倍率、设定流量。
@@ -1248,8 +1248,9 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 		//	显示倍率
 	
 		do {	// 实时显示流量
+			Flow = get_fstd( PumpSelect );
 			Lputs( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, slope, 0x0503u, NULL );
-			Lputs( 0x0C00u, "流量:" );	ShowFP32( 0x0C0Cu, get_fstd( PumpSelect ), 0x0603u, "L/m" );
+			Lputs( 0x0C00u, "流量:" );		ShowFP32( 0x0C0Cu, Flow, 0x0603u, "L/m" );
 			Lputs( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( PumpSelect ));
 		} while ( ! hitKey( 100u ));
 
@@ -1279,7 +1280,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 				changed = TRUE;
 				Flown = ( FP32 ) Flow32;
 				if( slope != 0 )
-					Flow  = Flow / ( slope *0.001);
+					Flow  = Flow / ( slope * 0.001 );
 				else
 					Flow = Flown / 1000;
 				if( Flow != 0 )				
@@ -1287,6 +1288,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 				else
 					slope = 1000; 
 			}
+			cls();
 			break;
 
 		case K_ESC:
