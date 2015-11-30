@@ -182,7 +182,7 @@ __task	int32_t	main( void )
 	DisplaySetGrayVolt( Configure.DisplayGray * 0.01f );
 	DisplaySetLight( Configure.DisplayLight );
 	DisplaySetTimeout( Configure.TimeoutLight );
-	Keyboard_Init();	//	配置完背光超时时间后再初始化。
+	Keyboard_Init();	//	配置完背光超时时间后再初始化
 		
 	RTC_Init();			//	为避免启动过程中时钟失败造成的假死现象，放在显示初始化之后
 	SD_Init();				//	SD卡读写初始化，放在开关机存取之前
@@ -197,6 +197,7 @@ __task	int32_t	main( void )
 	
 	Animation();		//	开机动画
  	delay( 1500 );
+	
 	ShowEdition();	//	确定型号之后，显示初始化之后	
 	delay( 1000u );
 	
