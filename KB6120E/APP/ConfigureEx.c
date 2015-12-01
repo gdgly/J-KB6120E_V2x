@@ -25,19 +25,19 @@
 /********************************** 功能说明 ***********************************
 *	扩展配置 -> 泵累计运行时间
 *******************************************************************************/
-static	void	menu_Clean_SumTime( void )
+void	menu_Clean_SumTime( void )
 {
 	BOOL	Done = FALSE;
 	do{
 		cls();	//	Lputs( 0x0000u, "运行时间(小时)" );
 		Lputs( 0x0102u, "泵类型" );  Lputs( 0x0112u, "时间" );
 		
-		Lputs( 0x0402u, " A路:" ); 	  ShowFP32( 0x040Cu, PumpSumTimeLoad( PP_R24_A  ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x0802u, " B路:" ); 	  ShowFP32( 0x080Cu, PumpSumTimeLoad( PP_R24_B  ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x0C02u, " C路:" ); 	  ShowFP32( 0x0C0Cu, PumpSumTimeLoad( PP_SHI_C  ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x1002u, " D路:" ); 	  ShowFP32( 0x100Cu, PumpSumTimeLoad( PP_SHI_D  ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x1402u, "大气:" ); 	ShowFP32( 0x140Cu, PumpSumTimeLoad( PP_AIR    ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x1802u, "粉尘:" );	ShowFP32( 0x180Cu, PumpSumTimeLoad( PP_TSP    ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x0402u, " A路:" ); 	  ShowFP32( 0x040Cu, PumpSumTimeLoad( SP_R24_A  ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x0802u, " B路:" ); 	  ShowFP32( 0x080Cu, PumpSumTimeLoad( SP_R24_B  ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x0C02u, " C路:" ); 	  ShowFP32( 0x0C0Cu, PumpSumTimeLoad( SP_SHI_C  ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x1002u, " D路:" ); 	  ShowFP32( 0x100Cu, PumpSumTimeLoad( SP_SHI_D  ) / 60.0f, 0x0601u, "h" );
+// 		Lputs( 0x1402u, "大气:" ); 	ShowFP32( 0x140Cu, PumpSumTimeLoad( SP_AIR    ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x1802u, "粉尘:" );	ShowFP32( 0x180Cu, PumpSumTimeLoad( SP_TSP    ) / 60.0f, 0x0601u, "h" );
 		switch ( getKey() )
 		{
 		case	K_OK	:						
@@ -46,12 +46,12 @@ static	void	menu_Clean_SumTime( void )
 				beep();
 				if ( vbYes == MsgBox( "清除累计时间 ?", vbYesNo | vbDefaultButton2 ))
 				{
-					PumpSumTimeSave( PP_TSP,   0u );
-					PumpSumTimeSave( PP_R24_A, 0u );
-					PumpSumTimeSave( PP_R24_B, 0u );
-					PumpSumTimeSave( PP_SHI_C, 0u );
-					PumpSumTimeSave( PP_SHI_D, 0u );
-					PumpSumTimeSave( PP_AIR,   0u );
+					PumpSumTimeSave( SP_TSP,   0u );
+					PumpSumTimeSave( SP_R24_A, 0u );
+					PumpSumTimeSave( SP_R24_B, 0u );
+					PumpSumTimeSave( SP_SHI_C, 0u );
+					PumpSumTimeSave( SP_SHI_D, 0u );
+// 					PumpSumTimeSave( SP_AIR,   0u );
 				}
 			}
 			break;
@@ -67,16 +67,18 @@ static	void	menu_Clean_SumTime( void )
 /********************************** 功能说明 ***********************************
 *  系统配置 -> 文件号
 *******************************************************************************/
-static	void	menu_Clean_FileNum( void )
+void	menu_Clean_FileNum( void )
 {
 	BOOL	Done = FALSE;
 	do{
 		cls();	
 		Lputs( 0x0102u, "类型" );		Lputs( 0x010Cu, "文件号" );
-		Lputs( 0x0602u, "粉尘:" );	ShowI16U( 0x060Cu, SampleSet[Q_TSP].FileNum, 0x0300u, NULL );
-		Lputs( 0x0C02u, "日均:" );	ShowI16U( 0x0C0Cu, SampleSet[Q_R24].FileNum, 0x0300u, NULL );
-		Lputs( 0x1202u, "时均:" );	ShowI16U( 0x120Cu, SampleSet[Q_SHI].FileNum, 0x0300u, NULL );
-		Lputs( 0x1802u, "大气:" );	ShowI16U( 0x180Cu, SampleSet[Q_AIR].FileNum, 0x0300u, NULL );
+		Lputs( 0x0802u, "粉 尘:" );	ShowI16U( 0x080Cu, SampleSet[SP_TSP].FileNum, 	0x0300u, NULL );
+		Lputs( 0x0C02u, "日均A:" );	ShowI16U( 0x0C0Cu, SampleSet[SP_R24_A].FileNum, 0x0300u, NULL );
+		Lputs( 0x1002u, "日均B:" );	ShowI16U( 0x100Cu, SampleSet[SP_R24_B].FileNum, 0x0300u, NULL );
+		Lputs( 0x1402u, "时均C:" );	ShowI16U( 0x140Cu, SampleSet[SP_SHI_C].FileNum, 0x0300u, NULL );
+		Lputs( 0x1802u, "时均D:" );	ShowI16U( 0x180Cu, SampleSet[SP_SHI_D].FileNum, 0x0300u, NULL );
+// 		Lputs( 0x1802u, "大气:" );	ShowI16U( 0x180Cu, SampleSet[SP_AIR].FileNum, 0x0300u, NULL );
 		
 		switch ( getKey() )
 		{
@@ -88,10 +90,12 @@ static	void	menu_Clean_FileNum( void )
 				{
 					File_Clean();
 					
-					SampleSet[Q_TSP].FileNum =
-					SampleSet[Q_R24].FileNum =
-					SampleSet[Q_SHI].FileNum =
-					SampleSet[Q_AIR].FileNum = 0u;
+					SampleSet[SP_TSP].FileNum =
+					SampleSet[SP_R24_A].FileNum =
+					SampleSet[SP_R24_B].FileNum =
+					SampleSet[SP_SHI_C].FileNum =
+					SampleSet[SP_SHI_D].FileNum = 0u;
+// 					SampleSet[SP_AIR].FileNum = 0u;
 					SampleSetSave();
 				}
 			}

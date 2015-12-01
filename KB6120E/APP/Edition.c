@@ -12,20 +12,20 @@
 extern	uint32_t	eDataValidMask; 
 void	EditionSelsct( void )
 {
-//	#define	T_KB6120C
-//	#define	T_KB6120B
-	#define	T_KB2400D
-//	#define	T_KB2400
+// 	#define	T_KB6120C
+// //	#define	T_KB6120B
+// //	#define	T_KB2400D
+// //	#define	T_KB2400
 
-#ifdef	T_KB6120C
-	eDataValidMask = 0x5A3A;
-#elif	defined	T_KB6120B
-	eDataValidMask = 0x5A3B;
-#elif	defined	T_KB2400D
-	eDataValidMask = 0x5A3C;
-#elif	defined	T_KB2400
-	eDataValidMask = 0x5A3D;
-#endif
+// #ifdef	T_KB6120C
+// 	eDataValidMask = 0x5A3A;
+// #elif	defined	T_KB6120B
+// 	eDataValidMask = 0x5A3B;
+// #elif	defined	T_KB2400D
+// 	eDataValidMask = 0x5A3C;
+// #elif	defined	T_KB2400
+// 	eDataValidMask = 0x5A3D;
+// #endif
 
 }
 /********************************** 功能说明 ***********************************
@@ -161,14 +161,14 @@ void	ConfigureLoad_KB6120C( void )
 {
 		Configure.InstrumentType = type_KB6120C;//6120C
 		
-		Configure.PumpType[PP_TSP  ] = enumOrifice_1;	Configure.SetFlow[PP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
-		Configure.PumpType[PP_R24_A] = enumOrifice_1;	Configure.SetFlow[PP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
-		Configure.PumpType[PP_R24_B] = enumOrifice_1;	Configure.SetFlow[PP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
-		Configure.PumpType[PP_SHI_C] = enumOrifice_1; Configure.SetFlow[PP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
-		Configure.PumpType[PP_SHI_D] = enumOrifice_1; Configure.SetFlow[PP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
-		Configure.PumpType[PP_AIR  ] = enumPumpNone;	Configure.SetFlow[PP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
-		Configure.AIRSetFlow[Q_PP1] = 5;
-		Configure.AIRSetFlow[Q_PP2] = 5;
+		Configure.PumpType[SP_TSP  ] = enumOrifice_1;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
+		Configure.PumpType[SP_R24_A] = enumOrifice_1;	Configure.SetFlow[SP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
+		Configure.PumpType[SP_R24_B] = enumOrifice_1;	Configure.SetFlow[SP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
+		Configure.PumpType[SP_SHI_C] = enumOrifice_1; Configure.SetFlow[SP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
+		Configure.PumpType[SP_SHI_D] = enumOrifice_1; Configure.SetFlow[SP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
+
+		
+
 		
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
 		
@@ -181,14 +181,14 @@ void	ConfigureLoad_KB6120B( void )
 {
 		Configure.InstrumentType = type_KB6120B; // 6120B
 
-		Configure.PumpType[PP_TSP  ] = enumOrifice_1;	Configure.SetFlow[PP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
-		Configure.PumpType[PP_R24_A] = enumPumpNone;	Configure.SetFlow[PP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
-		Configure.PumpType[PP_R24_B] = enumPumpNone;	Configure.SetFlow[PP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
-		Configure.PumpType[PP_SHI_C] = enumOrifice_1;	Configure.SetFlow[PP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
-		Configure.PumpType[PP_SHI_D] = enumOrifice_1;	Configure.SetFlow[PP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
-		Configure.PumpType[PP_AIR  ] = enumPumpNone;	Configure.SetFlow[PP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
-		Configure.AIRSetFlow[Q_PP1] = 5;
-		Configure.AIRSetFlow[Q_PP2] = 5;
+		Configure.PumpType[SP_TSP  ] = enumOrifice_1;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
+		Configure.PumpType[SP_R24_A] = enumPumpNone;	Configure.SetFlow[SP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
+		Configure.PumpType[SP_R24_B] = enumPumpNone;	Configure.SetFlow[SP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
+		Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
+		Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
+
+		
+
 		
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
 		
@@ -199,14 +199,14 @@ void	ConfigureLoad_KB2400D( void )
 {
 		Configure.InstrumentType = type_KB2400D;//2400D
 		
-		Configure.PumpType[PP_TSP  ] = enumPumpNone;	Configure.SetFlow[PP_TSP  ]  = 1000u;	//	粉尘 采样流量 100.0 L/m
-		Configure.PumpType[PP_R24_A] = enumOrifice_1;	Configure.SetFlow[PP_R24_A]  =  200u;	//	日均1采样流量 0.200 L/m
-		Configure.PumpType[PP_R24_B] = enumOrifice_1;	Configure.SetFlow[PP_R24_B]  =  200u;	//	日均2采样流量 0.200 L/m
-		Configure.PumpType[PP_SHI_C] = enumOrifice_1;	Configure.SetFlow[PP_SHI_C]  =    5u;	//	时均1采样流量 0.5 L/m
-		Configure.PumpType[PP_SHI_D] = enumOrifice_1;	Configure.SetFlow[PP_SHI_D]  =    5u;	//	时均2采样流量 0.5 L/m
-		Configure.PumpType[PP_AIR  ] = enumPumpNone;	Configure.SetFlow[PP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
-		Configure.AIRSetFlow[Q_PP1] = 5;
-		Configure.AIRSetFlow[Q_PP2] = 5;
+		Configure.PumpType[SP_TSP  ] = enumPumpNone;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘 采样流量 100.0 L/m
+		Configure.PumpType[SP_R24_A] = enumOrifice_1;	Configure.SetFlow[SP_R24_A]  =  200u;	//	日均1采样流量 0.200 L/m
+		Configure.PumpType[SP_R24_B] = enumOrifice_1;	Configure.SetFlow[SP_R24_B]  =  200u;	//	日均2采样流量 0.200 L/m
+		Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =    5u;	//	时均1采样流量 0.5 L/m
+		Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =    5u;	//	时均2采样流量 0.5 L/m
+
+		
+
 		
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
 		
@@ -217,14 +217,14 @@ void	ConfigureLoad_KB2400( void )
 {
 		Configure.InstrumentType = type_KB2400;//2400
 		
-		Configure.PumpType[PP_TSP  ] = enumPumpNone;	Configure.SetFlow[PP_TSP  ]  = 1000u;	//	粉尘 采样流量 100.0 L/m
-		Configure.PumpType[PP_R24_A] = enumPumpNone;	Configure.SetFlow[PP_R24_A]  =  200u;	//	日均1采样流量 0.200 L/m
-		Configure.PumpType[PP_R24_B] = enumPumpNone;	Configure.SetFlow[PP_R24_B]  =  200u;	//	日均2采样流量 0.200 L/m
-		Configure.PumpType[PP_SHI_C] = enumOrifice_1;	Configure.SetFlow[PP_SHI_C]  =    5u;	//	时均1采样流量 0.5 L/m
-		Configure.PumpType[PP_SHI_D] = enumOrifice_1;	Configure.SetFlow[PP_SHI_D]  =    5u;	//	时均2采样流量 0.5 L/m
-		Configure.PumpType[PP_AIR  ] = enumPumpNone;	Configure.SetFlow[PP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
-		Configure.AIRSetFlow[Q_PP1] = 5;
-		Configure.AIRSetFlow[Q_PP2] = 5;
+		Configure.PumpType[SP_TSP  ] = enumPumpNone;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘 采样流量 100.0 L/m
+		Configure.PumpType[SP_R24_A] = enumPumpNone;	Configure.SetFlow[SP_R24_A]  =  200u;	//	日均1采样流量 0.200 L/m
+		Configure.PumpType[SP_R24_B] = enumPumpNone;	Configure.SetFlow[SP_R24_B]  =  200u;	//	日均2采样流量 0.200 L/m
+		Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =    5u;	//	时均1采样流量 0.5 L/m
+		Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =    5u;	//	时均2采样流量 0.5 L/m
+
+		
+
 		
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
 		
@@ -236,12 +236,12 @@ void	ConfigureLoad_KB2400( void )
 // {
 // 	Configure.InstrumentType = type_KB6120AD2;
 
-// 	Configure.PumpType[PP_TSP  ] = enumOrifice_1;	Configure.SetFlow[PP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
-// 	Configure.PumpType[PP_R24_A] = enumPumpNone;	Configure.SetFlow[PP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
-// 	Configure.PumpType[PP_R24_B] = enumPumpNone;	Configure.SetFlow[PP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
-// 	Configure.PumpType[PP_SHI_C] = enumOrifice_1;	Configure.SetFlow[PP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
-// 	Configure.PumpType[PP_SHI_D] = enumOrifice_1;	Configure.SetFlow[PP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
-// 	Configure.PumpType[PP_AIR  ] = enumPumpNone;	Configure.SetFlow[PP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
+// 	Configure.PumpType[SP_TSP  ] = enumOrifice_1;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
+// 	Configure.PumpType[SP_R24_A] = enumPumpNone;	Configure.SetFlow[SP_R24_A]  =  200u;	//	日均1 采样流量 0.200 L/m
+// 	Configure.PumpType[SP_R24_B] = enumPumpNone;	Configure.SetFlow[SP_R24_B]  =  200u;	//	日均2 采样流量 0.200 L/m
+// 	Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =    5u;	//	时均1 采样流量 0.5 L/m
+// 	Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =    5u;	//	时均2 采样流量 0.5 L/m
+// 	Configure.PumpType[SP_AIR  ] = enumPumpNone;	Configure.SetFlow[SP_AIR  ]  =  500u;	//	大气 流量 0.5 L/m
 
 // 	Configure.HeaterType = enumHeaterOnly;	//	只有恒温箱
 // 	Configure.Heater_SetTemp = 300u;		//	加热器恒温温度 30.0 ℃
@@ -268,70 +268,70 @@ void	ConfigureLoad_KB2400( void )
 // 	Configure.ExNum = 1501000;			 //出厂编号
 // }
 
-uint8_t KB2400D( enum enumPumpSelect PumpSelect )
+uint8_t KB2400D( enum enumSamplerSelect SamplerSelect )
 {
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
 	default:
-	case PP_TSP  :
-	case PP_R24_A:	PumpSelect = PP_R24_B;	break;
-	case PP_R24_B:	PumpSelect = PP_SHI_C;	break;
-	case PP_SHI_C:	PumpSelect = PP_SHI_D;	break;
-	case PP_SHI_D:	PumpSelect = PP_R24_A;	break;
+	case SP_TSP  :
+	case SP_R24_A:	SamplerSelect = SP_R24_B;	break;
+	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
+	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
+	case SP_SHI_D:	SamplerSelect = SP_R24_A;	break;
 	}	
-	return  PumpSelect;
+	return  SamplerSelect;
 }
-uint8_t KB2400( enum enumPumpSelect PumpSelect )
+uint8_t KB2400( enum enumSamplerSelect SamplerSelect )
 {
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
 	default:
-	case PP_TSP  :
-	case PP_R24_A:	 
-	case PP_R24_B:
-	case PP_SHI_C:	PumpSelect = PP_SHI_D;	break;
-	case PP_SHI_D:	PumpSelect = PP_SHI_C;	break;
+	case SP_TSP  :
+	case SP_R24_A:	 
+	case SP_R24_B:
+	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
+	case SP_SHI_D:	SamplerSelect = SP_SHI_C;	break;
 	}	
-	return  PumpSelect;
+	return  SamplerSelect;
 }
-// uint8_t KB6120AD2( enum enumPumpSelect PumpSelect )
+// uint8_t KB6120AD2( enum enumSamplerSelect SamplerSelect )
 // {
-// 	switch ( PumpSelect )
+// 	switch ( SamplerSelect )
 // 	{
 // 	default:
-// 	case PP_TSP  :
-// 	case PP_R24_A:	 
-// 	case PP_R24_B:	PumpSelect = PP_SHI_C;	break;
-// 	case PP_SHI_C:	PumpSelect = PP_SHI_D;	break;
-// 	case PP_SHI_D:	PumpSelect = PP_TSP;		break;
+// 	case SP_TSP  :
+// 	case SP_R24_A:	 
+// 	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
+// 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
+// 	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
 // 	}	
-// 	return  PumpSelect;
+// 	return  SamplerSelect;
 // }
-uint8_t KB6120C( enum enumPumpSelect PumpSelect )
+uint8_t KB6120C( enum enumSamplerSelect SamplerSelect )
 {
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
 	default:
-	case PP_TSP  :	PumpSelect = PP_R24_A;	break;
-	case PP_R24_A:	PumpSelect = PP_R24_B;	break;
-	case PP_R24_B:	PumpSelect = PP_SHI_C;	break;
-	case PP_SHI_C:	PumpSelect = PP_SHI_D;	break;
-	case PP_SHI_D:	PumpSelect = PP_TSP;		break;
+	case SP_TSP  :	SamplerSelect = SP_R24_A;	break;
+	case SP_R24_A:	SamplerSelect = SP_R24_B;	break;
+	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
+	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
+	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
 	}	
-	return PumpSelect;
+	return SamplerSelect;
 }
-uint8_t KB6120B( enum enumPumpSelect PumpSelect )
+uint8_t KB6120B( enum enumSamplerSelect SamplerSelect )
 {
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
 	default:
-	case PP_R24_A:	 
-	case PP_R24_B:
-	case PP_TSP  :	PumpSelect = PP_SHI_C;	break;
-	case PP_SHI_C:	PumpSelect = PP_SHI_D;	break;
-	case PP_SHI_D:	PumpSelect = PP_TSP;		break;
+	case SP_R24_A:	 
+	case SP_R24_B:
+	case SP_TSP  :	SamplerSelect = SP_SHI_C;	break;
+	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
+	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
 	}	
-	return PumpSelect;
+	return SamplerSelect;
 }
 
 /********************************** 功能说明 ***********************************
@@ -359,8 +359,8 @@ CHAR  const * const Type[]=
 	"[恒温箱]",	//7
 	"[全安装]" 	//8
 };
-CHAR  PumpC[PP_Max+1];
-CHAR  TypeC[PP_Max+1];
+CHAR  PumpC[SP_Max+1];
+CHAR  TypeC[SP_Max+1];
 static	void	PumpConfigure( void )
 {
 	enum 
@@ -381,60 +381,60 @@ static	void	PumpConfigure( void )
 		imax = 
 		i    = 0;
 		ConfigureLoad();
-		if( Configure.PumpType[PP_TSP] != enumPumpNone )
+		if( Configure.PumpType[SP_TSP] != enumPumpNone )
 		{	
-			switch ( Configure.PumpType[PP_TSP] )
+			switch ( Configure.PumpType[SP_TSP] )
 			{
 			case enumOrifice_1: TypeC[i] = 0;break; 
 			case enumOrifice_2: TypeC[i] = 1;break; 
 			}
 			PumpC[i++] = 0; 		
 		}		
-		if( Configure.PumpType[PP_R24_A] != enumPumpNone )
+		if( Configure.PumpType[SP_R24_A] != enumPumpNone )
 		{		
-			switch (Configure.PumpType[PP_R24_A] )
+			switch (Configure.PumpType[SP_R24_A] )
 			{
 			case enumOrifice_1:TypeC[i] = 2;break; 
 			case enumOrifice_2:TypeC[i] = 3;break; 
 			}
 			PumpC[i++] = 1; 	
 		}
-		if( Configure.PumpType[PP_R24_B] != enumPumpNone )
+		if( Configure.PumpType[SP_R24_B] != enumPumpNone )
 		{
-			switch ( Configure.PumpType[PP_R24_B] )
+			switch ( Configure.PumpType[SP_R24_B] )
 			{
 			case enumOrifice_1:TypeC[i] = 2;break; 
 			case enumOrifice_2:TypeC[i] = 3;break; 
 			}
 			PumpC[i++] = 2; 
 		}
-		if( Configure.PumpType[PP_SHI_C] != enumPumpNone )
+		if( Configure.PumpType[SP_SHI_C] != enumPumpNone )
 		{
-			switch ( Configure.PumpType[PP_SHI_C] )
+			switch ( Configure.PumpType[SP_SHI_C] )
 			{
 			case enumOrifice_1:TypeC[i] = 2;break; 
 			case enumOrifice_2:TypeC[i] = 3;break; 
 			}
 			PumpC[i++] = 3; 
 		}	 
-		if( Configure.PumpType[PP_SHI_D] != enumPumpNone )
+		if( Configure.PumpType[SP_SHI_D] != enumPumpNone )
 		{
-			switch ( Configure.PumpType[PP_SHI_D] )
+			switch ( Configure.PumpType[SP_SHI_D] )
 			{
 			case enumOrifice_1:TypeC[i] = 2;break; 
 			case enumOrifice_2:TypeC[i] = 3;break; 
 			}
 			PumpC[i++] = 4; 
 		}	 
-		if( Configure.PumpType[PP_AIR] != enumPumpNone )
-		{
-			switch ( Configure.PumpType[PP_AIR] )
-			{
-			case enumOrifice_1:TypeC[i] = 4;break; 
-			case enumOrifice_2:TypeC[i] = 5;break; 
-			}
-			PumpC[i++] = 5; 
-		}	 
+// 		if( Configure.PumpType[SP_AIR] != enumPumpNone )
+// 		{
+// 			switch ( Configure.PumpType[SP_AIR] )
+// 			{
+// 			case enumOrifice_1:TypeC[i] = 4;break; 
+// 			case enumOrifice_2:TypeC[i] = 5;break; 
+// 			}
+// 			PumpC[i++] = 5; 
+// 		}	 
 		if( Configure.HeaterType != enumPumpNone )
 		{
 			switch ( Configure.HeaterType )
@@ -444,7 +444,7 @@ static	void	PumpConfigure( void )
 			case enumHCBoxHeater:  TypeC[i] = 8;break; 
 
 			}
-			PumpC[i++] = 6; 
+			PumpC[i++] = 5; 
 		}
 		imax = i;
 		
@@ -657,7 +657,7 @@ void	Configure_Instrument( void )
 	
 	if ( changed )
 	{
-// 		ConfigureLoadDefault( );
+		ConfigureLoadDefault( );
 		ConfigureSave();
 	}
 	else
@@ -665,37 +665,42 @@ void	Configure_Instrument( void )
 }
 
 
-// void	ConfigureLoadDefault( void )
-// {
-// 	switch ( Configure.InstrumentType )
-// 	{
-// 	case type_KB6120C:		ConfigureLoad_KB6120C();	break;
-// 	case type_KB6120B:		ConfigureLoad_KB6120B();	break;
-// 	case type_KB2400D:		ConfigureLoad_KB2400D();	break;
-// // 	case type_KB6120AD2:	ConfigureLoad_KB6120AD2();break;
-// 	case type_KB2400:			ConfigureLoad_KB2400();		break;
-// 	}
-// }
 void	ConfigureLoadDefault( void )
-{	
-#ifdef				T_KB6120C
-	ConfigureLoad_KB6120C();
-
-#elif	defined	T_KB6120B
-	ConfigureLoad_KB6120B();
-	
-#elif	defined	T_KB2400D
-	ConfigureLoad_KB2400D();
-	
-#elif	defined	T_KB2400
-	ConfigureLoad_KB2400();
-#endif	
-	if ( Configure.DataValidMask != eDataValidMask )
+{
+	switch ( Configure.InstrumentType )
+	{
+	case type_KB6120C:		ConfigureLoad_KB6120C();	break;
+	case type_KB6120B:		ConfigureLoad_KB6120B();	break;
+	case type_KB2400D:		ConfigureLoad_KB2400D();	break;
+// 	case type_KB6120AD2:	ConfigureLoad_KB6120AD2();break;
+	case type_KB2400:			ConfigureLoad_KB2400();		break;
+	}
+ 	if ( Configure.DataValidMask != eDataValidMask )
 	{
 		ConfigureLoadDefault_KB6120E();
 		Configure.DataValidMask = eDataValidMask;
 	}
 }
+// void	ConfigureLoadDefault( void )
+// {	
+// #ifdef				T_KB6120C
+// 	ConfigureLoad_KB6120C();
+
+// #elif	defined	T_KB6120B
+// 	ConfigureLoad_KB6120B();
+// 	
+// #elif	defined	T_KB2400D
+// 	ConfigureLoad_KB2400D();
+// 	
+// #elif	defined	T_KB2400
+// 	ConfigureLoad_KB2400();
+// #endif	
+// 	if ( Configure.DataValidMask != eDataValidMask )
+// 	{
+// 		ConfigureLoadDefault_KB6120E();
+// 		Configure.DataValidMask = eDataValidMask;
+// 	}
+// }
 
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/

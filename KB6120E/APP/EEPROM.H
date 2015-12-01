@@ -68,7 +68,7 @@ extern	void	PowerLog_Clean( void );
 //		virtual	void	Load( uint16_t FileNum ) = 0;
 //	};
 
-struct	uFile_TSP //: public uFile
+struct	uFile_TSP_SHI_R24 //: public uFile
 {
 	//	文件信息 与 采样设置
 	uint32_t	sample_begin;		//	记录采样开始时间
@@ -77,7 +77,7 @@ struct	uFile_TSP //: public uFile
 	uint8_t		set_loops; 			//	设置采样次数
 	uint8_t		run_loops;			//	记录采样次数
 	//	采样过程中的统计参数
-	uint16_t	sum_min;
+	uint16_t	sum_min;					//	实际采样时间，每分钟一计，最大24小时
 	FP32		sum_Ba;				//	大气压力
 	FP32		sum_tr;				//	计前温度
 	FP32		sum_pr;				//	计前温度
@@ -90,52 +90,52 @@ struct	uFile_TSP //: public uFile
 //		void	Load( uint16_t FileNum );
 };
 
-struct	uFile_SHI
-{
-	//	文件信息 与 采样设置
-	uint32_t	sample_begin;		//	记录采样开始时间
-	uint16_t	set_time[2];		//	设置采样时间
-	uint16_t	set_flow[2];		//	设置采样流量
-	uint8_t		set_loops; 			//	设置采样次数
-	uint8_t		run_loops;			//	记录采样次数
-	//	采样过程中的统计参数
-	uint16_t	sum_min[2];			//	实际采样时间，每分钟一计，最大24小时
-	FP32		sum_Ba;				//	大气压力
-	FP32		sum_tr[2];			//	计前温度
-	FP32		sum_pr[2];			//	计前压力
-	FP32		max_pr[2];			//	计前压力最大值
-	//	采样的累计值
-	FP32		vnd[2];				//	累计的采样体积，只记录标况体积
-	FP32		vd[2];				//	2015年7月23日 累计标况体积
+// struct	uFile_SHI
+// {
+// 	//	文件信息 与 采样设置
+// 	uint32_t	sample_begin;		//	记录采样开始时间
+// 	uint16_t	set_time[2];		//	设置采样时间
+// 	uint16_t	set_flow[2];		//	设置采样流量
+// 	uint8_t		set_loops; 			//	设置采样次数
+// 	uint8_t		run_loops;			//	记录采样次数
+// 	//	采样过程中的统计参数
+// 	uint16_t	sum_min[2];			//	实际采样时间，每分钟一计，最大24小时
+// 	FP32		sum_Ba;				//	大气压力
+// 	FP32		sum_tr[2];			//	计前温度
+// 	FP32		sum_pr[2];			//	计前压力
+// 	FP32		max_pr[2];			//	计前压力最大值
+// 	//	采样的累计值
+// 	FP32		vnd[2];				//	累计的采样体积，只记录标况体积
+// 	FP32		vd[2];				//	2015年7月23日 累计标况体积
 
-//	public:
-//		void	Save( uint16_t FileNum );
-//		void	Load( uint16_t FileNum );
-};
+// //	public:
+// //		void	Save( uint16_t FileNum );
+// //		void	Load( uint16_t FileNum );
+// };
 
-struct	uFile_R24	//	日均与时均使用的记录结构完全相同，但分别定义，便于进行类型检查
-{
-	//	文件信息 与 采样设置
-	uint32_t	sample_begin;		//	记录采样开始时间
-	uint16_t	set_time[2];		//	设置采样时间
-	uint16_t	set_flow[2];		//	设置采样流量
-	uint8_t		set_loops; 			//	设置采样次数
-	uint8_t		run_loops;			//	记录采样次数
-	uint8_t  _r[2];
-	//	采样过程中的统计参数
-	uint16_t	sum_min[2];			//	实际采样时间，每分钟一计，最大24小时
-	FP32		sum_Ba;				//	大气压力
-	FP32		sum_tr[2];			//	计前温度
-	FP32		sum_pr[2];			//	计前压力
-	FP32		max_pr[2];			//	计前压力最大值
-	//	采样的累计值
-	FP32		vnd[2];				//	累计的采样体积，只记录标况体积
-	FP32		vd[2];				//	2015年7月23日 累计标况体积
+// struct	uFile_R24	//	日均与时均使用的记录结构完全相同，但分别定义，便于进行类型检查
+// {
+// 	//	文件信息 与 采样设置
+// 	uint32_t	sample_begin;		//	记录采样开始时间
+// 	uint16_t	set_time[2];		//	设置采样时间
+// 	uint16_t	set_flow[2];		//	设置采样流量
+// 	uint8_t		set_loops; 			//	设置采样次数
+// 	uint8_t		run_loops;			//	记录采样次数
+// 	uint8_t  _r[2];
+// 	//	采样过程中的统计参数
+// 	uint16_t	sum_min[2];			//	实际采样时间，每分钟一计，最大24小时
+// 	FP32		sum_Ba;				//	大气压力
+// 	FP32		sum_tr[2];			//	计前温度
+// 	FP32		sum_pr[2];			//	计前压力
+// 	FP32		max_pr[2];			//	计前压力最大值
+// 	//	采样的累计值
+// 	FP32		vnd[2];				//	累计的采样体积，只记录标况体积
+// 	FP32		vd[2];				//	2015年7月23日 累计标况体积
 
-//	public:
-//		void	Save( uint16_t FileNum );
-//		void	Load( uint16_t FileNum );
-};
+// //	public:
+// //		void	Save( uint16_t FileNum );
+// //		void	Load( uint16_t FileNum );
+// };
 
 struct	uFile_AIR
 {
@@ -154,13 +154,17 @@ struct	uFile_AIR
 };
 
 
-extern	void	File_Save_TSP( uint16_t FileNum, struct uFile_TSP const * pFile );
-extern	void	File_Load_TSP( uint16_t FileNum, struct uFile_TSP       * pFile );
-extern	void	File_Save_R24( uint16_t FileNum, struct uFile_R24 const * pFile );
-extern	void	File_Load_R24( uint16_t FileNum, struct uFile_R24       * pFile );
-extern	void	File_Save_SHI( uint16_t FileNum, struct uFile_SHI const * pFile );
-extern	void	File_Load_SHI( uint16_t FileNum, struct uFile_SHI       * pFile );
-extern	void	File_Save_AIR( uint16_t FileNum, struct uFile_AIR const * pFile );
-extern	void	File_Load_AIR( uint16_t FileNum, struct uFile_AIR       * pFile );
+extern	void	File_Save_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
+extern	void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );
+// extern	void	File_Save_R24_A( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
+// extern	void	File_Load_R24_A( uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );
+// extern	void	File_Save_R24_B( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
+// extern	void	File_Load_R24( uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );
+// extern	void	File_Save_SHI( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
+// extern	void	File_Load_SHI( uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );
+// extern	void	File_Save_SHI( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
+// extern	void	File_Load_SHI( uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );
+// extern	void	File_Save_AIR( uint16_t FileNum, struct uFile_AIR const * pFile );
+// extern	void	File_Load_AIR( uint16_t FileNum, struct uFile_AIR       * pFile );
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/

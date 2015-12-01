@@ -204,8 +204,8 @@ __task	int32_t	main( void )
 	Sampler_BootResume();	//	时间配置完成之后，设置参数读入之后。
  	delay( 100u );
 	
-	SamplerSelect = Q_ALL;	//	初始化当前采样器为不合理的值，进行一次切换，切换到第一个合理的值。
-	SamplerTypeSwitch();
+	SamplerTypeSelect();
+
 	delay( 100u );
 	for(;;)
 	{

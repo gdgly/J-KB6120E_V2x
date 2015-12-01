@@ -14,33 +14,33 @@
 /********************************** 功能说明 ***********************************
 *	采样泵调速任务数据
 *******************************************************************************/
-static	FP32	MotorPID_fetchRunValue( enum enumPumpSelect PumpSelect )
+static	FP32	MotorPID_fetchRunValue( enum enumSamplerSelect SamplerSelect )
 {
-	switch( PumpSelect )
+	switch( SamplerSelect )
 	{
-    case PP_TSP:
+    case SP_TSP:
 		{
-			FP32	fstd = get_fstd( PumpSelect );	
+			FP32	fstd = get_fstd( SamplerSelect );	
 			FP32	Te   = get_Te();
 			FP32	Ba   = get_Ba();
-			FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, Q_TSP );
+			FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, SP_TSP );
 
 			return	flow;
 		}
-		case PP_R24_A:
-		case PP_R24_B:
-		case PP_SHI_C:
-		case PP_SHI_D:
+		case SP_R24_A:
+		case SP_R24_B:
+		case SP_SHI_C:
+		case SP_SHI_D:
 		{
-			FP32	fstd = get_fstd( PumpSelect );
+			FP32	fstd = get_fstd( SamplerSelect );
 			return	fstd;
 		}
 		default:
-		case PP_AIR:
+// 		case SP_AIR:
 			return 0;
 	}	
 }
-// struct  uMotorPID_Set const MotorPID_Set[PP_Max] =
+// struct  uMotorPID_Set const MotorPID_Set[SP_Max] =
 // {	// SetGain   Kp       Ki      Kd 
 // 	{ 0.100f, 0.0025f, 0.00015f, 0.0015f },	//	MT_TSP
 // 	{ 0.001f, 0.0200f, 0.025f, 0.0500f },	//	MT_R24_A
@@ -55,7 +55,7 @@ static	FP32	MotorPID_fetchRunValue( enum enumPumpSelect PumpSelect )
 static	enum	enumMotorOp_State
 {	//	采样泵操作状态
 	eShut, eRunning, eShutReq 
-} volatile  MotorOp_State[PP_Max];
+} volatile  MotorOp_State[SP_Max];
 
 struct uMotorPID_Set
 {	//	电机调速数据
@@ -65,9 +65,9 @@ struct uMotorPID_Set
 	//	fetch_set, outCmd, setOutput
 };
 
-static	FP32	MotorOutValue[PP_Max];
+static	FP32	MotorOutValue[SP_Max];
 
-struct  uMotorPID_Set const MotorPID_Set[PP_Max] =
+struct  uMotorPID_Set const MotorPID_Set[SP_Max] =
 {	// SetGain   Kp       Ki      Kd 
 	{ 0.100f, 0.00110f, 0.000105f, 0.00008f },
 	{ 0.001f, 0.0190f, 0.025f, 0.0100f },	//	MT_R24_A{ 0.001f, 0.0200f, 0.025f, 0.0500f },	//	MT_R24_A
@@ -77,7 +77,7 @@ struct  uMotorPID_Set const MotorPID_Set[PP_Max] =
 // 	{ 0.100f, 0.0200f, 0.025f, 0.0500f },//	 
 };
 
-static	void	MotorPID_Task( enum enumPumpSelect PumpSelect )
+static	void	MotorPID_Task( enum enumSamplerSelect SamplerSelect )
 {
 	FP32	SetValue, RunValue, OutValue = 0.0f;
 	FP32	Ek_1, Ek = 0.0f;
@@ -86,45 +86,45 @@ static	void	MotorPID_Task( enum enumPumpSelect PumpSelect )
 	FP32  Initout = 0.35f;
 	FP32	UpidSetGain = 0.800f;
 	uint32_t  SaveTick;
-	SetValue = ( Configure.SetFlow[PumpSelect] * MotorPID_Set[PumpSelect].SetGain );
-	switch( PumpSelect )
+	SetValue = ( Configure.SetFlow[SamplerSelect] * MotorPID_Set[SamplerSelect].SetGain );
+	switch( SamplerSelect )
 	{
-	case PP_TSP:
+	case SP_TSP:
 		UpidSetGain = 0.900f;
 		break;
 	default:
-	case PP_R24_A:
-	case PP_R24_B:
-	case PP_SHI_C:
-	case PP_SHI_D:	
+	case SP_R24_A:
+	case SP_R24_B:
+	case SP_SHI_C:
+	case SP_SHI_D:	
 		UpidSetGain = 0.800f;
 		break;
 	}	
-	MotorOutValue[PumpSelect] = 0.0f;
-	Motor_SetOutput( PumpSelect, 0u );
-	Motor_OutCmd( PumpSelect, TRUE );
+	MotorOutValue[SamplerSelect] = 0.0f;
+	Motor_SetOutput( SamplerSelect, 0u );
+	Motor_OutCmd( SamplerSelect, TRUE );
 	//	初始化延时
 	delay( 100u );	SaveTick = osKernelSysTick( );
 
-	while ( eRunning == MotorOp_State[PumpSelect] )
+	while ( eRunning == MotorOp_State[SamplerSelect] )
 	{
 		
-		RunValue  = MotorPID_fetchRunValue( PumpSelect );
+		RunValue  = MotorPID_fetchRunValue( SamplerSelect );
 		//	PID计算
 		Ek_1 = Ek;  Ek = ( SetValue - RunValue );
-		Up   = MotorPID_Set[PumpSelect].Kp * Ek;
-		Ui  += MotorPID_Set[PumpSelect].Ki * Ek;
+		Up   = MotorPID_Set[SamplerSelect].Kp * Ek;
+		Ui  += MotorPID_Set[SamplerSelect].Ki * Ek;
 		if ( Ui < -1.0f ){  Ui = -1.0f; }
 		if ( Ui > +1.0f ){  Ui = +1.0f; }
-		Ud   = ( Ud * 0.667f ) + ( MotorPID_Set[PumpSelect].Kd * ( Ek - Ek_1 ) * ( 1.0f - 0.667f ));
+		Ud   = ( Ud * 0.667f ) + ( MotorPID_Set[SamplerSelect].Kd * ( Ek - Ek_1 ) * ( 1.0f - 0.667f ));
 		Upid =  ( Upid * UpidSetGain ) +( Up + Ui + Ud ) * ( 1.0f - UpidSetGain ); 
 		OutValue = Upid + Initout;
 
 		//	PID输出
 		if ( OutValue < 0.0f ){  OutValue = 0.0f; }
 		if ( OutValue > 1.0f ){  OutValue = 1.0f; }
-		MotorOutValue[PumpSelect] = OutValue;
-		Motor_SetOutput( PumpSelect, 27648u * OutValue );
+		MotorOutValue[SamplerSelect] = OutValue;
+		Motor_SetOutput( SamplerSelect, 27648u * OutValue );
 
 		//	定间隔延时
 		{
@@ -148,11 +148,11 @@ static	void	MotorPID_Task( enum enumPumpSelect PumpSelect )
 		}
 	}
 	//	PID 停止
-	MotorOutValue[PumpSelect] = 0.0f;
-	Motor_SetOutput( PumpSelect, 0u );
-	Motor_OutCmd( PumpSelect, FALSE );
+	MotorOutValue[SamplerSelect] = 0.0f;
+	Motor_SetOutput( SamplerSelect, 0u );
+	Motor_OutCmd( SamplerSelect, FALSE );
 
-	MotorOp_State[PumpSelect] = eShut;
+	MotorOp_State[SamplerSelect] = eShut;
 }
 
 /********************************** 功能说明 ***********************************
@@ -162,65 +162,65 @@ static	void	MotorTask_Socket( void const * p_arg )
 {	//	调用采样控制程序，然后结束任务
 	uint32_t	arg = (uint32_t)p_arg;
 
-	MotorPID_Task((enum enumPumpSelect)arg );
+	MotorPID_Task((enum enumSamplerSelect)arg );
 
 	osThreadTerminate( osThreadGetId());
 }
 
-osThreadDef( MotorTask_Socket, osPriorityHigh, ( PP_Max - 1 ), 0 );
+osThreadDef( MotorTask_Socket, osPriorityHigh, ( SP_Max - 1 ), 0 );
 
-static	void	MotorTask_Init( enum enumPumpSelect PumpSelect )
+static	void	MotorTask_Init( enum enumSamplerSelect SamplerSelect )
 {
-	osThreadCreate( osThread( MotorTask_Socket ), ( void * )PumpSelect );
+	osThreadCreate( osThread( MotorTask_Socket ), ( void * )SamplerSelect );
 }
 /********************************** 功能说明 ***********************************
 *  电机任务的启停控制///	开关指定的采样泵
 *******************************************************************************/
 //	#include "BIOS.H"
 
-void  Pump_OutCmd( enum enumPumpSelect PumpSelect, BOOL NewState )
+void  Pump_OutCmd( enum enumSamplerSelect SamplerSelect, BOOL NewState )
 {
-	if ( PumpSelect == PP_AIR )
-	{
-		MotorOp_State[PumpSelect] = NewState ? eRunning : eShut;
-		Motor_OutCmd( PumpSelect, NewState );
-		return;
-	}
+// 	if ( SamplerSelect == SP_AIR )
+// 	{
+// 		MotorOp_State[SamplerSelect] = NewState ? eRunning : eShut;
+// 		Motor_OutCmd( SamplerSelect, NewState );
+// 		return;
+// 	}
 	
 	if ( ! NewState )
 	{	//	发标志，任务会检测标志自行中止。	//	osThread_SetReady;			
-		MotorOp_State[PumpSelect] = eShutReq;
+		MotorOp_State[SamplerSelect] = eShutReq;
 	}
-	else if ( eRunning == MotorOp_State[PumpSelect] )
+	else if ( eRunning == MotorOp_State[SamplerSelect] )
 	{	//	请求开泵，但泵并没有关?!
 		;
 	}
 	else
 	{	//	请求开泵，且已知泵是关的
-		MotorOp_State[PumpSelect] = eRunning;
-		MotorTask_Init( PumpSelect );	
+		MotorOp_State[SamplerSelect] = eRunning;
+		MotorTask_Init( SamplerSelect );	
 	}
-// 	if( MotorOp_State[PumpSelect] == eRunning)
+// 	if( MotorOp_State[SamplerSelect] == eRunning)
 // 		lightopen();
 // 	else
 // 		lightclose();
 }
 
 ///	读取指定的采样泵的调速输出[0.0 ~ 1.0]
-FP32	Pump_GetOutput( enum enumPumpSelect PumpSelect )
+FP32	Pump_GetOutput( enum enumSamplerSelect SamplerSelect )
 {
-	if ( PumpSelect == PP_AIR )
-	{
-		return	( eShutReq == MotorOp_State[PumpSelect] ) ? 0.0f : 1.0f;
-	}
+// 	if ( SamplerSelect == SP_AIR )
+// 	{
+// 		return	( eShutReq == MotorOp_State[SamplerSelect] ) ? 0.0f : 1.0f;
+// 	}
 
-	if ( eShutReq == MotorOp_State[PumpSelect] )
+	if ( eShutReq == MotorOp_State[SamplerSelect] )
 	{
 		return	0.0f;
 	}
 	else
 	{
-		return	MotorOutValue[PumpSelect];
+		return	MotorOutValue[SamplerSelect];
 	}
 }
 

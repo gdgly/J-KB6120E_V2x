@@ -159,76 +159,49 @@ void PumpWorkFlag( void )
 	if( i == 3 )
 	WBMP(0x1818,0x010A, PUMP4 );
 }
-static	FP32	fstdx[4][PP_Max];
+static	FP32	fstdx[4][SP_Max];
 static	FP32	fstd ;
 static	void Sampler_Tdfilter( void )
 {	
-//   switch(  SamplerSelect )enum enumSamplerSelect SamplerSelect
-//   {	
-//     case Q_TSP:
-//       fstdx[0][PP_TSP] = fstdx[1][PP_TSP];
-//       fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
-//       fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
-//       fstdx[3][PP_TSP] = get_fstd( PP_TSP );    
-//       break;
-//     case Q_SHI:
-//       fstdx[0][PP_SHI_C] = fstdx[1][PP_SHI_C];
-//       fstdx[1][PP_SHI_C] = fstdx[2][PP_SHI_C];
-//       fstdx[2][PP_SHI_C] = fstdx[3][PP_SHI_C];
-//       fstdx[3][PP_SHI_C] = get_fstd( PP_SHI_C );
-//       fstdx[0][PP_SHI_D] = fstdx[1][PP_SHI_D];
-//       fstdx[1][PP_SHI_D] = fstdx[2][PP_SHI_D];
-//       fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
-//       fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
-//       break;
-//     case Q_R24:
-//       fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
-//       fstdx[1][PP_R24_A] = fstdx[2][PP_R24_A];
-//       fstdx[2][PP_R24_A] = fstdx[3][PP_R24_A];
-//       fstdx[3][PP_R24_A] = get_fstd( PP_R24_A );
-//       fstdx[0][PP_R24_B] = fstdx[1][PP_R24_B];
-//       fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
-//       fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
-//       fstdx[3][PP_R24_B] = get_fstd( PP_R24_B );
-//       break;
-//     default:  
-//       break;
-//   }
 	static	uint32_t tt,lastsec;
 	tt = get_Now();
 	if( lastsec != tt )
 	{
 		lastsec = tt; 
-		if( Sampler_isRunning( Q_TSP ) )
+		if( Sampler_isRunning( SP_TSP ) )
 		{
-			fstdx[0][PP_TSP] = fstdx[1][PP_TSP];
-			fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
-			fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
-			fstdx[3][PP_TSP] = get_fstd( PP_TSP );
+			fstdx[0][SP_TSP] = fstdx[1][SP_TSP];
+			fstdx[1][SP_TSP] = fstdx[2][SP_TSP];
+			fstdx[2][SP_TSP] = fstdx[3][SP_TSP];
+			fstdx[3][SP_TSP] = get_fstd( SP_TSP );
 		}    
-		if( Sampler_isRunning( Q_SHI ) )
+		if( Sampler_isRunning( SP_SHI_C ) )
 		{
-			fstdx[0][PP_SHI_C] = fstdx[1][PP_SHI_C];
-			fstdx[1][PP_SHI_C] = fstdx[2][PP_SHI_C];
-			fstdx[2][PP_SHI_C] = fstdx[3][PP_SHI_C];
-			fstdx[3][PP_SHI_C] = get_fstd( PP_SHI_C );
-			
-			fstdx[0][PP_SHI_D] = fstdx[1][PP_SHI_D];
-			fstdx[1][PP_SHI_D] = fstdx[2][PP_SHI_D];
-			fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
-			fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
+			fstdx[0][SP_SHI_C] = fstdx[1][SP_SHI_C];
+			fstdx[1][SP_SHI_C] = fstdx[2][SP_SHI_C];
+			fstdx[2][SP_SHI_C] = fstdx[3][SP_SHI_C];
+			fstdx[3][SP_SHI_C] = get_fstd( SP_SHI_C );
+		}	
+		if( Sampler_isRunning( SP_SHI_D ) )
+		{
+			fstdx[0][SP_SHI_D] = fstdx[1][SP_SHI_D];
+			fstdx[1][SP_SHI_D] = fstdx[2][SP_SHI_D];
+			fstdx[2][SP_SHI_D] = fstdx[3][SP_SHI_D];
+			fstdx[3][SP_SHI_D] = get_fstd( SP_SHI_D );
 		}
-		if( Sampler_isRunning( Q_R24 ) )
+		if( Sampler_isRunning( SP_R24_A ) )
 		{		
-			fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
-			fstdx[1][PP_R24_A] = fstdx[2][PP_R24_A];
-			fstdx[2][PP_R24_A] = fstdx[3][PP_R24_A];
-			fstdx[3][PP_R24_A] = get_fstd( PP_R24_A );
-			
-			fstdx[0][PP_R24_B] = fstdx[1][PP_R24_B];
-			fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
-			fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
-			fstdx[3][PP_R24_B] = get_fstd( PP_R24_B ); 
+			fstdx[0][SP_R24_A] = fstdx[1][SP_R24_A];
+			fstdx[1][SP_R24_A] = fstdx[2][SP_R24_A];
+			fstdx[2][SP_R24_A] = fstdx[3][SP_R24_A];
+			fstdx[3][SP_R24_A] = get_fstd( SP_R24_A );
+		}	
+		if( Sampler_isRunning( SP_R24_B ) )
+		{
+			fstdx[0][SP_R24_B] = fstdx[1][SP_R24_B];
+			fstdx[1][SP_R24_B] = fstdx[2][SP_R24_B];
+			fstdx[2][SP_R24_B] = fstdx[3][SP_R24_B];
+			fstdx[3][SP_R24_B] = get_fstd( SP_R24_B ); 
 		}
 	}	   
  
@@ -236,12 +209,11 @@ static	void Sampler_Tdfilter( void )
 /********************************** 功能说明 ***********************************
 *  显示指定采样器的时间状态
 *******************************************************************************/
-static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpSelect PumpSelect )
+static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect)
 {
 	struct uSamplerQuery * p = & Q_Sampler[SamplerSelect];
- 	struct	uPumpQuery * pT = &Q_Pump[PumpSelect];
 	Lputs ( 0x0102u, "工况" );		//	ShowQueryType ( 0x000Au );
-// 	if( PumpSelect != PP_AIR )
+// 	if( SamplerSelect != SP_AIR )
 	{
 		switch ( p->state )
 		{
@@ -253,11 +225,11 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 		case state_PAUSE:		Lputs ( 0x0705u, "   暂停采样 "	);	break;
 		}
 		//TODO:	2路同开不同关的时间不一样！！！
-		Lputs ( 0x0B02u, "温   度:" 	);	ShowFP32 ( 0x0B11u, get_Tr( PumpSelect ), 0x0602u, "℃" );
-		Lputs ( 0x0E02u, "压   力:" 	);	ShowFP32 ( 0x0E11u, get_Pr( PumpSelect ), 0x0602u, "kPa" );
+		Lputs ( 0x0B02u, "温   度:" 	);	ShowFP32 ( 0x0B11u, get_Tr( SamplerSelect ), 0x0602u, "℃" );
+		Lputs ( 0x0E02u, "压   力:" 	);	ShowFP32 ( 0x0E11u, get_Pr( SamplerSelect ), 0x0602u, "kPa" );
 		Lputs ( 0x1102u, "大气压力:" 	);	ShowFP32 ( 0x1111u, get_Ba(),             0x0602u, "kPa" );
 		Lputs ( 0x1402u, "剩余时间:" 	);	ShowTIME ( 0x1416u, p->timer );	
-		Lputs ( 0x1702u, "采样时间:" 	);	ShowTIME ( 0x1716u, pT->sum_time );
+		Lputs ( 0x1702u, "采样时间:" 	);	ShowTIME ( 0x1716u, p->sum_time );
 		Lputs ( 0x1A02u, "当前次数:" 	);	ShowI16U ( 0x1A11u, p->loops, 0x0500u, NULL );
 	}
 // 	else
@@ -272,8 +244,8 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 // 		case state_SUSPEND:	Lputs ( 0x0605u, "    等待采样    " );	break;
 // 		case state_PAUSE:		Lputs ( 0x0605u, "    暂停采样    " );	break;
 // 		}
-// 		Lputs ( 0x0902u, "温   度:" );	ShowFP32 ( 0x0911u, get_Tr( PumpSelect ), 0x0602u, "℃" );
-// 		Lputs ( 0x0C02u, "压   力:" );	ShowFP32 ( 0x0C11u, get_Pr( PumpSelect ), 0x0602u, "kPa" );
+// 		Lputs ( 0x0902u, "温   度:" );	ShowFP32 ( 0x0911u, get_Tr( SamplerSelect ), 0x0602u, "℃" );
+// 		Lputs ( 0x0C02u, "压   力:" );	ShowFP32 ( 0x0C11u, get_Pr( SamplerSelect ), 0x0602u, "kPa" );
 // 		Lputs ( 0x0F02u, "大气压力:" );	ShowFP32 ( 0x0F11u, get_Ba(),             0x0602u, "kPa" );
 // 		Lputs ( 0x1202u, "剩余时间:" );	ShowTIME ( 0x1216u, p->timer );	
 // 		Lputs ( 0x1502u, "当前次数:" );	ShowI16U ( 0x1511u, p->loops, 0x0500u, NULL );
@@ -285,16 +257,17 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 /********************************** 功能说明 ***********************************
 *  显示指定采样泵的计前工况状态
 *******************************************************************************/
-static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
+static	void	ShowPumpBefore( enum enumSamplerSelect SamplerSelect )
 {
-	struct	uPumpQuery * p = &Q_Pump[PumpSelect];
+	struct uSamplerQuery * p = & Q_Sampler[SamplerSelect];
 	Lputs ( 0x0102u, "流量" );
 
-	if ( ! Q_Pump[PumpSelect].xp_state )
+	if ( ! Q_Sampler[SamplerSelect].xp_state )
 	{
-		switch ( PumpSelect )
+	
+		switch ( SamplerSelect )
 		{
-		case PP_TSP: // TSP_KB120F
+		case SP_TSP: // TSP_KB120F
 			Lputs( 0x0602u, "工况体积: "						);	ShowFP32 ( 0x0613u, p->vd,   0x0600u, "L" );    
 			Lputs( 0x0A02u, "标况体积: "						);	ShowFP32 ( 0x0A13u, p->vnd,  0x0600u, "L" );    
 			Lputs( 0x0E02u, "                   " );
@@ -302,10 +275,10 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 			Lputs( 0x1602u, "                   "	);
 
 			return;
-		case PP_R24_A:
-		case PP_R24_B:
-		case PP_SHI_C:
-		case PP_SHI_D:
+		case SP_R24_A:
+		case SP_R24_B:
+		case SP_SHI_C:
+		case SP_SHI_D:
 			Lputs( 0x0602u, "标况体积: "		 				);	ShowFP32 ( 0x0611u, p->vnd,  0x0702u, "L" );
 			Lputs( 0x0A02u, "                   " );
 			Lputs( 0x0E02u, "                   " );
@@ -313,23 +286,23 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 			Lputs( 0x1602u, "                   " );
 			Lputs( 0x1A02u, "                   " );
 			return;
-		case PP_AIR:
-			break;
+// 		case SP_AIR:
+// 			break;
 		}
 	}
 	else 
 	{
 		
-		FP32	OutValue = Pump_GetOutput( PumpSelect );
-    fstd = ( fstdx[0][PumpSelect] + fstdx[1][PumpSelect] + fstdx[2][PumpSelect] + fstdx[3][PumpSelect] ) / 4; 
-		switch ( PumpSelect )
+		FP32	OutValue = Pump_GetOutput( SamplerSelect );
+    fstd = ( fstdx[0][SamplerSelect] + fstdx[1][SamplerSelect] + fstdx[2][SamplerSelect] + fstdx[3][SamplerSelect] ) / 4; 
+		switch ( SamplerSelect )
 		{
-		case PP_TSP: // TSP_KB120F
+		case SP_TSP: // TSP_KB120F
 			{
 				FP32	Te   = get_Te();
 				FP32	Ba   = get_Ba();
 				FP32	flow;
-				flow = Calc_flow( fstd, Te, 0.0f, Ba, Q_TSP );
+				flow = Calc_flow( fstd, Te, 0.0f, Ba, SP_TSP );
 				Lputs ( 0x0602u, "工况体积: " 	);		ShowFP32    ( 0x0613u, p->vd,  0x0600u, "L" );
 				Lputs ( 0x0A02u, "标况体积: " 	);		ShowFP32    ( 0x0A13u, p->vnd, 0x0600u, "L" );
 				Lputs ( 0x0E02u, "工   况: "	);		ShowFP32    ( 0x0E11u, flow,   0x0701u, "L/m" );
@@ -338,10 +311,10 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 
 			}
 			break;
-		case PP_R24_A:
-		case PP_R24_B:
-		case PP_SHI_C:
-		case PP_SHI_D:
+		case SP_R24_A:
+		case SP_R24_B:
+		case SP_SHI_C:
+		case SP_SHI_D:
 			Lputs ( 0x0602u, "标况体积: "	);		ShowFP32 ( 0x0611u, p->vnd,  0x0702u, "L" );
 			Lputs ( 0x0A02u, "标   况: "	);		ShowFP32 ( 0x0A13u, fstd,    0x0703u, "L/m" );
 			Lputs ( 0x0E02u, "输   出: "	);		ShowPercent ( 0x0E15u, OutValue );
@@ -366,8 +339,8 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 			break;
 		}
 			break;
-		case PP_AIR:
-			break;
+// 		case SP_AIR:
+// 			break;
 		}
 	}	
 	
@@ -412,7 +385,7 @@ void Samplestate_Select( BOOL state )
 						item = enumSelectESC;
             break;
         case 2:
-            Sampler_Terminate( SamplerSelect );
+            Sample_Terminate( SamplerSelect );
 						item = enumSelectESC;
             break;
         case 3:
@@ -426,7 +399,7 @@ void Samplestate_Select( BOOL state )
 /********************************** 功能说明 ***********************************
 *  按键处理，集中统一处理各种情况下的按键
 *******************************************************************************/
-void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, const uint8_t opt_max, enum enumPumpSelect * pPumpSelect )
+void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, const uint8_t opt_max )
 {
 	enum {
 		opt_exit,
@@ -436,37 +409,30 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 	BOOL graychanged = FALSE;	
 
 	uint8_t option  = * pOption;
-	enum enumPumpSelect PumpSelect;
 
-	if ( NULL != pPumpSelect )
-	{
-		PumpSelect = *pPumpSelect;
-	}
-	else
-	{
-		PumpSelect = PP_Max;
-	}
 	Sampler_Tdfilter();//	流量滤波
 	if ( hitKey ( 100u ) )
 	{
 		switch ( getKey() )
 		{
-		case K_UP:
-			switch ( SamplerSelect )
-			{
-			case Q_R24:	PumpSelect = PP_R24_A;	break;
-			case Q_SHI:	PumpSelect = PP_SHI_C;	break;
-			default:	break;
-			}
-			break;
-		case K_DOWN:
-			switch ( SamplerSelect )
-			{
-			case Q_R24:	PumpSelect = PP_R24_B;	break;
-			case Q_SHI:	PumpSelect = PP_SHI_D;	break;
-			default:	break;
-			}
-			break;
+// 		case K_UP:
+// 			switch ( SamplerSelect )
+// 			{
+// 			case SP_R24_A:	SamplerSelect = SP_R24_A;	break;
+// 			case SP_R24_B:	SamplerSelect = SP_R24_A;	break;
+// 			case SP_SHI_C:	SamplerSelect = SP_SHI_C;	break;
+// 			case SP_SHI_D:	SamplerSelect = SP_SHI_C;	break;
+// 			default:	break;
+// 			}
+// 			break;
+// 		case K_DOWN:
+// 			switch ( SamplerSelect )
+// 			{
+// 			case SP_R24:	SamplerSelect = SP_R24_B;	break;
+// 			case SP_SHI:	SamplerSelect = SP_SHI_D;	break;
+// 			default:	break;
+// 			}
+// 			break;
 
 		case K_RIGHT:
 			++option;
@@ -555,10 +521,6 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 		cls();
 		
 		*pOption = option;
-		if ( NULL != pPumpSelect )
-		{
-			*pPumpSelect = PumpSelect;
-		}
 	}
 
 }
@@ -575,7 +537,7 @@ void	monitor_TSP( void )
 	uint8_t option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	const	enum	enumPumpSelect  PumpSelect = PP_TSP;
+	const	enum	enumSamplerSelect  SamplerSelect = SP_TSP;
 	
 	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -595,18 +557,18 @@ void	monitor_TSP( void )
 		
 		switch ( option )
 		{
-		case opt_qt_1:	ShowTimeState( SamplerSelect, PumpSelect );	break;
-		case opt_qt_2:	ShowPumpBefore( PumpSelect );break;
-// 		case opt_qt_3:	ShowPumpRunFlow( PumpSelect );	break;
-// 		case opt_qt_4:	ShowSumCubage( PumpSelect );	break;
+		case opt_qt_1:	ShowTimeState( SamplerSelect );	break;
+		case opt_qt_2:	ShowPumpBefore( SamplerSelect );break;
+// 		case opt_qt_3:	ShowPumpRunFlow( SamplerSelect );	break;
+// 		case opt_qt_4:	ShowSumCubage( SamplerSelect );	break;
 		default:	break;
 		}
 		
-		disposeKey( SamplerSelect, &option, opt_max, NULL );
+		disposeKey( SamplerSelect, &option, opt_max );
 	}
 }
 
-static	void	monitor_R24 ( void )
+static	void	monitor_R24_A ( void )
 {
 	enum
 	{
@@ -617,7 +579,7 @@ static	void	monitor_R24 ( void )
 	uint8_t option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumPumpSelect  PumpSelect = PP_R24_A;
+	enum	enumSamplerSelect  SamplerSelect = SP_R24_A;
 	
 	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -634,27 +596,75 @@ static	void	monitor_R24 ( void )
 		
 		PumpWorkFlag();
 		
-		switch ( PumpSelect )
+		switch ( SamplerSelect )
 		{
-		case PP_R24_A:		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();	break;
-		case PP_R24_B:		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	break;
+		case SP_R24_A:		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();	break;
+		case SP_R24_B:		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	break;
 		}
 
 		switch ( option )
 		{
-		case opt_qt_1:	ShowTimeState( SamplerSelect, PumpSelect );	
+		case opt_qt_1:	ShowTimeState( SamplerSelect );	
 						show_battery( 0x0020u );
 						break;
-		case opt_qt_2:	ShowPumpBefore( PumpSelect );	break;
+		case opt_qt_2:	ShowPumpBefore( SamplerSelect );	break;
 		default:	break;
 		}
 
-		disposeKey( SamplerSelect, &option, opt_max, &PumpSelect );
+		disposeKey( SamplerSelect, &option, opt_max );
 	}
 
 }
 
-static	void	monitor_SHI ( void )
+static	void	monitor_R24_B ( void )
+{
+	enum
+	{
+	    opt_exit,
+	    opt_qt_1, opt_qt_2, 
+	    opt_max, opt_min = 1u
+	};
+	uint8_t option = opt_min;
+	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
+
+	enum	enumSamplerSelect  SamplerSelect = SP_R24_A;
+	
+	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
+	{
+		if ( 0u != iDelay )
+		{
+			if ( --iDelay == 0u )
+			{
+				cls();	option = opt_min;
+			}
+		}
+		
+		WBMP( 0x0290,0x0502, STROCK);
+		WBMP( 0x0290,0x0514, STROCK);
+		
+		PumpWorkFlag();
+		
+		switch ( SamplerSelect )
+		{
+		case SP_R24_A:		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();	break;
+		case SP_R24_B:		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	break;
+		}
+
+		switch ( option )
+		{
+		case opt_qt_1:	ShowTimeState( SamplerSelect );	
+						show_battery( 0x0020u );
+						break;
+		case opt_qt_2:	ShowPumpBefore( SamplerSelect );	break;
+		default:	break;
+		}
+
+		disposeKey( SamplerSelect, &option, opt_max );
+	}
+
+}
+
+static	void	monitor_SHI_C ( void )
 {
 	enum
 	{
@@ -666,7 +676,7 @@ static	void	monitor_SHI ( void )
 	uint8_t	option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumPumpSelect  PumpSelect = PP_SHI_C;
+	enum	enumSamplerSelect  SamplerSelect = SP_SHI_C;
 
 	while (( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -686,37 +696,38 @@ static	void	monitor_SHI ( void )
 		PumpWorkFlag();
 		
 
-		switch ( PumpSelect )
+		switch ( SamplerSelect )
 		{
-		case PP_SHI_C:		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();break;
-		case PP_SHI_D:		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	break;
+		case SP_SHI_C:		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();break;
+		case SP_SHI_D:		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	break;
 		}
 
 		switch ( option )
 		{
-		case opt_qt_1:	ShowTimeState( SamplerSelect, PumpSelect );	break;
-		case opt_qt_2:	ShowPumpBefore( PumpSelect );	break;
+		case opt_qt_1:	ShowTimeState( SamplerSelect);	break;
+		case opt_qt_2:	ShowPumpBefore( SamplerSelect );	break;
 		default:	break;
 		}
 
-		disposeKey( SamplerSelect, &option, opt_max, &PumpSelect );
+		disposeKey( SamplerSelect, &option, opt_max);
 	}
 }
 
-static	void	monitor_AIR ( void )
+static	void	monitor_SHI_D ( void )
 {
 	enum
 	{
 	    opt_exit,
-	    opt_qt_1,
+	    opt_qt_1, opt_qt_2,  
 	    opt_max, opt_min = 1u
 	};
+
 	uint8_t	option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	const enum	enumPumpSelect  PumpSelect = PP_AIR;
-	
-	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
+	enum	enumSamplerSelect  SamplerSelect = SP_SHI_C;
+
+	while (( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
 		if ( 0u != iDelay )
 		{
@@ -726,16 +737,64 @@ static	void	monitor_AIR ( void )
 			}
 		}
 		
-		PumpWorkFlag();
+
 		WBMP( 0x0290,0x0502, STROCK);
 		WBMP( 0x0290,0x0514, STROCK);
-		ShowTimeState( SamplerSelect, PumpSelect );
-		show_battery( 0x0020u );
-		SamplerTypeShow( 0x010Eu );
 		
-		disposeKey( SamplerSelect, &option, opt_max, NULL );
+
+		PumpWorkFlag();
+		
+
+		switch ( SamplerSelect )
+		{
+		case SP_SHI_C:		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();break;
+		case SP_SHI_D:		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	break;
+		}
+
+		switch ( option )
+		{
+		case opt_qt_1:	ShowTimeState( SamplerSelect);	break;
+		case opt_qt_2:	ShowPumpBefore( SamplerSelect );	break;
+		default:	break;
+		}
+
+		disposeKey( SamplerSelect, &option, opt_max);
 	}
 }
+
+// static	void	monitor_AIR ( void )
+// {
+// 	enum
+// 	{
+// 	    opt_exit,
+// 	    opt_qt_1,
+// 	    opt_max, opt_min = 1u
+// 	};
+// 	uint8_t	option = opt_min;
+// 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
+
+// 	const enum	enumSamplerSelect  SamplerSelect = SP_AIR;
+// 	
+// 	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
+// 	{
+// 		if ( 0u != iDelay )
+// 		{
+// 			if ( --iDelay == 0u )
+// 			{
+// 				cls();	option = opt_min;
+// 			}
+// 		}
+// 		
+// 		PumpWorkFlag();
+// 		WBMP( 0x0290,0x0502, STROCK);
+// 		WBMP( 0x0290,0x0514, STROCK);
+// 		ShowTimeState( SamplerSelect, SamplerSelect );
+// 		show_battery( 0x0020u );
+// 		SamplerTypeShow( 0x010Eu );
+// 		
+// 		disposeKey( SamplerSelect, &option, opt_max, NULL );
+// 	}
+// }
 
 /********************************** 功能说明 ***********************************
 *  采样过程中显示各种状态
@@ -750,10 +809,12 @@ void	monitor ( void )
 		switch ( SamplerSelect )
 		{
 		default:	
-		case Q_TSP:	monitor_TSP();	break;
-		case Q_R24:	monitor_R24();	break;
-		case Q_SHI:	monitor_SHI();	break;
-		case Q_AIR:	monitor_AIR();	break;
+		case SP_TSP:		monitor_TSP();		break;
+		case SP_R24_A:	monitor_R24_A();	break;
+		case SP_R24_B:	monitor_R24_B();	break;
+		case SP_SHI_C:	monitor_SHI_C();	break;
+		case SP_SHI_D:	monitor_SHI_D();	break;
+// 		case SP_AIR:	monitor_AIR();	break;
 		}
 	
 	}	
@@ -762,223 +823,96 @@ void	monitor ( void )
 /********************************** 功能说明 ***********************************
 *  根据仪器型号，显示、切换当前的采样器
 *******************************************************************************/
-enum  enumSamplerSelect  SamplerSelect; 	//	= Q_TSP;
+enum  enumSamplerSelect  SamplerSelect; 	//	= SP_TSP;
 
 void	SamplerTypeShow( uint16_t yx )
 {
 		switch ( SamplerSelect )
 		{
-		case Q_TSP: Lputs( yx, "<粉尘>" );	break;
-		case Q_R24: Lputs( yx, "<日均>" );	break;
-		case Q_SHI:	Lputs( yx, "<时均>" );	break;
-		case Q_AIR:	Lputs( yx, "<大气>" );	break;
-		default:		Lputs( yx, "<未知>" );	break;
+		case SP_TSP: 		Lputs( yx, "<粉 尘>" );	break;
+		case SP_R24_A:	Lputs( yx, "<日均A>" );	break;
+		case SP_R24_B:	Lputs( yx, "<日均B>" );	break;
+		case SP_SHI_C:	Lputs( yx, "<时均C>" );	break;
+		case SP_SHI_D:	Lputs( yx, "<时均D>" );	break;
+// 		case SP_AIR:		Lputs( yx, "<大 气>" );	break;
+		default:				Lputs( yx, "<未 知>" );	break;
 		}
+}
+uint8_t	SamplerTypeHas[SP_Max];
+uint8_t SamplerHasMax = 0;
+void	SamplerTypeSelect( void )
+{
+	uint8_t i,t;
+	t = 0;
+	for( i = 0; i < (enum	enumSamplerSelect) SP_Max; i ++ )
+	{
+		if( enumPumpNone != Configure.PumpType[ (enum	enumSamplerSelect)i ] )	
+			SamplerTypeHas[t++] = (enum	enumSamplerSelect)i;
+	}
+	SamplerHasMax =  t;
+	SamplerSelect = (enum	enumSamplerSelect)SamplerTypeHas[0];
 }
 
 void	SamplerTypeSwitch( void )
 {
-	BOOL	hasPumpTSP =  ( enumPumpNone != Configure.PumpType[PP_TSP] );
-	BOOL	hasPumpR24 = (( enumPumpNone != Configure.PumpType[PP_R24_A] ) || ( enumPumpNone != Configure.PumpType[PP_R24_B] ));
-	BOOL	hasPumpSHI = (( enumPumpNone != Configure.PumpType[PP_SHI_C] ) || ( enumPumpNone != Configure.PumpType[PP_SHI_D] ));
-	BOOL	hasPumpAIR =  ( enumPumpNone != Configure.PumpType[PP_AIR] );
-	switch ( SamplerSelect )
+	static	uint8_t SamplerExchange;
+	for( SamplerExchange = 0; SamplerExchange < SamplerHasMax; SamplerExchange ++ )
 	{
-	case Q_ALL:	if ( hasPumpTSP ) 
-								SamplerSelect = Q_TSP; 
-							else if ( hasPumpR24 ) 
-								SamplerSelect = Q_R24;
-							else if( hasPumpSHI) 
-								SamplerSelect = Q_SHI;
-							else if( hasPumpAIR ) 
-								SamplerSelect = Q_AIR;
-		break;
-		
-	case Q_TSP:	if ( hasPumpR24 ) 
-								SamplerSelect = Q_R24;
-							else if( hasPumpSHI) 
-								SamplerSelect = Q_SHI;
-							else if( hasPumpAIR ) 
-								SamplerSelect = Q_AIR;
-		break;	
-	case Q_R24:	if( hasPumpSHI) 
-								SamplerSelect = Q_SHI;
-							else if( hasPumpAIR ) 
-								SamplerSelect = Q_AIR;
-							else if( hasPumpTSP ) 
-								SamplerSelect = Q_TSP;					
-		break;
-	case Q_SHI:	if( hasPumpAIR ) 
-								SamplerSelect = Q_AIR;
-							else if( hasPumpTSP ) 
-								SamplerSelect = Q_TSP;	
-							else if ( hasPumpR24 ) 
-								SamplerSelect = Q_R24;			
-		break;
-	case Q_AIR:	if( hasPumpTSP ) 
-								SamplerSelect = Q_TSP;	
-							else if ( hasPumpR24 ) 
-								SamplerSelect = Q_R24;
-							else if( hasPumpSHI) 
-								SamplerSelect = Q_SHI;							
-		break;
-	default:	break;
-	}
+		if( SamplerSelect == SamplerTypeHas[SamplerExchange] )
+		{
+			SamplerExchange += 1u;
+			break;
+		}
+	}	
+	if( SamplerSelect == SamplerTypeHas[SamplerHasMax - 1u] )
+		SamplerSelect =(enum enumSamplerSelect )SamplerTypeHas[0];
+	else
+		SamplerSelect = (enum	enumSamplerSelect)SamplerTypeHas[SamplerExchange];
+// 	switch ( SamplerSelect )
+// 	{
+// 	case SP_ALL:	if ( hasPumpTSP ) 
+// 								SamplerSelect = SP_TSP; 
+// 							else if ( hasPumpR24 ) 
+// 								SamplerSelect = SP_R24;
+// 							else if( hasPumpSHI) 
+// 								SamplerSelect = SP_SHI;
+// 							else if( hasPumpAIR ) 
+// 								SamplerSelect = SP_AIR;
+// 		break;
+// 		
+// 	case SP_TSP:	if ( hasPumpR24 ) 
+// 								SamplerSelect = SP_R24;
+// 							else if( hasPumpSHI) 
+// 								SamplerSelect = SP_SHI;
+// 							else if( hasPumpAIR ) 
+// 								SamplerSelect = SP_AIR;
+// 		break;	
+// 	case SP_R24:	if( hasPumpSHI) 
+// 								SamplerSelect = SP_SHI;
+// 							else if( hasPumpAIR ) 
+// 								SamplerSelect = SP_AIR;
+// 							else if( hasPumpTSP ) 
+// 								SamplerSelect = SP_TSP;					
+// 		break;
+// 	case SP_SHI:	if( hasPumpAIR ) 
+// 								SamplerSelect = SP_AIR;
+// 							else if( hasPumpTSP ) 
+// 								SamplerSelect = SP_TSP;	
+// 							else if ( hasPumpR24 ) 
+// 								SamplerSelect = SP_R24;			
+// 		break;
+// 	case SP_AIR:	if( hasPumpTSP ) .
+
+// 								SamplerSelect = SP_TSP;	
+// 							else if ( hasPumpR24 ) 
+// 								SamplerSelect = SP_R24;
+// 							else if( hasPumpSHI) 
+// 								SamplerSelect = SP_SHI;							
+// 		break;
+// 	default:	break;
+// 	}
 }
 
-// void	DisplaySetContrast( uint8_t SetContrast );
-
-// /********************************** 功能说明 ***********************************
-// *  设置显示屏参数（有可能在看不到显示的情况下进入）
-// *******************************************************************************/
-// void	ModifyLCD( void )
-// {
-// 	uint16_t gray  = Configure.DisplayGray;
-// 	BOOL	graychanged = FALSE;
-
-// 	BOOL	changed = false;
-// 	
-// 	cls();
-// 	Lputs( 0x0000u, "配置 液晶 灰度" );
-// 	Lputs( 0x1800u, "用方向键调整电压" );
-// 	for(;;)
-// 	{
-// 		DisplaySetGrayVolt( gray * 0.01f );
-
-// 		Lputs( 0x0C00u, "灰度" );	ShowI16U( 0x0C0Cu, gray,  0x0502u, " V " );
-
-
-// 		switch( getKey())
-// 		{
-// 		case K_UP:	
-// 			if ( gray < 2000u )
-// 			{
-// 				++gray;
-// 			}
-// 			changed = true;
-// 			break;
-// 		case K_DOWN:
-// 			if ( gray >  200u )
-// 			{
-// 				--gray;
-// 			}
-// 			changed = true;
-// 			break;
-
-// 		case K_RIGHT:
-// 			if ( gray < ( 2000u - 100u ))
-// 			{ 
-// 				gray += 100u;
-// 			}
-// 			changed = true;
-// 			break;
-// 		case K_LEFT:	
-// 			if ( gray > ( 200 + 20u ))
-// 			{
-// 				gray -= 20u;
-// 			}
-// 			changed = true;
-// 			break;
-
-// 		case K_ESC:
-// 		case K_OK:
-// 			if ( changed )
-// 			{
-// 				Configure.DisplayGray  = gray;
-// 				ConfigureSave();
-// 			}
-// 			return;
-// 		case K_OK_UP:	
-// 			if ( gray < 2200u )
-// 			{
-// 				++gray;
-// 			}
-// 			if( ! releaseKey( K_OK_UP,100 ))
-// 			{
-// 				while( ! releaseKey( K_OK_UP, 1 ))
-// 				{
-// 					++gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
-// 				}
-// 			}
-// 			graychanged = true;		
-// 			break;
-// 		case K_OK_DOWN:
-// 			if ( gray >  200u )
-// 			{
-// 				--gray;
-// 			}
-// 			if( ! releaseKey( K_OK_DOWN, 100 ))
-// 			{
-// 				while( ! releaseKey( K_OK_DOWN, 1 ))
-// 				{
-// 					--gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
-// 				}			
-// 			}
-// 			graychanged = true;
-// 			break;
-
-// 		case K_OK_RIGHT:
-// 			if ( gray < ( 2000u - 50u ))
-// 			{ 
-// 				gray += 100u;
-// 			}
-// 			graychanged = true;
-// 			break;
-// 		case K_OK_LEFT:	
-// 			if ( gray > ( 200 + 20u ))
-// 			{
-// 				gray -= 20u;
-// 			}
-// 			graychanged = true;
-// 			break;
-// 		default:
-// 			break;
-// 		}
-// 		if( graychanged == true )
-// 		{
-// 			DisplaySetGrayVolt( gray * 0.01f );
-// 			Configure.DisplayGray = gray;
-// 			ConfigureSave();
-// 			graychanged = FALSE;;
-// 		}		
-
-// 	}
-// }
-// uint8_t LCD_Gray( uint8_t item )
-// {
-// 	if( ( item == 1 ) || ( item == 0xff ) )
-//   {
-//     if ( ! releaseKey( K_OK, 300 ))
-//     {
-//       item = enumSelectESC;	
-//       beep();
-//       delay( 100u );
-//       beep();
-//       cls();	
-//       ModifyLCD();
-//     }
-//     else
-//     if ( ! releaseKey( K_SHIFT, 300 ))
-//     {
-//       item = enumSelectESC;
-//       beep();
-//       delay( 100u );
-//       beep();
-//       cls();
-//       Lputs( 0x0604u, "请输入出厂编号:" );
-//       ConfigureLoad();
-//       if( EditI32U( 0x0A05u, &Configure.ExNum, 0x0700u ))
-//         if( vbYes == MsgBox("是否保存编号?",vbYesNo) )
-//           ConfigureSave();
-//         else
-//           ConfigureLoad();				
-//     }
-//   }
-//   
-// 	return item;
-// }
 void	menu_show_env_state( void )
 {
 

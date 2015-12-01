@@ -342,15 +342,17 @@ uint32_t SecGetSize(const char * BUF_Name)
 	bus_SPI_mutex_release();
 	return bufoffset;
 }
-/***/
-#define	FilePageSize_TSP  40u
-#define	FilePageSize_AIR  32u
-#define	FilePageSize_R24  64u
-#define	FilePageSize_SHI  64u
-uint8_t  sdinit[16]={"SDINITSUCCESSFUL"};
+
+
+
+
+/*
+	初始化
+*/
+
 void SD_Init(void)
 {
-	BOOL SetFlag = FALSE;
+
 	s = mInitCH376Host(SD_Card);       /* 初始化CH376--SD卡模式*/
 	if( s != 0xFA )
 	{
@@ -372,157 +374,92 @@ void SD_Init(void)
 			}                                   				
 		}
 		
-	// 	i = CH376ReadBlock( buf );  /* 如果需要,可以读取数据块CH376_CMD_DATA.DiskMountInq,返回长度 */
-	// 	if ( i == sizeof( INQUIRY_DATA ) )  /* U盘的厂商和产品信息 */
-	// 	{  
-	// 		buf[ i ] = 0;
-	// 	}
-	// 	s = CH376DiskCapacity( (PUINT32) buf  ); 
+		// 	i = CH376ReadBlock( buf );  /* 如果需要,可以读取数据块CH376_CMD_DATA.DiskMountInq,返回长度 */
+		// 	if ( i == sizeof( INQUIRY_DATA ) )  /* U盘的厂商和产品信息 */
+		// 	{  
+		// 		buf[ i ] = 0;
+		// 	}
+		// 	s = CH376DiskCapacity( (PUINT32) buf  ); 
 
-	// 	s = CH376DiskQuery ( (PUINT32) buf );	/* 查询磁盘剩余空间信息,扇区数 */	
-		 
-		if( ! ByteLoad( "\\SD_AIR\\AIR.TXT", 0, (uint8_t *) bufread, 15 ) )
-		{ 
-			Byte_CREAT_CON_DIR("\\SD_AIR");	//创建工作目录	( 如果已经存在，直接打开 )
-			Byte_CREAT_WRITE_PATH( "\\SD_AIR\\AIR.TXT", sdinit,16 );// 不正常 重新创建
-			ByteFill( "\\SD_AIR\\AIR.TXT", 16, (FilePageSize_AIR - sizeof ( sdinit ) + FilePageSize_AIR ));
-			SampleSet[Q_AIR].FileNum = 0u;SetFlag = TRUE;
-				
+		// 	s = CH376DiskQuery ( (PUINT32) buf );	/* 查询磁盘剩余空间信息,扇区数 */	
+	}
+	SD_File_Creat();
+}
+
+#define	FilePageSize_TSP_SHI_R24  40u
+extern	const	char	* const Save_NameChar[SP_Max];
+uint8_t  sdinit[16]={"SDInitSuccessful"};
+void	SD_File_Creat( void )
+{	
+	BOOL SetFlag = FALSE;
+	
+	Byte_CREAT_CON_DIR("\\Sampler");	//创建工作目录	( 如果已经存在，直接打开 )
+	
+	for ( i = 0; i < SP_Max; i ++ ) 
+	{
+		if( ! ByteLoad( Save_NameChar[i], 0, (uint8_t *) bufread, 15 ) )
+		{ 		
+			Byte_CREAT_WRITE_PATH( Save_NameChar[i], sdinit,16 );// 不正常 重新创建
+			ByteFill( Save_NameChar[i], 16, (FilePageSize_TSP_SHI_R24 - sizeof ( sdinit ) + FilePageSize_TSP_SHI_R24 ));
+			SampleSet[(enum enumSamplerSelect)i].FileNum = 0u;SetFlag = TRUE;			
 		}
-		else 
 		if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
 		{
-			Byte_CREAT_WRITE_PATH( "\\SD_AIR\\AIR.TXT", sdinit,16 );//非零 不正常 重新创建
-			ByteFill( "\\SD_AIR\\AIR.TXT", 16, ( FilePageSize_AIR - sizeof ( sdinit ) + FilePageSize_AIR ));
-			SampleSet[Q_AIR].FileNum = 0u;SetFlag = TRUE;
+			Byte_CREAT_WRITE_PATH( Save_NameChar[i], sdinit,16 );//非零 不正常 重新创建
+			ByteFill( Save_NameChar[i], 16, ( FilePageSize_TSP_SHI_R24 - sizeof ( sdinit ) + FilePageSize_TSP_SHI_R24 ));
+			SampleSet[(enum enumSamplerSelect)i].FileNum = 0u;SetFlag = TRUE;
 		}
-		
-		if( ! ByteLoad( "\\SD_TSP\\TSP.TXT", 0, (uint8_t *) bufread, 15 ) )
-		{ 
-			Byte_CREAT_CON_DIR("\\SD_TSP");
-			Byte_CREAT_WRITE_PATH( "\\SD_TSP\\TSP.TXT", sdinit,16 );// 不正常 重新创建
-			ByteFill( "\\SD_TSP\\TSP.TXT",16, ( FilePageSize_TSP - sizeof ( sdinit ) + FilePageSize_TSP ));
-			SampleSet[Q_TSP].FileNum = 0;SetFlag = TRUE;
-		}
-		else 
-		if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-		{
-			Byte_CREAT_WRITE_PATH( "\\SD_TSP\\TSP.TXT", sdinit,16 );//非零 不正常 重新创建
-			ByteFill( "\\SD_TSP\\TSP.TXT", 16, (FilePageSize_TSP - sizeof ( sdinit ) + FilePageSize_TSP ));
-			SampleSet[Q_TSP].FileNum = 0;SetFlag = TRUE;
-		}
-		
-		if( ! ByteLoad( "\\SD_R24\\R24.TXT", 0, (uint8_t *) bufread, 15 ) )
-		{  
-			Byte_CREAT_CON_DIR("\\SD_R24");
-			Byte_CREAT_WRITE_PATH( "\\SD_R24\\R24.TXT", sdinit,16 );// 不正常 重新创建
-			ByteFill( "\\SD_R24\\R24.TXT", 16, (FilePageSize_R24 - sizeof ( sdinit ) + FilePageSize_R24 ));
-			SampleSet[Q_R24].FileNum = 0;SetFlag = TRUE;
-		}
-		else 
-		if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-		{
-			Byte_CREAT_WRITE_PATH( "\\SD_R24\\R24.TXT", sdinit,16 );//非零 不正常 重新创建
-			ByteFill( "\\SD_R24\\R24.TXT", 16, (FilePageSize_R24 - sizeof ( sdinit ) + FilePageSize_R24 ));
-			SampleSet[Q_R24].FileNum = 0;SetFlag = TRUE;
-		}
-			
-		if( ! ByteLoad( "\\SD_SHI\\SHI.TXT", 0, (uint8_t  *) bufread, 15 ) )
-		{  
-			Byte_CREAT_CON_DIR("\\SD_SHI");
-			Byte_CREAT_WRITE_PATH( "\\SD_SHI\\SHI.TXT", sdinit,16 );// 不正常 重新创建
-			ByteFill( "\\SD_SHI\\SHI.TXT", 16, (FilePageSize_SHI - sizeof ( sdinit ) + FilePageSize_SHI ));
-			SampleSet[Q_SHI].FileNum = 0;SetFlag = TRUE;
-		}
-		else 
-		if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-		{
-			Byte_CREAT_WRITE_PATH( "\\SD_SHI\\SHI.TXT", sdinit,16 );//非零 不正常 重新创建
-			ByteFill( "\\SD_SHI\\SHI.TXT", 16, (FilePageSize_SHI - sizeof ( sdinit ) + FilePageSize_SHI ));
-			SampleSet[Q_SHI].FileNum = 0;SetFlag = TRUE;
-		}
-		
-		if( ! ByteLoad( "\\SD_POW\\POWER.TXT", 0, (uint8_t *) bufread, 15 ) )
-		{  
-			Byte_CREAT_CON_DIR("\\SD_POW");
-			Byte_CREAT_WRITE_PATH( "\\SD_POW\\POWER.TXT", sdinit,16 );// 不正常 重新创建
-			ByteFill( "\\SD_POW\\POWER.TXT", 16, ( 100 + 4 -  sizeof ( sdinit ) ));
-		}
-		else 
-		if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-		{
-			Byte_CREAT_WRITE_PATH( "\\SD_POW\\POWER.TXT", sdinit,16 );//非零 不正常 重新创建
-			ByteFill( "\\SD_POW\\POWER.TXT", 16, (100 + 4 - sizeof ( sdinit ) ));
-		}
-		if(SetFlag == TRUE )
-		{
-			SampleSetSave();
-			SetFlag = FALSE;
-		}
+	}
+	
+	if( ! ByteLoad( "\\Sampler\\POWER", 0, (uint8_t *) bufread, 15 ) )
+	{  
+		Byte_CREAT_WRITE_PATH( "\\Sampler\\POWER", sdinit,16 );// 不正常 重新创建
+		ByteFill( "\\Sampler\\POWER", 16, ( 100 + 4 -  sizeof ( sdinit ) ));
+	}
+	if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
+	{
+		Byte_CREAT_WRITE_PATH( "\\Sampler\\POWER", sdinit,16 );//非零 不正常 重新创建
+		ByteFill( "\\Sampler\\POWER", 16, (100 + 4 - sizeof ( sdinit ) ));
 	}	
+	if(SetFlag == TRUE )
+	{
+		SampleSetSave();
+		SetFlag = FALSE;
+	}	
+
 }
 /**/  
 
-void File_Creat(void)
+
+void USB_File_Creat(void)
 {	
-	uint8_t USBinit[512]={"USBINITSUCCESSFUL"};	
-	Lputs( 0x0C0A,"Loading." ); 
-	if( ! ByteLoad( "\\USB_AIR\\AIR.TXT", 0, (uint8_t *) bufread, 15 ) )
-	{ 
-		Byte_CREAT_CON_DIR("\\USB_AIR");	//创建工作目录	( 如果已经存在，直接打开 )
-		Byte_CREAT_WRITE_PATH( "\\USB_AIR\\AIR.TXT", USBinit,512);// 不正常 重新创建
-	}
-	else 
-	if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
+
+const	char	* const USB_Loading[6]=
+{
+	"Loading.",
+	"Loading..",
+	"Loading...",
+	"Loading....",
+	"Loading.....",
+	"Loading......",
+};
+	uint8_t USBinit[512]={"USBInitSuccessful"};	
+	uint8_t i;
+	Byte_CREAT_CON_DIR("\\Sampler");	//创建工作目录	( 如果已经存在，直接打开 )
+	for( i =0; i < SamplerHasMax; i ++ )
 	{
-		Byte_CREAT_WRITE_PATH( "\\USB_AIR\\AIR.TXT", USBinit,512 );//非零 不正常 重新创建
-	}
-	Lputs( 0x0C0A,"Loading.." ); 
-	if( ! ByteLoad( "\\USB_TSP\\TSP.TXT", 0, (uint8_t *) bufread, 15 ) )
-	{ 
-		Byte_CREAT_CON_DIR("\\USB_TSP");
-		Byte_CREAT_WRITE_PATH( "\\USB_TSP\\TSP.TXT", USBinit,512 );// 不正常 重新创建
-	}
-	else 
-	if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-	{
-		Byte_CREAT_WRITE_PATH( "\\USB_TSP\\TSP.TXT", USBinit,512 );//非零 不正常 重新创建
-	}
-	Lputs( 0x0C0A,"Loading..." ); 
-	if( ! ByteLoad( "\\USB_R24\\R24.TXT", 0, (uint8_t *) bufread, 15 ) )
-	{  
-		Byte_CREAT_CON_DIR("\\USB_R24");
-		Byte_CREAT_WRITE_PATH( "\\USB_R24\\R24.TXT", USBinit,512 );// 不正常 重新创建
-	}
-	else 
-	if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-	{
-		Byte_CREAT_WRITE_PATH( "\\USB_R24\\R24.TXT", USBinit,512 );//非零 不正常 重新创建
-	}
-	Lputs( 0x0C0A,"Loading...." ); 	
-	if( ! ByteLoad( "\\USB_SHI\\SHI.TXT", 0, (uint8_t  *) bufread, 15 ) )
-	{  
-		Byte_CREAT_CON_DIR("\\USB_SHI");
-		Byte_CREAT_WRITE_PATH( "\\USB_SHI\\SHI.TXT", USBinit,512 );// 不正常 重新创建
-	}
-	else 
-	if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-	{
-		Byte_CREAT_WRITE_PATH( "\\USB_SHI\\SHI.TXT", USBinit,512 );//非零 不正常 重新创建
-	}
-	Lputs( 0x0C0A,"Loading....." ); 
-	if( ! ByteLoad( "\\USB_POW\\POWER.TXT", 0, (uint8_t *) bufread, 15 ) )
-	{  
-		Byte_CREAT_CON_DIR("\\USB_POW");
-		Byte_CREAT_WRITE_PATH( "\\USB_POW\\POWER.TXT", USBinit,512 );// 不正常 重新创建
-	}
-	else 
-	if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
-	{
-		Byte_CREAT_WRITE_PATH( "\\USB_POW\\POWER.TXT", USBinit,512 );//非零 不正常 重新创建
-	}
-	Lputs( 0x0C0A,"Loading......" ); 
+		Lputs( 0x0C0A,USB_Loading[SamplerTypeHas[i]]); 
+		if( ! ByteLoad( Save_NameChar[SamplerTypeHas[i]], 0, (uint8_t *) bufread, 15 ) )
+		{ 	
+			Byte_CREAT_WRITE_PATH( Save_NameChar[SamplerTypeHas[i]], USBinit,512);// 不正常 重新创建
+		}
+		if( strncmp( (char*)USBinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
+		{
+			Byte_CREAT_WRITE_PATH( Save_NameChar[SamplerTypeHas[i]], USBinit,512 );//非零 不正常 重新创建
+		}
+	}	
 }
+
 
 uint8_t USB_CHAK(void)
 {

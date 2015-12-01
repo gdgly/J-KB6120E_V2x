@@ -1,21 +1,20 @@
 void  _task_Sample_TSP( void )
 {
-	const enum enumSamplerSelect	SamplerSelect = Q_TSP;
-	const enum enumPumpSelect       PumpSelect = PP_TSP;
+	const enum enumSamplerSelect SamplerSelect = SP_TSP;
 
-	BOOL	PumpState;
+	BOOL	SamplerState;
 
 	uint32_t	tt, now_minute = get_Now() / 60u;
 
-	struct	uFile_TSP	File;
+	struct	uFile_TSP_SHI_R24	File;
 	
 	uint16_t	fname;	//	当前有效文件
 	uint32_t	start;	//	采样开始时间
 	uint8_t 	iloop;	//	当前采样次数
 	
-	PumpState = FALSE;
+	SamplerState = FALSE;
 
-	Q_Pump[PumpSelect].xp_state = FALSE;
+	Q_Sampler[SamplerSelect].xp_state = FALSE;
 
 	
  	start = SampleSet[SamplerSelect].start;
@@ -63,19 +62,19 @@ void  _task_Sample_TSP( void )
 
 				if ( SampleSwitch[SamplerSelect].Pause )
 				{
-					PumpState = FALSE;
+					SamplerState = FALSE;
 					Q_Sampler[SamplerSelect].state = state_PAUSE;
 				}
 				else
 				{
-					PumpState = FALSE;
+					SamplerState = FALSE;
 					Q_Sampler[SamplerSelect].state = state_SUSPEND;
 				}
 
-				if ( PumpState != Q_Pump[PumpSelect].xp_state )
+				if ( SamplerState != Q_Sampler[SamplerSelect].xp_state )
 				{
-					Pump_OutCmd( PumpSelect, PumpState );
-					Q_Pump[PumpSelect].xp_state = PumpState;
+					Pump_OutCmd( SamplerSelect, SamplerState );
+					Q_Sampler[SamplerSelect].xp_state = SamplerState;
 				}
 
 
@@ -86,9 +85,9 @@ void  _task_Sample_TSP( void )
 				now_minute = get_Now() / 60u;
 
 				//	显示查询数据
-				Q_Pump[PumpSelect].sum_time = 0u;
-				Q_Pump[PumpSelect].vd       = 0.0f;
-				Q_Pump[PumpSelect].vnd      = 0.0f;
+				Q_Sampler[SamplerSelect].sum_time = 0u;
+				Q_Sampler[SamplerSelect].vd       = 0.0f;
+				Q_Sampler[SamplerSelect].vnd      = 0.0f;
 
 			}
 
@@ -96,7 +95,7 @@ void  _task_Sample_TSP( void )
 			fname = SampleSet[SamplerSelect].FileNum;
 			if ( ++fname > FileNum_Max ){  fname = 1u; }
 			
-			File_Load_TSP( fname, &File );
+			File_Load_TSP_SHI_R24( SamplerSelect, fname, &File );
 			if ( 0u == File.sample_begin )
 			{
 				File.sum_min = 0u;
@@ -109,7 +108,7 @@ void  _task_Sample_TSP( void )
         
 				
 
-			File_Save_TSP( fname, &File );
+			File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );
 			}
 
 			//	1.采样，执行采样
@@ -120,9 +119,9 @@ void  _task_Sample_TSP( void )
 				{
 				default:
 				case enumBySet:	//	根据采样时间设置运行，扣除掉电，按设置时间运行
-					if ( now_minute < ( start + SampleSet[SamplerSelect].sample_1 ))
+					if ( now_minute < ( start + SampleSet[SamplerSelect].sample_time ))
 					{
-						Q_Sampler[SamplerSelect].timer = (uint16_t)(( start + SampleSet[SamplerSelect]. sample_1 ) - now_minute );	//	剩余运行时间（倒计时）
+						Q_Sampler[SamplerSelect].timer = (uint16_t)(( start + SampleSet[SamplerSelect]. sample_time ) - now_minute );	//	剩余运行时间（倒计时）
 					}
 					else
 					{
@@ -130,9 +129,9 @@ void  _task_Sample_TSP( void )
 					}
 					break;
 				case enumBySum:	//	不扣掉电，按累计时间运行
-					if ( File.sum_min         < SampleSet[SamplerSelect].sample_1 )
+					if ( File.sum_min         < SampleSet[SamplerSelect].sample_time )
 					{
-						Q_Sampler[SamplerSelect].timer = SampleSet[SamplerSelect]. sample_1 - File.sum_min;			//	剩余运行时间（倒计时）
+						Q_Sampler[SamplerSelect].timer = SampleSet[SamplerSelect]. sample_time - File.sum_min;			//	剩余运行时间（倒计时）
 					}
 					else
 					{
@@ -146,17 +145,17 @@ void  _task_Sample_TSP( void )
 
 				if ( SampleSwitch[SamplerSelect].Fatal )
 				{
-					PumpState = FALSE;
+					SamplerState = FALSE;
 					Q_Sampler[SamplerSelect].state = state_ERROR;
 				}
 				else if ( SampleSwitch[SamplerSelect].Pause )
 				{
-					PumpState = FALSE;
+					SamplerState = FALSE;
 					Q_Sampler[SamplerSelect].state = state_PAUSE;
 				}
 				else
 				{
-					PumpState = TRUE;
+					SamplerState = TRUE;
 
 
 
@@ -171,18 +170,18 @@ void  _task_Sample_TSP( void )
 					Q_Sampler[SamplerSelect].state = state_SAMPLE;
 				}
 				//	应避免重复开启
-				if ( PumpState != Q_Pump[PumpSelect].xp_state )
+				if ( SamplerState != Q_Sampler[SamplerSelect].xp_state )
 				{
-					Pump_OutCmd( PumpSelect, PumpState );
-					Q_Pump[PumpSelect].xp_state = PumpState;
+					Pump_OutCmd( SamplerSelect, SamplerState );
+					Q_Sampler[SamplerSelect].xp_state = SamplerState;
 				}
 
 				//	保护压力设置成零，禁止保护功能。
-				if ( Configure.TSP_Pr_Portect != 0u )
+				if ( Configure.Pr_Portect[SamplerSelect] != 0u )
 				{
-					FP32	Pr_Protect = Configure.TSP_Pr_Portect * 0.01f;
+					FP32	Pr_Protect = Configure.Pr_Portect[SamplerSelect] * 0.01f;
 					
-					FP32	rPr = get_Pr( PumpSelect );
+					FP32	rPr = get_Pr( SamplerSelect );
 
 					static	uint16_t	iRetry;
 					
@@ -232,23 +231,23 @@ void  _task_Sample_TSP( void )
 						{	//	空文件，初始化
 							File.set_loops	= SampleSet[SamplerSelect].set_loops;
 							File.run_loops  = iloop;
-							File.set_time 	= SampleSet[SamplerSelect].sample_1;
+							File.set_time 	= SampleSet[SamplerSelect].sample_time;
 
 							File.set_flow 	= Configure.SetFlow[SamplerSelect];
 
 							File.sample_begin = now_minute * 60u + 1u;
 						}
 
-						if ( PumpState )
+						if ( SamplerState )
 						{
-							FP32	fstd = get_fstd( PumpSelect );
+							FP32	fstd = get_fstd( SamplerSelect );
 
 							FP32	Ba = get_Ba();
-							FP32	Te = get_Te();// PumpSelect );
-							FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, Q_TSP );	//	Calc_flow( fstd, Tr, Pr, Ba );
+							FP32	Te = get_Te();// SamplerSelect );
+							FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, SP_TSP );	//	Calc_flow( fstd, Tr, Pr, Ba );
 
-							FP32	rTr = get_Tr( PumpSelect );
-							FP32	rPr = get_Pr( PumpSelect );
+							FP32	rTr = get_Tr( SamplerSelect );
+							FP32	rPr = get_Pr( SamplerSelect );
  							if ( fabs( File.max_pr ) < fabs( rPr ))
 							{
 								File.max_pr = rPr;
@@ -275,15 +274,15 @@ void  _task_Sample_TSP( void )
 
 
 
-							File_Save_TSP( fname, &File );
+							File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );
 					}
 					now_minute = tt;
 				}
 
 				//	显示查询数据
-				Q_Pump[PumpSelect].sum_time = File.sum_min;
-				Q_Pump[PumpSelect].vd       = File.vd;
-				Q_Pump[PumpSelect].vnd      = File.vnd;
+				Q_Sampler[SamplerSelect].sum_time = File.sum_min;
+				Q_Sampler[SamplerSelect].vd       = File.vd;
+				Q_Sampler[SamplerSelect].vnd      = File.vnd;
 
 			}
 			
@@ -295,9 +294,9 @@ void  _task_Sample_TSP( void )
 				if ( ++fname > FileNum_Max ){  fname = 1u; }
 				
 				File.sample_begin = 0u;		//	清空文件, 标志本次采样循环结束
-				File_Save_TSP( fname, &File );			
+				File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );			
 				//	记录泵累计运行
-				PumpSumTimeSave( PumpSelect, PumpSumTimeLoad( PumpSelect ) + File.sum_min );
+				PumpSumTimeSave( SamplerSelect, PumpSumTimeLoad( SamplerSelect ) + File.sum_min );
 
 			}
 //       if( fname == 0 ){delay_us(10);beep();}     //bug
@@ -307,17 +306,17 @@ void  _task_Sample_TSP( void )
 			{
 			default:
 			case enumBySet:	//	根据采样时间设置运行，扣除掉电，按设置时间运行
-				start = ( start + SampleSet[SamplerSelect].sample_1 );
+				start = ( start + SampleSet[SamplerSelect].sample_time );
 				break;	
 			case enumBySum:	//	根据累计时间设置运行，不扣掉电，从当前时间延时
 				start = now_minute;
 				break;							
 			}
-			start += SampleSet[SamplerSelect].suspend_1;
+			start += SampleSet[SamplerSelect].suspend_time;
 			iloop ++;
 		}
 			//	采样已经完成
-			Pump_OutCmd( PumpSelect, FALSE );	Q_Pump[PumpSelect].xp_state = FALSE;
+			Pump_OutCmd( SamplerSelect, FALSE );	Q_Sampler[SamplerSelect].xp_state = FALSE;
      
 
 		//	删除采样任务
@@ -330,9 +329,9 @@ void  _task_Sample_TSP( void )
 	Q_Sampler[SamplerSelect].loops	= 0u;
 	Q_Sampler[SamplerSelect].timer	= 0u;
 
-	Q_Pump[PumpSelect].vd	= 0.0f;
-	Q_Pump[PumpSelect].vnd	= 0.0f;
-	Q_Pump[PumpSelect].sum_time = 0u;
+	Q_Sampler[SamplerSelect].vd	= 0.0f;
+	Q_Sampler[SamplerSelect].vnd	= 0.0f;
+	Q_Sampler[SamplerSelect].sum_time = 0u;
 
 
 	//	osThreadTerminate( osThreadGetId());

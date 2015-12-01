@@ -105,20 +105,20 @@ bool	get_Bat_Charging( void )
 /********************************** 功能说明 ***********************************
 *	计前压力、孔板差压
 *******************************************************************************/
-FP32	get_Pr( enum enumPumpSelect PumpSelect )
+FP32	get_Pr( enum enumSamplerSelect SamplerSelect )
 {	//	计前压力
-	int32_t 	Value  = SensorRemote.pr[PumpSelect];
-	int32_t 	origin = CalibrateRemote.origin[esid_pr][PumpSelect];
-	FP32		slope  = CalibrateRemote.slope[esid_pr][PumpSelect] * 0.001f;
+	int32_t 	Value  = SensorRemote.pr[SamplerSelect];
+	int32_t 	origin = CalibrateRemote.origin[esid_pr][SamplerSelect];
+	FP32		slope  = CalibrateRemote.slope[esid_pr][SamplerSelect] * 0.001f;
 
 	return	_CV_005D( origin - Value ) * slope;
 }
 
-FP32	get_pf( enum enumPumpSelect PumpSelect )
+FP32	get_pf( enum enumSamplerSelect SamplerSelect )
 {	//	孔板差压
-	int32_t 	Value  = SensorRemote.pf[PumpSelect];
-	int32_t 	origin = CalibrateRemote.origin[esid_pf][PumpSelect];
-	FP32		slope  = CalibrateRemote.slope[esid_pf][PumpSelect] * 0.001f;
+	int32_t 	Value  = SensorRemote.pf[SamplerSelect];
+	int32_t 	origin = CalibrateRemote.origin[esid_pf][SamplerSelect];
+	FP32		slope  = CalibrateRemote.slope[esid_pf][SamplerSelect] * 0.001f;
 
 	return	_CV_10WD( Value - origin ) * slope;
 }
@@ -144,12 +144,12 @@ FP32	get_Te( void )
 	return	_get_DS18B20_Temp();	//	使用传感器板上单独的温度传感器（DS18B20)测量环境温度
 }
 
-FP32	get_Tr( enum enumPumpSelect PumpSelect )
+FP32	get_Tr( enum enumSamplerSelect SamplerSelect )
 {	//	计前温度
-	uint16_t	Value = SensorRemote.tr[PumpSelect];
+	uint16_t	Value = SensorRemote.tr[SamplerSelect];
 	FP32		Temp = _CV_DS18B20_Temp( Value );
-	FP32		slope  = CalibrateRemote.slope[esid_tr][PumpSelect] * 0.001f;
-	FP32		origin = CalibrateRemote.origin[esid_tr][PumpSelect] * 0.01f;
+	FP32		slope  = CalibrateRemote.slope[esid_tr][SamplerSelect] * 0.001f;
+	FP32		origin = CalibrateRemote.origin[esid_tr][SamplerSelect] * 0.01f;
 
 	return	(( Temp + 273.15f ) - origin ) * slope;
 }
@@ -157,12 +157,12 @@ FP32	get_Tr( enum enumPumpSelect PumpSelect )
 /********************************** 功能说明 ***********************************
 *  读取归一化之后的（未校准的）的流量
 *******************************************************************************/
-static	FP32	fetch_flow( enum enumPumpSelect PumpSelect )
+static	FP32	fetch_flow( enum enumSamplerSelect SamplerSelect )
 {
 	FP32	f_org;
 
 	//	读取传感器（未归一化、未校准的）流量
-	switch( Configure.PumpType[PumpSelect] )
+	switch( Configure.PumpType[SamplerSelect] )
 	{
 	default:
 	case enumPumpNone:	//	没有流量计 或 未安装
@@ -174,9 +174,9 @@ static	FP32	fetch_flow( enum enumPumpSelect PumpSelect )
 			FP32	Ba, Tr, Pr;
 			FP32	pf;
 			Ba = get_Ba();
-			Tr = get_Tr( PumpSelect );
-			Pr = get_Pr( PumpSelect );
-			pf = get_pf( PumpSelect );
+			Tr = get_Tr( SamplerSelect );
+			Pr = get_Pr( SamplerSelect );
+			pf = get_pf( SamplerSelect );
 			f_org = Calc_fstd( pf, Tr, Pr, Ba );
 		}
 		break;
@@ -188,41 +188,41 @@ static	FP32	fetch_flow( enum enumPumpSelect PumpSelect )
 	}		
 
 	//	实验确定归一化倍率
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
-	case PP_TSP:	return	f_org * 125.0f;
-	case PP_R24_A:
-	case PP_R24_B:	return	f_org * 1.0f;
-	case PP_SHI_C:
-	case PP_SHI_D:	return	f_org * 1.0f;
+	case SP_TSP:	return	f_org * 125.0f;
+	case SP_R24_A:
+	case SP_R24_B:	return	f_org * 1.0f;
+	case SP_SHI_C:
+	case SP_SHI_D:	return	f_org * 1.0f;
 	default:
-	case PP_AIR:	return	0.0f;
+		return	0.0f;
 	}
 }
 
 /********************************** 功能说明 ***********************************
 *  读取校正后的（标况）流量
 *******************************************************************************/
-FP32	get_fstd( enum enumPumpSelect PumpSelect )
+FP32	get_fstd( enum enumSamplerSelect SamplerSelect )
 {
-	uint16_t const	* pSetSlope	= CalibrateRemote.slope_flow[PumpSelect];
+	uint16_t const	* pSetSlope	= CalibrateRemote.slope_flow[SamplerSelect];
 	extern	FP32     const  PumpPoints[4][4];
 			FP32     const	* pSetPoint;
 
 	//	根据泵类型，读取归一化之后的（未校准的）流量
-	FP32	f_reg	= fetch_flow( PumpSelect );
+	FP32	f_reg	= fetch_flow( SamplerSelect );
 
 	//	根据标定参数进行数据修正
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
-	case PP_TSP  :
-	case PP_R24_A:
-	case PP_R24_B:
+	case SP_TSP  :
+	case SP_R24_A:
+	case SP_R24_B:
 		return	f_reg * ( pSetSlope[0] * 0.001f );						//	单点校正
 
-	case PP_SHI_C:
-	case PP_SHI_D:
-		pSetPoint = PumpPoints[Configure.PumpType[PumpSelect]];			//	泵类型应使用不同分段
+	case SP_SHI_C:
+	case SP_SHI_D:
+		pSetPoint = PumpPoints[Configure.PumpType[SamplerSelect]];			//	泵类型应使用不同分段
 		return	CorrectMulitPoint( f_reg, pSetSlope, pSetPoint, 4u );	//	多点校正
 
 	default:

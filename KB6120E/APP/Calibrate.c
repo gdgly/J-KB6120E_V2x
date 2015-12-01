@@ -48,26 +48,26 @@ void	menu_Calibrate_Battery( void );
 /********************************** 功能说明 ***********************************
 *  切换传感器
 *******************************************************************************/
-void	ShowPumpSelect( uint16_t yx, enum enumPumpSelect PumpSelect )
+void	ShowSamplerSelect( uint16_t yx, enum enumSamplerSelect SamplerSelect )
 {
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
-	case PP_TSP  : 	Lputs( yx, "粉 尘" );	break;
-	case PP_R24_A:	Lputs( yx, "日均A" );	break;
-	case PP_R24_B:	Lputs( yx, "日均B" );	break;
-	case PP_SHI_C:	Lputs( yx, "时均C" );	break;
-	case PP_SHI_D:	Lputs( yx, "时均D" );	break;
-	case PP_AIR  :	Lputs( yx, "大 气" );	break;
+	case SP_TSP  : 	Lputs( yx, "粉 尘" );	break;
+	case SP_R24_A:	Lputs( yx, "日均A" );	break;
+	case SP_R24_B:	Lputs( yx, "日均B" );	break;
+	case SP_SHI_C:	Lputs( yx, "时均C" );	break;
+	case SP_SHI_D:	Lputs( yx, "时均D" );	break;
+// 	case SP_AIR  :	Lputs( yx, "大 气" );	break;
 	default:		Lputs( yx, "未知?" );	break;
 	}
 }
 
-// static	void	CalibrateSave_PP( enum enumPumpSelect PumpSelect )
+// static	void	CalibrateSave_SP( enum enumSamplerSelect SamplerSelect )
 // {
 // 	CalibrateSave( );
 // }
 
-// static	void	CalibrateLoad_PP( enum enumPumpSelect PumpSelect )
+// static	void	CalibrateLoad_SP( enum enumSamplerSelect SamplerSelect )
 // {
 // 	CalibrateLoad( );
 // }
@@ -704,7 +704,7 @@ void	menu_Calibrate_Heater_Temp( void )
 /********************************** 功能说明 ***********************************
 * 传感器标定->计前温度
 *******************************************************************************/
-static	void	Calibrate_Tr ( enum enumPumpSelect PumpSelect )
+static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 {
 	static	struct  uMenu  const  menu[] = 
 	{
@@ -723,8 +723,8 @@ static	void	Calibrate_Tr ( enum enumPumpSelect PumpSelect )
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL graychanged = FALSE;
 
-	uint16_t	*p_origin = &CalibrateRemote.origin[esid_tr][PumpSelect];
-	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_tr][PumpSelect];
+	uint16_t	*p_origin = &CalibrateRemote.origin[esid_tr][SamplerSelect];
+	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_tr][SamplerSelect];
 	BOOL		changed = FALSE;
 
 	do {
@@ -732,7 +732,7 @@ static	void	Calibrate_Tr ( enum enumPumpSelect PumpSelect )
 		{
 			cls();
 			Menu_Redraw( menu );
-			ShowPumpSelect( 0x0115u, PumpSelect );
+			ShowSamplerSelect( 0x0115u, SamplerSelect );
 
 			need_redraw = FALSE;
 		}
@@ -743,7 +743,7 @@ static	void	Calibrate_Tr ( enum enumPumpSelect PumpSelect )
 		Menu_Item_Mask( menu, option );
 		do{
 			Lputs( 0x0800u, "温度:" );
-			ShowFP32( 0x080Cu, get_Tr( PumpSelect ), 0x0602u, "℃" );
+			ShowFP32( 0x080Cu, get_Tr( SamplerSelect ), 0x0602u, "℃" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
 
@@ -872,7 +872,7 @@ static	void	Calibrate_Tr ( enum enumPumpSelect PumpSelect )
 /********************************** 功能说明 ***********************************
 * 传感器标定->计前压力
 *******************************************************************************/
-static	void	Calibrate_Pr( enum enumPumpSelect PumpSelect )
+static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 {
 	struct	uMenu const menu[] = 
 	{
@@ -890,8 +890,8 @@ static	void	Calibrate_Pr( enum enumPumpSelect PumpSelect )
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL graychanged = FALSE;
 	
-	uint16_t	*p_origin = &CalibrateRemote.origin[esid_pr][PumpSelect];
-	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_pr][PumpSelect];
+	uint16_t	*p_origin = &CalibrateRemote.origin[esid_pr][SamplerSelect];
+	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_pr][SamplerSelect];
 	BOOL		changed   = FALSE;
 
 	do {
@@ -899,7 +899,7 @@ static	void	Calibrate_Pr( enum enumPumpSelect PumpSelect )
 		{
 			cls();
 			Menu_Redraw( menu );
-			ShowPumpSelect( 0x0115u, PumpSelect );
+			ShowSamplerSelect( 0x0115u, SamplerSelect );
 
 			need_redraw = FALSE;
 		}
@@ -910,7 +910,7 @@ static	void	Calibrate_Pr( enum enumPumpSelect PumpSelect )
 		Menu_Item_Mask( menu, option );
 		do{
 			Lputs( 0x0800u, "计压:" );
-			ShowFP32( 0x080C, get_Pr( PumpSelect ), 0x0602, "kPa" );
+			ShowFP32( 0x080C, get_Pr( SamplerSelect ), 0x0602, "kPa" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
 
@@ -1037,7 +1037,7 @@ static	void	Calibrate_Pr( enum enumPumpSelect PumpSelect )
 /********************************** 功能说明 ***********************************
 * 传感器标定->孔板差压
 *******************************************************************************/
-static	void	Calibrate_pf(  enum enumPumpSelect PumpSelect )
+static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 {
 	struct	uMenu const	menu[] = {
 		{ 0x0201u, "标定差压" },
@@ -1055,8 +1055,8 @@ static	void	Calibrate_pf(  enum enumPumpSelect PumpSelect )
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL graychanged = FALSE;
 
-	uint16_t	*p_origin = &CalibrateRemote.origin[esid_pf][PumpSelect];
-	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_pf][PumpSelect];
+	uint16_t	*p_origin = &CalibrateRemote.origin[esid_pf][SamplerSelect];
+	uint16_t	*p_slope  = &CalibrateRemote.slope [esid_pf][SamplerSelect];
 	BOOL		changed   = FALSE;
 
 	do {
@@ -1064,7 +1064,7 @@ static	void	Calibrate_pf(  enum enumPumpSelect PumpSelect )
 		{
 			cls();
 			Menu_Redraw( menu );
-			ShowPumpSelect( 0x0115u, PumpSelect );
+			ShowSamplerSelect( 0x0115u, SamplerSelect );
 
 			need_redraw = FALSE;
 		}
@@ -1075,7 +1075,7 @@ static	void	Calibrate_pf(  enum enumPumpSelect PumpSelect )
 		Menu_Item_Mask( menu, option );
 		do{
 			Lputs( 0x0800u, "差压:" );
-			ShowFP32( 0x080C, get_pf( PumpSelect ), 0x0603, "kPa" );
+			ShowFP32( 0x080C, get_pf( SamplerSelect ), 0x0603, "kPa" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
 
@@ -1203,7 +1203,7 @@ static	void	Calibrate_pf(  enum enumPumpSelect PumpSelect )
 /********************************** 功能说明 ***********************************
 *  流量调校程序
 *******************************************************************************/
-BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowKSet[], FP32 const PointSet[], uint8_t PointSelect )
+BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t FlowKSet[], FP32 const PointSet[], uint8_t PointSelect )
 {
 		enum 
 	{
@@ -1228,9 +1228,9 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 	FlowKSave[2] = FlowKSet[2];
 	FlowKSave[3] = FlowKSet[3];
 	// 设置流量
-	Configure.SetFlow[PumpSelect] = ( uint16_t)( PointSet[PointSelect] * 1.0e+1f + 0.5f );
+	Configure.SetFlow[SamplerSelect] = ( uint16_t)( PointSet[PointSelect] * 1.0e+1f + 0.5f );
 	//	开启泵流量控制
-	Pump_OutCmd( PumpSelect, TRUE ); // Motor_OutCmd( MotorSelect, TRUE );
+	Pump_OutCmd( SamplerSelect, TRUE ); // Motor_OutCmd( MotorSelect, TRUE );
 
 	do {
 		if ( need_redraw )
@@ -1248,10 +1248,10 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 		//	显示倍率
 	
 		do {	// 实时显示流量
-			Flow = get_fstd( PumpSelect );
+			Flow = get_fstd( SamplerSelect );
 			Lputs( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, slope, 0x0503u, NULL );
 			Lputs( 0x0C00u, "流量:" );		ShowFP32( 0x0C0Cu, Flow, 0x0603u, "L/m" );
-			Lputs( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( PumpSelect ));
+			Lputs( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
 		} while ( ! hitKey( 100u ));
 
 		switch ( getKey())
@@ -1273,7 +1273,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 			break;
 
 		case K_OK:
-			Flow32 = Configure.SetFlow[PumpSelect] * 100;
+			Flow32 = Configure.SetFlow[SamplerSelect] * 100;
 			LcmMask( 0x0C00u, 3u, CHARsz );
 			if ( EditI32U( 0x0C0Cu, &Flow32, 0x0603u ))
 			{
@@ -1352,7 +1352,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 
 	} while ( opt_exit != option );
 	
-	Pump_OutCmd( PumpSelect, FALSE ); 
+	Pump_OutCmd( SamplerSelect, FALSE ); 
 	// 	恢复除当前点之外的其他校准点的倍率。
 	FlowKSet[0] = FlowKSave[0];
 	FlowKSet[1] = FlowKSave[1];
@@ -1363,7 +1363,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t FlowK
 	return	changed;
 }
 
-BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * const p_FlowK )
+BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t * const p_FlowK )
 {
 	BOOL	done = FALSE;
 	BOOL	changed = FALSE;
@@ -1375,33 +1375,33 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 	uint16_t	fmt = 0x0000u;
 	const CHAR * szUnit = NULL;
 	
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
-	case PP_TSP  :	fmt = 0x0501u;	szUnit = "L/m";	break;
-	case PP_R24_A:	fmt = 0x0503u;	szUnit = "L/m";	break;
-	case PP_R24_B:	fmt = 0x0503u;	szUnit = "L/m";	break;
+	case SP_TSP  :	fmt = 0x0501u;	szUnit = "L/m";	break;
+	case SP_R24_A:	fmt = 0x0503u;	szUnit = "L/m";	break;
+	case SP_R24_B:	fmt = 0x0503u;	szUnit = "L/m";	break;
 	default:	break;
 	}
 
 	cls();	
 	
-	Pump_OutCmd( PumpSelect, TRUE );
+	Pump_OutCmd( SamplerSelect, TRUE );
 	
 	while ( ! done )
 	{
 		
 		do {	//	实时显示流量
-			FP32	fstd = get_fstd( PumpSelect );
-			if( PumpSelect == PP_TSP )
+			FP32	fstd = get_fstd( SamplerSelect );
+			if( SamplerSelect == SP_TSP )
 			{	
 				FP32	Ba = get_Ba();
-				FP32	Te = get_Te();// PumpSelect );
-				FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, Q_TSP );	//	Calc_flow( fstd, Tr, Pr, Ba );
+				FP32	Te = get_Te();// SamplerSelect );
+				FP32	flow = Calc_flow( fstd, Te, 0.0f, Ba, SP_TSP );	//	Calc_flow( fstd, Tr, Pr, Ba );
 				Flow = flow;
 				Lputs ( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, * p_FlowK, 0x0503u, NULL );
 				Lputs ( 0x0800u, "工况:" );	ShowFP32( 0x080Cu, flow, fmt, szUnit );
 				Lputs ( 0x1000u, "标况:" );	ShowFP32( 0x100Cu, fstd, fmt, szUnit );
-				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( PumpSelect ));
+				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
 			}
 			else
 			{
@@ -1409,7 +1409,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 				Lputs( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, * p_FlowK, 0x0503u, NULL );
 // 				Lputs ( 0x0800u, "工况:" );	ShowFP32( 0x080Cu, flow, fmt, szUnit );
 				Lputs ( 0x0C00u, "标况:" );	ShowFP32( 0x0C0Cu, fstd, fmt, szUnit );
-				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( PumpSelect ));
+				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
 			}
 		} while ( ! hitKey( 100u ));
 
@@ -1430,9 +1430,9 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 			changed = TRUE;
 			break;
 		case K_OK:
-			Flow32 = Configure.SetFlow[PumpSelect];
+			Flow32 = Configure.SetFlow[SamplerSelect];
 			
-		if( PumpSelect == PP_TSP )
+		if( SamplerSelect == SP_TSP )
 			{
 				LcmMask( 0x0800u, 3u, CHARsz );
 
@@ -1530,7 +1530,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 
 	}
 	
-	Pump_OutCmd( PumpSelect, FALSE );
+	Pump_OutCmd( SamplerSelect, FALSE );
 	
 	return	changed;
 }
@@ -1540,7 +1540,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 *********************************** 功能说明 ***********************************
 * 传感器标定 -> 日均流量（单点标定）
 *******************************************************************************/
-static	void	CalibrateFlow_1_Point( enum enumPumpSelect PumpSelect )
+static	void	CalibrateFlow_1_Point( enum enumSamplerSelect SamplerSelect )
 {
 	struct	uMenu const	menu[] = 
 	{
@@ -1553,16 +1553,16 @@ static	void	CalibrateFlow_1_Point( enum enumPumpSelect PumpSelect )
 
 	uint8_t	option  = 1u;
 
-	uint16_t	*p_FlowK = CalibrateRemote.slope_flow[PumpSelect];
+	uint16_t	*p_FlowK = CalibrateRemote.slope_flow[SamplerSelect];
 	BOOL		changed  = FALSE;
 	uint16_t	fmt;
 	
-	switch ( PumpSelect )
+	switch ( SamplerSelect )
 	{
 	default:
-	case PP_TSP:	fmt = 0x0501u; 	break;
-	case PP_R24_A:
-	case PP_R24_B:	fmt = 0x0503u;	break;
+	case SP_TSP:	fmt = 0x0501u; 	break;
+	case SP_R24_A:
+	case SP_R24_B:	fmt = 0x0503u;	break;
 	}
 	
 	do {
@@ -1570,11 +1570,11 @@ static	void	CalibrateFlow_1_Point( enum enumPumpSelect PumpSelect )
 		{
 			cls();
 			Menu_Redraw( menu );
-			ShowPumpSelect( 0x0115u, PumpSelect );
+			ShowSamplerSelect( 0x0115u, SamplerSelect );
 			need_redraw = FALSE;
 		}
 
-		ShowI16U ( 0x080Cu, Configure.SetFlow[PumpSelect], fmt, "L/m" );
+		ShowI16U ( 0x080Cu, Configure.SetFlow[SamplerSelect], fmt, "L/m" );
 		ShowI16U ( 0x180Cu, * p_FlowK, 0x0503u, NULL );
 
 		option = Menu_Select( menu, option, NULL );
@@ -1601,13 +1601,13 @@ static	void	CalibrateFlow_1_Point( enum enumPumpSelect PumpSelect )
 			}
 			break;
 		case 1:
-			if ( EditI16U( 0x080Cu, &Configure.SetFlow[PumpSelect], fmt ))
+			if ( EditI16U( 0x080Cu, &Configure.SetFlow[SamplerSelect], fmt ))
 			{
 				ConfigureSave();			
 			}
 			break;
 		case 2:
-			if ( CalibrateFlow_1_Point_DEBUG( PumpSelect, p_FlowK ))
+			if ( CalibrateFlow_1_Point_DEBUG( SamplerSelect, p_FlowK ))
 			{
 				changed = TRUE;
 			}
@@ -1630,7 +1630,7 @@ static	void	CalibrateFlow_1_Point( enum enumPumpSelect PumpSelect )
 /********************************** 功能说明 ***********************************
 * 传感器标定->时均流量（多点标定，具体的标定点根据设定的孔板的流量范围进行选择）
 *******************************************************************************/
-static	BOOL	CalibrateFLOW_4_Point_1_Point( enum enumPumpSelect PumpSelect, uint16_t FlowKSet[], FP32 const PointSet[], uint8_t PointSelect )
+static	BOOL	CalibrateFLOW_4_Point_1_Point( enum enumSamplerSelect SamplerSelect, uint16_t FlowKSet[], FP32 const PointSet[], uint8_t PointSelect )
 {
 	struct	uMenu  const  menu[] = 
 	{
@@ -1652,7 +1652,7 @@ static	BOOL	CalibrateFLOW_4_Point_1_Point( enum enumPumpSelect PumpSelect, uint1
 		switch ( option )
 		{
 		case 1:
-			if ( CalibrateFLOW_4_Point_DEBUG( PumpSelect, FlowKSet, PointSet, PointSelect ))
+			if ( CalibrateFLOW_4_Point_DEBUG( SamplerSelect, FlowKSet, PointSet, PointSelect ))
 			{
 				changed = TRUE;
 			}
@@ -1683,7 +1683,7 @@ FP32  const  PumpPoints[4][4] =
 	{ 0.2f, 0.5f, 0.8f, 1.0f },	//	enumMassflow
 };
 
-static	void	CalibrateFlow_4_Point( enum enumPumpSelect PumpSelect )
+static	void	CalibrateFlow_4_Point( enum enumSamplerSelect SamplerSelect )
 {
 	static	struct	uMenu const	menu_1L[] =
 	{
@@ -1704,8 +1704,8 @@ static	void	CalibrateFlow_4_Point( enum enumPumpSelect PumpSelect )
 	struct uMenu const * menu;
 	uint8_t	option  = 1u;
 
-	uint8_t		PumpType = Configure.PumpType[PumpSelect];
-	uint16_t *  p_FlowK4 = CalibrateRemote.slope_flow[PumpSelect];
+	uint8_t		PumpType = Configure.PumpType[SamplerSelect];
+	uint16_t *  p_FlowK4 = CalibrateRemote.slope_flow[SamplerSelect];
 	BOOL		changed = FALSE;
 	
 	switch ( PumpType )
@@ -1738,10 +1738,10 @@ static	void	CalibrateFlow_4_Point( enum enumPumpSelect PumpSelect )
 				}
 			}
 			break;
-		case 1:	if ( CalibrateFLOW_4_Point_1_Point( PumpSelect, p_FlowK4, PumpPoints[PumpType], 0 )){ changed = TRUE; }	break;
-		case 2:	if ( CalibrateFLOW_4_Point_1_Point( PumpSelect, p_FlowK4, PumpPoints[PumpType], 1 )){ changed = TRUE; }	break;
-		case 3:	if ( CalibrateFLOW_4_Point_1_Point( PumpSelect, p_FlowK4, PumpPoints[PumpType], 2 )){ changed = TRUE; }	break;
-		case 4:	if ( CalibrateFLOW_4_Point_1_Point( PumpSelect, p_FlowK4, PumpPoints[PumpType], 3 )){ changed = TRUE; }	break;
+		case 1:	if ( CalibrateFLOW_4_Point_1_Point( SamplerSelect, p_FlowK4, PumpPoints[PumpType], 0 )){ changed = TRUE; }	break;
+		case 2:	if ( CalibrateFLOW_4_Point_1_Point( SamplerSelect, p_FlowK4, PumpPoints[PumpType], 1 )){ changed = TRUE; }	break;
+		case 3:	if ( CalibrateFLOW_4_Point_1_Point( SamplerSelect, p_FlowK4, PumpPoints[PumpType], 2 )){ changed = TRUE; }	break;
+		case 4:	if ( CalibrateFLOW_4_Point_1_Point( SamplerSelect, p_FlowK4, PumpPoints[PumpType], 3 )){ changed = TRUE; }	break;
 		default:	break;
 		}
 	} while( 0u != option );
@@ -1878,47 +1878,48 @@ static	void	menu_CalibrateAll( uint8_t configT )
 	static	uint8_t	item = 1u;
 	static	uint8_t	sitem = 1u;
 	uint8_t TO = Configure.TimeoutLight;
-	enum	enumPumpSelect	PumpSelect = PP_TSP;
+	enum	enumSamplerSelect	SamplerSelect = SP_TSP;
 	Configure.TimeoutLight = 4;
 	DisplaySetTimeout( Configure.TimeoutLight );
 	switch( configT )
 	{
-	case type_KB2400:		PumpSelect = PP_SHI_C;break;
-	case type_KB2400D:	PumpSelect = PP_R24_A;break;
-// 	case type_KB6120AD2:PumpSelect = PP_TSP;	break;
-	case type_KB6120C:	PumpSelect = PP_TSP; 	break;
-	case type_KB6120B:	PumpSelect = PP_TSP; 	break;	
+	case type_KB2400:		SamplerSelect = SP_SHI_C;break;
+	case type_KB2400D:	SamplerSelect = SP_R24_A;break;
+// 	case type_KB6120AD2:SamplerSelect = SP_TSP;	break;
+	case type_KB6120C:	SamplerSelect = SP_TSP; 	break;
+	case type_KB6120B:	SamplerSelect = SP_TSP; 	break;	
 	}
 	do {
 		cls();
 		Menu_Redraw( menu );
-		ShowPumpSelect( 0x0115u, PumpSelect );
+		ShowSamplerSelect( 0x0115u, SamplerSelect );
 		item = Menu_Select( menu, item, NULL );
 		switch( item )
 		{
-		case 1:		Calibrate_Tr( PumpSelect );sitem = 1;		break;
-		case 3:		Calibrate_Pr( PumpSelect );sitem = 3;		break;
-		case 5:		Calibrate_pf( PumpSelect );sitem = 5;		break;
+		case 1:		Calibrate_Tr( SamplerSelect );sitem = 1;		break;
+		case 3:		Calibrate_Pr( SamplerSelect );sitem = 3;		break;
+		case 5:		Calibrate_pf( SamplerSelect );sitem = 5;		break;
 		case 2:
-			switch ( PumpSelect )
+			switch ( SamplerSelect )
 			{
 			default:
-			case PP_TSP  : 	CalibrateZeromain_TSP();	break;
-			case PP_R24_A:		
-			case PP_R24_B:	CalibrateZeromain_R24();  	break;
-			case PP_SHI_C:		
-			case PP_SHI_D:	CalibrateZeromain_SHI(); 	break;
+			case SP_TSP  : 	//CalibrateZeromain_TSP();	break;
+			case SP_R24_A:		
+			case SP_R24_B:	//CalibrateZeromain_R24();  	break;
+			case SP_SHI_C:		
+			case SP_SHI_D:	//CalibrateZeromain_SHI(); 	
+			break;
 			}sitem = 2;
 			break;
 		case 4:
-			switch ( PumpSelect )
+			switch ( SamplerSelect )
 			{
 			default:
-			case PP_TSP  :
-			case PP_R24_A:
-			case PP_R24_B:	CalibrateFlow_1_Point( PumpSelect );  	break;
-			case PP_SHI_C:
-			case PP_SHI_D:	CalibrateFlow_4_Point( PumpSelect ); 	break;
+			case SP_TSP  :
+			case SP_R24_A:
+			case SP_R24_B:	CalibrateFlow_1_Point( SamplerSelect );  	break;
+			case SP_SHI_C:
+			case SP_SHI_D:	CalibrateFlow_4_Point( SamplerSelect ); 	break;
 			}sitem = 4;
 			break;
 		case 6:
@@ -1928,11 +1929,11 @@ static	void	menu_CalibrateAll( uint8_t configT )
 		case enumSelectXCH:
 			switch( configT )
 			{
-			case type_KB2400:		PumpSelect = (enum	enumPumpSelect) KB2400( PumpSelect ); break;
-			case type_KB2400D:	PumpSelect = (enum	enumPumpSelect) KB2400D( PumpSelect ); break;
-			case type_KB6120C:	PumpSelect = (enum	enumPumpSelect) KB6120C( PumpSelect ); break;
-			case type_KB6120B:	PumpSelect = (enum	enumPumpSelect) KB6120B( PumpSelect ); break;
-// 			case type_KB6120AD2:PumpSelect = (enum	enumPumpSelect) KB6120AD2( PumpSelect ); break;
+			case type_KB2400:		SamplerSelect = (enum	enumSamplerSelect) KB2400( SamplerSelect ); break;
+			case type_KB2400D:	SamplerSelect = (enum	enumSamplerSelect) KB2400D( SamplerSelect ); break;
+			case type_KB6120C:	SamplerSelect = (enum	enumSamplerSelect) KB6120C( SamplerSelect ); break;
+			case type_KB6120B:	SamplerSelect = (enum	enumSamplerSelect) KB6120B( SamplerSelect ); break;
+// 			case type_KB6120AD2:SamplerSelect = (enum	SamplerSelect) KB6120AD2( SamplerSelect ); break;
 			}
 			break;	
 		default:

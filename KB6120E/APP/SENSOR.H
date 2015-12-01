@@ -19,11 +19,11 @@ extern	FP32	_get_DS18B20_Temp( void );	//	环境温度
 
 extern	FP32	get_Ba( void );		//	环境压力
 extern	FP32	get_Te( void );		//	环境温度
-extern	FP32	get_Tr( enum enumPumpSelect PumpSelect );	//	计前压力
-extern	FP32	get_Pr( enum enumPumpSelect PumpSelect );	//	计前温度
-extern	FP32	get_pf( enum enumPumpSelect PumpSelect );	//	孔板差压
+extern	FP32	get_Tr( enum enumSamplerSelect SamplerSelect );	//	计前压力
+extern	FP32	get_Pr( enum enumSamplerSelect SamplerSelect );	//	计前温度
+extern	FP32	get_pf( enum enumSamplerSelect SamplerSelect );	//	孔板差压
 
-extern	FP32	get_fstd( enum enumPumpSelect PumpSelect );	//	标况流量
+extern	FP32	get_fstd( enum enumSamplerSelect SamplerSelect );	//	标况流量
 
 /********************************** 功能说明 ***********************************
 *	归一化转换，传感器（ADC）读数 -> 归一化量值
@@ -84,10 +84,10 @@ extern	struct	uCalibrateLocal		CalibrateLocal;
 /********************************** 功能说明 ***********************************
 *  远程传感器读数及标定数据访问
 *******************************************************************************/
-//	enum	enumPumpSelect
+//	enum	enumSamplerSelect
 //	{
 //		PP_TSP, PP_R24_A, PP_R24_B, PP_SHI_C, PP_SHI_D, PP_AIR,
-//		PP_Max
+//		SP_Max
 //	};
 
 enum
@@ -99,14 +99,14 @@ enum
 struct	uSensorRemote
 {
 	uint16_t	iCounter;
-	bool	isExist[PP_Max];
+	bool	isExist[SP_Max];
 	
 	uint16_t	Ba;	//	大气压力
 	int16_t 	Te;	//	环境温度
 	int16_t 	Tm;	//	电压温度
-	int16_t 	tr[PP_Max];
-	uint16_t	pr[PP_Max];
-	uint16_t	pf[PP_Max];
+	int16_t 	tr[SP_Max];
+	uint16_t	pr[SP_Max];
+	uint16_t	pf[SP_Max];
 	
 	bool	has_HCBox;	//	恒温箱
 	int16_t		HCBoxRunTemp;

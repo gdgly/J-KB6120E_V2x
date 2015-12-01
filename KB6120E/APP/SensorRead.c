@@ -160,14 +160,14 @@ __task  void	_task_SensorRead( void const * p_arg )
 #define	X_Base_SHI_C	30u
 #define	X_Base_SHI_D 	35u
 
-const uint16_t BaseList[PP_Max] = 
+const uint16_t BaseList[SP_Max] = 
 {
-	15,	//	PP_TSP
-	20,	//	PP_R24_A
-	25,	//	PP_R24_B
-	30,	//	PP_SHI_C
-	35,	//	PP_SHI_D
-	10,	//	PP_AIR
+	15,	//	SP_TSP
+	20,	//	SP_R24_A
+	25,	//	SP_R24_B
+	30,	//	SP_SHI_C
+	35,	//	SP_SHI_D
+// 	10,	//	SP_AIR
 };
 
 #define	DO_Base	1u
@@ -187,16 +187,16 @@ const uint16_t BaseList[PP_Max] =
 *******************************************************************************/
 const uint8_t SubSlave = 1u;
 
-void	Motor_OutCmd( enum enumPumpSelect PumpSelect, BOOL NewState )
+void	Motor_OutCmd( enum enumSamplerSelect PumpSelect, BOOL NewState )
 {
 	uint16_t	RegAddress = DO_Base + BaseList[PumpSelect];
 	uint8_t		RegValue   = NewState ? 0x01u : 0x00u;
-	if( PumpSelect == PP_AIR)
-		AIRLightOutCmd( NewState );
+// 	if( PumpSelect == SP_AIR)
+// 		AIRLightOutCmd( NewState );
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 }
 
-void	Motor_SetOutput( enum enumPumpSelect PumpSelect, uint16_t OutValue )
+void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 {
 	uint16_t	RegAddress = AO_Base + BaseList[PumpSelect];
 	uint16_t	RegValue   = OutValue;
@@ -220,8 +220,8 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		{
 			SensorRemote.has_Heater = BITN( DI_Buf, 8 ) ? true : false;
 			SensorRemote.has_HCBox  = BITN( DI_Buf, 5 ) ? true : false;
-			SensorRemote.isExist[PP_AIR] = BITN( DI_Buf, 10 ) ? true : false;
-			SensorRemote.isExist[PP_TSP] = BITN( DI_Buf, 15 ) ? true : false;
+// 			SensorRemote.isExist[SP_AIR] = BITN( DI_Buf, 10 ) ? true : false;
+			SensorRemote.isExist[SP_TSP] = BITN( DI_Buf, 15 ) ? true : false;
 		}
 		else
 		{
@@ -249,25 +249,25 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.HeaterRunTemp  = AI_Buf[8];
 			SensorRemote.HeaterOutValue = AI_Buf[9];
 			
-			SensorRemote.pf[PP_TSP] = AI_Buf[15];
-			SensorRemote.pr[PP_TSP] = AI_Buf[16];
-			SensorRemote.tr[PP_TSP] = AI_Buf[17];
+			SensorRemote.pf[SP_TSP] = AI_Buf[15];
+			SensorRemote.pr[SP_TSP] = AI_Buf[16];
+			SensorRemote.tr[SP_TSP] = AI_Buf[17];
 			
-			SensorRemote.pf[PP_R24_A] = AI_Buf[20];
-			SensorRemote.pr[PP_R24_A] = AI_Buf[21];
-			SensorRemote.tr[PP_R24_A] = AI_Buf[22];
+			SensorRemote.pf[SP_R24_A] = AI_Buf[20];
+			SensorRemote.pr[SP_R24_A] = AI_Buf[21];
+			SensorRemote.tr[SP_R24_A] = AI_Buf[22];
 			
-			SensorRemote.pf[PP_R24_B] = AI_Buf[25];
-			SensorRemote.pr[PP_R24_B] = AI_Buf[26];
-			SensorRemote.tr[PP_R24_B] = AI_Buf[27];
+			SensorRemote.pf[SP_R24_B] = AI_Buf[25];
+			SensorRemote.pr[SP_R24_B] = AI_Buf[26];
+			SensorRemote.tr[SP_R24_B] = AI_Buf[27];
 
-			SensorRemote.pf[PP_SHI_C] = AI_Buf[30];
-			SensorRemote.pr[PP_SHI_C] = AI_Buf[31];
-			SensorRemote.tr[PP_SHI_C] = AI_Buf[32];
+			SensorRemote.pf[SP_SHI_C] = AI_Buf[30];
+			SensorRemote.pr[SP_SHI_C] = AI_Buf[31];
+			SensorRemote.tr[SP_SHI_C] = AI_Buf[32];
 			
-			SensorRemote.pf[PP_SHI_D] = AI_Buf[35];
-			SensorRemote.pr[PP_SHI_D] = AI_Buf[36];
-			SensorRemote.tr[PP_SHI_D] = AI_Buf[37];
+			SensorRemote.pf[SP_SHI_D] = AI_Buf[35];
+			SensorRemote.pr[SP_SHI_D] = AI_Buf[36];
+			SensorRemote.tr[SP_SHI_D] = AI_Buf[37];
 		}
 		else
 		{
@@ -308,7 +308,7 @@ void	menu_FactoryDebug( void )
 	enum
 	{
 		opt_exit,
-		opt_COMM, opt_TSP, opt_R24_A, opt_R24_B, opt_SHI_C, opt_SHI_D, opt_AIR,
+		opt_COMM, opt_TSP, opt_R24_A, opt_R24_B, opt_SHI_C, opt_SHI_D, //opt_AIR,
 		opt_CPU,
 		opt_HCBox, opt_BAT,
 		opt_max, opt_min = 1
@@ -317,16 +317,16 @@ void	menu_FactoryDebug( void )
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL	graychanged = FALSE;
 
-	BOOL		OutState[PP_Max];
-	uint16_t	OutValue[PP_Max];
+	BOOL		OutState[SP_Max];
+	uint16_t	OutValue[SP_Max];
 
-	enum enumPumpSelect	PumpSelect = PP_TSP;
+	enum enumSamplerSelect	PumpSelect = SP_TSP;
 	
 	CHAR	sbuffer[36];
 
 	uint8_t	i;
 
-	for ( i = 0u; i < PP_Max; ++i )
+	for ( i = 0u; i < SP_Max; ++i )
 	{
 		OutState[i] = FALSE;
 		OutValue[i] = 10000;
@@ -339,12 +339,12 @@ void	menu_FactoryDebug( void )
 		switch ( option )
 		{
 		case opt_COMM:		Lputs( 0x0102u, "通信" );	break;
-		case opt_TSP:		  Lputs( 0x0102u, "粉尘" );		  PumpSelect = PP_TSP;	break;
-		case opt_R24_A:		Lputs( 0x0102u, "日均(A)" );	PumpSelect = PP_R24_A;	break;
-		case opt_R24_B:		Lputs( 0x0102u, "日均(B)" );	PumpSelect = PP_R24_B;	break;
-		case opt_SHI_C:		Lputs( 0x0102u, "时均(C)" );	PumpSelect = PP_SHI_C;	break;
-		case opt_SHI_D:		Lputs( 0x0102u, "时均(D)" );	PumpSelect = PP_SHI_D;	break;
-		case opt_AIR:		  Lputs( 0x0102u, "大气" );	    PumpSelect = PP_AIR;	break;
+		case opt_TSP:		  Lputs( 0x0102u, "粉尘" );		  PumpSelect = SP_TSP;	break;
+		case opt_R24_A:		Lputs( 0x0102u, "日均(A)" );	PumpSelect = SP_R24_A;	break;
+		case opt_R24_B:		Lputs( 0x0102u, "日均(B)" );	PumpSelect = SP_R24_B;	break;
+		case opt_SHI_C:		Lputs( 0x0102u, "时均(C)" );	PumpSelect = SP_SHI_C;	break;
+		case opt_SHI_D:		Lputs( 0x0102u, "时均(D)" );	PumpSelect = SP_SHI_D;	break;
+// 		case opt_AIR:		  Lputs( 0x0102u, "大气" );	    PumpSelect = SP_AIR;	break;
 
 		case opt_HCBox: Lputs( 0x0102u, "恒温箱" );Lputs( 0x1002u, "加热器" );	break;
 		
@@ -367,12 +367,12 @@ void	menu_FactoryDebug( void )
 				sprintf( sbuffer, "Pf: %04X", SensorRemote.pf[PumpSelect] );					Lputs( 0x1200u, sbuffer );
 				sprintf( sbuffer, "调速:  [%s]%5u", ( OutState[PumpSelect] ? "+" :"-" ),OutValue[PumpSelect] );	Lputs( 0x1800u, sbuffer );
 				break;
-			case opt_AIR:
-				sprintf( sbuffer, "  Ba:%6.3f", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));	Lputs( 0x0600u, sbuffer );
-				sprintf( sbuffer, "Temp:%6.4f", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x0C00u, sbuffer );
-				sprintf( sbuffer, "环境温度:%6.4f", _CV_DS18B20_Temp( SensorRemote.Te ));		Lputs( 0x1200u, sbuffer );
-				sprintf( sbuffer, "开关 [%s]", ( OutState[PumpSelect] ?  "+" :"-" ));	Lputs( 0x1800u, sbuffer );
-				break;
+// 			case opt_AIR:
+// 				sprintf( sbuffer, "  Ba:%6.3f", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));	Lputs( 0x0600u, sbuffer );
+// 				sprintf( sbuffer, "Temp:%6.4f", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x0C00u, sbuffer );
+// 				sprintf( sbuffer, "环境温度:%6.4f", _CV_DS18B20_Temp( SensorRemote.Te ));		Lputs( 0x1200u, sbuffer );
+// 				sprintf( sbuffer, "开关 [%s]", ( OutState[PumpSelect] ?  "+" :"-" ));	Lputs( 0x1800u, sbuffer );
+// 				break;
 
 
 			case opt_HCBox:
@@ -452,10 +452,10 @@ void	menu_FactoryDebug( void )
 				Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
 				break;
-      case opt_AIR:		
-				OutState[PumpSelect] = TRUE;
-				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
-				break;
+//       case opt_AIR:		
+// 				OutState[PumpSelect] = TRUE;
+// 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
+// 				break;
 			}
 			break;
 		case K_DOWN:
@@ -470,9 +470,9 @@ void	menu_FactoryDebug( void )
 				Motor_SetOutput( PumpSelect, 0 );
 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
 				break;
-            case opt_AIR:		
-				OutState[PumpSelect] = FALSE;
-				break;
+//             case opt_AIR:		
+// 				OutState[PumpSelect] = FALSE;
+// 				break;
 			}
 			break;
 			
@@ -556,9 +556,9 @@ void	menu_FactoryDebug( void )
 
 	} while ( opt_exit != option );
 	
-	for ( i = 0; i < PP_Max; ++i )
+	for ( i = 0; i < SP_Max; ++i )
 	{
-		Motor_OutCmd((enum enumPumpSelect)i,   FALSE );
+		Motor_OutCmd((enum enumSamplerSelect)i,   FALSE );
 	}
 }
 
@@ -579,10 +579,10 @@ static	uint16_t	average( uint16_t const * pArray, const uint8_t count )
 	return	(uint16_t)( sum / count );
 }
 
-static	void	KB6102_CalibrateZero( enum enumPumpSelect PumpSelect_1, enum enumPumpSelect PumpSelect_2 )
+static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 {
 	#define	f_len 10u
-	uint16_t	sensor[4][f_len];
+	uint16_t	sensor[2][f_len];
 	uint8_t		index;
 	BOOL		cnt_full;
 
@@ -594,46 +594,27 @@ static	void	KB6102_CalibrateZero( enum enumPumpSelect PumpSelect_1, enum enumPum
 	for(;;)
 	{
 		do {
-			sensor[0][index] = SensorRemote.pf[PumpSelect_1];
-			sensor[1][index] = SensorRemote.pf[PumpSelect_2];
-			sensor[2][index] = SensorRemote.pr[PumpSelect_1];
-			sensor[3][index] = SensorRemote.pr[PumpSelect_2];
+			sensor[0][index] = SensorRemote.pf[SamplerSelect];
+			sensor[1][index] = SensorRemote.pr[SamplerSelect];
 			if ( ++index == f_len )
 			{
 				index = 0u;
 				cnt_full = TRUE;
 			}
 	
-			CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pf][PumpSelect_2] = average( sensor[1], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pr][PumpSelect_2] = average( sensor[3], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
 
-			if ( PumpSelect_1 == PumpSelect_2 )
-			{
-				CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
 
-				Lputs( 0x0F0Fu, "流量:" );
-				ShowFP32( 0x150Eu, get_pf( PumpSelect_1 ), 0x0602u, NULL );
+			Lputs( 0x0F0Fu, "流量:" );
+			ShowFP32( 0x150Eu, get_pf( SamplerSelect ), 0x0602u, NULL );
 
-				Lputs( 0x0F1Cu, "计压:" );
-				ShowFP32( 0x151Bu, get_Pr( PumpSelect_1 ), 0x0602u, NULL );
-			}
-			else
-			{
-				CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pf][PumpSelect_2] = average( sensor[1], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_2] = average( sensor[3], cnt_full ? f_len : index );
+			Lputs( 0x0F1Cu, "计压:" );
+			ShowFP32( 0x151Bu, get_Pr( SamplerSelect ), 0x0602u, NULL );
+	
 
-				Lputs( 0x0F0Fu, "流量:" );
-				ShowFP32( 0x140Eu, get_pf( PumpSelect_1 ), 0x0602u, NULL );
-				ShowFP32( 0x180Eu, get_pf( PumpSelect_2 ), 0x0602u, NULL );
-				Lputs( 0x0F1Cu, "计压:" );
-				ShowFP32( 0x141Bu, get_Pr( PumpSelect_1 ), 0x0602u, NULL );
-				ShowFP32( 0x181Bu, get_Pr( PumpSelect_2 ), 0x0602u, NULL );
-			}
 		} while( ! hitKey( 40u ));
 
 		switch( getKey())
@@ -698,169 +679,144 @@ static	void	KB6102_CalibrateZero( enum enumPumpSelect PumpSelect_1, enum enumPum
 
 	}
 }
-static	void	KB6102Main_CalibrateZero( enum enumPumpSelect PumpSelect_1, enum enumPumpSelect PumpSelect_2 )
+// static	void	KB6102Main_CalibrateZero( enum enumSamplerSelect SamplerSelect )
+// {
+// 	#define	f_len 10u
+// 	uint16_t	sensor[2][f_len];
+// 	uint8_t		index;
+// 	BOOL		cnt_full;
+// 	uint16_t gray  = Configure.DisplayGray;
+// 	BOOL	graychanged = FALSE;
+
+// 	index = 0u;
+// 	cnt_full = FALSE;
+
+// 	for(;;)
+// 	{
+// 		do {
+// 			sensor[0][index] = SensorRemote.pf[SamplerSelect];
+// // 			sensor[1][index] = SensorRemote.pf[SamplerSelect];
+// // 			sensor[2][index] = SensorRemote.pr[SamplerSelect];
+// 			sensor[1][index] = SensorRemote.pr[SamplerSelect];
+// 			if ( ++index == f_len )
+// 			{
+// 				index = 0u;
+// 				cnt_full = TRUE;
+// 			}
+// 	
+// 			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+// 			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
+
+// 			
+// 			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+// 			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
+
+// 			Lputs( 0x0C04u, "流量:" );
+// 			ShowFP32( 0x1503u, get_pf( SamplerSelect ), 0x0602u, NULL );
+
+// 			Lputs( 0x0C18u, "计压:" );
+// 			ShowFP32( 0x1517u, get_Pr( SamplerSelect ), 0x0602u, NULL );
+
+// 			} while( ! hitKey( 40u ));
+
+// 		switch( getKey())
+// 		{
+// 		case K_OK:	
+// 		case K_ESC:		CalibrateSave( );		return;
+// 		case K_OK_UP:	
+// 			if ( gray < 2200u )
+// 			{
+// 				++gray;
+// 			}
+// 			if( ! releaseKey( K_OK_UP,100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_UP, 1 ))
+// 				{
+// 					++gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}
+// 			}
+// 			graychanged = true;		
+// 			break;
+// 		case K_OK_DOWN:
+// 			if ( gray >  200u )
+// 			{
+// 				--gray;
+// 			}
+// 			if( ! releaseKey( K_OK_DOWN, 100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_DOWN, 1 ))
+// 				{
+// 					--gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}			
+// 			}
+// 			graychanged = true;
+// 			break;
+
+// 		case K_OK_RIGHT:
+// 			if ( gray < ( 2000u - 50u ))
+// 			{ 
+// 				gray += 100u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		case K_OK_LEFT:	
+// 			if ( gray > ( 200 + 20u ))
+// 			{
+// 				gray -= 20u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		default:
+// 			break;
+// 		}
+// 		if( graychanged == true )
+// 		{
+// 			DisplaySetGrayVolt( gray * 0.01f );
+// 			Configure.DisplayGray = gray;
+// 			ConfigureSave();
+// 			graychanged = FALSE;;
+// 		}		
+
+// 	}
+// }
+
+
+void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect )
 {
-	#define	f_len 10u
-	uint16_t	sensor[4][f_len];
-	uint8_t		index;
-	BOOL		cnt_full;
-	uint16_t gray  = Configure.DisplayGray;
-	BOOL	graychanged = FALSE;
-
-	index = 0u;
-	cnt_full = FALSE;
-
-	for(;;)
+	Part_cls();
+	switch( SamplerSelect )
 	{
-		do {
-			sensor[0][index] = SensorRemote.pf[PumpSelect_1];
-			sensor[1][index] = SensorRemote.pf[PumpSelect_2];
-			sensor[2][index] = SensorRemote.pr[PumpSelect_1];
-			sensor[3][index] = SensorRemote.pr[PumpSelect_2];
-			if ( ++index == f_len )
-			{
-				index = 0u;
-				cnt_full = TRUE;
-			}
-	
-			CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pf][PumpSelect_2] = average( sensor[1], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
-			CalibrateRemote.origin[esid_pr][PumpSelect_2] = average( sensor[3], cnt_full ? f_len : index );
-
-			if ( PumpSelect_1 == PumpSelect_2 )
-			{
-				CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
-
-				Lputs( 0x0C04u, "流量:" );
-				ShowFP32( 0x1503u, get_pf( PumpSelect_1 ), 0x0602u, NULL );
-
-				Lputs( 0x0C18u, "计压:" );
-				ShowFP32( 0x1517u, get_Pr( PumpSelect_1 ), 0x0602u, NULL );
-			}
-			else
-			{
-				CalibrateRemote.origin[esid_pf][PumpSelect_1] = average( sensor[0], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pf][PumpSelect_2] = average( sensor[1], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_1] = average( sensor[2], cnt_full ? f_len : index );
-				CalibrateRemote.origin[esid_pr][PumpSelect_2] = average( sensor[3], cnt_full ? f_len : index );
-
-				Lputs( 0x0C04u, "流量:" );
-				ShowFP32( 0x1403u, get_pf( PumpSelect_1 ), 0x0602u, NULL );
-				ShowFP32( 0x1803u, get_pf( PumpSelect_2 ), 0x0602u, NULL );
-				Lputs( 0x0C18u, "计压:" );
-				ShowFP32( 0x1417u, get_Pr( PumpSelect_1 ), 0x0602u, NULL );
-				ShowFP32( 0x1817u, get_Pr( PumpSelect_2 ), 0x0602u, NULL );
-			}
-		} while( ! hitKey( 40u ));
-
-		switch( getKey())
-		{
-		case K_OK:	
-		case K_ESC:		CalibrateSave( );		return;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
-				{
-					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
-				{
-					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
-
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
-		}
-		if( graychanged == true )
-		{
-			DisplaySetGrayVolt( gray * 0.01f );
-			Configure.DisplayGray = gray;
-			ConfigureSave();
-			graychanged = FALSE;;
-		}		
-
+	case SP_TSP:		Lputs( 0x080Eu, "粉 尘 自动调零" );	break;
+	case SP_R24_A:	Lputs( 0x080Eu, "日均A 自动调零" );	break;
+	case SP_R24_B:	Lputs( 0x080Eu, "日均B 自动调零" );	break;
+	case SP_SHI_C:	Lputs( 0x080Eu, "时均C 自动调零" );	break;
+	case SP_SHI_D:	Lputs( 0x080Eu, "时均D 自动调零" );	break;
 	}
+	KB6102_CalibrateZero( SamplerSelect );
 }
 
+// void	CalibrateZeromain_R24( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "日均   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_R24_A, SP_R24_B );
+// }
 
-void	CalibrateZero_R24( void )
-{
-	Part_cls();
-	Lputs( 0x080Eu, "日均 自动调零" );
-	KB6102_CalibrateZero( PP_R24_A, PP_R24_B );
-}
+// void	CalibrateZeromain_SHI( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "时均   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_SHI_C, SP_SHI_D );
+// }
 
-void	CalibrateZero_SHI( void )
-{
-	Part_cls();
-	Lputs( 0x080Eu, "时均 自动调零" );
-	KB6102_CalibrateZero( PP_SHI_C, PP_SHI_D );
-}
-
-void	CalibrateZero_TSP( void )
-{
-	Part_cls();
-	Lputs( 0x080Eu, "粉尘 自动调零" );
-	KB6102_CalibrateZero( PP_TSP, PP_TSP );
-}
-
-
-void	CalibrateZeromain_R24( void )
-{
-	cls();
-	Lputs( 0x0402u, "日均   自动调零" );
-	KB6102Main_CalibrateZero( PP_R24_A, PP_R24_B );
-}
-
-void	CalibrateZeromain_SHI( void )
-{
-	cls();
-	Lputs( 0x0402u, "时均   自动调零" );
-	KB6102Main_CalibrateZero( PP_SHI_C, PP_SHI_D );
-}
-
-void	CalibrateZeromain_TSP( void )
-{
-	cls();
-	Lputs( 0x0402u, "粉尘   自动调零" );
-	KB6102Main_CalibrateZero( PP_TSP, PP_TSP );
-}
+// void	CalibrateZeromain_TSP( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "粉尘   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_TSP, SP_TSP );
+// }
 
 
 

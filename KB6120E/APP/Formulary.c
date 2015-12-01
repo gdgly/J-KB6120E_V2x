@@ -183,12 +183,13 @@ __PURE	FP32	Calc_flow( FP32 fstd, FP32 Tx, FP32 Px, FP32 Ba, enum enumSamplerSel
 	FP32	flow;
 	switch( SamplerSelect )
 	{
-	case Q_TSP:
+	case SP_TSP:
 	Tstd = Tr0;
 	break;
-	case Q_R24:
-	case Q_SHI:
-	case Q_AIR:
+	case SP_R24_A:
+	case SP_R24_B:
+	case SP_SHI_C:
+	case SP_SHI_D:
 	default:
 	Tstd = get_Tstd();
 	break;
