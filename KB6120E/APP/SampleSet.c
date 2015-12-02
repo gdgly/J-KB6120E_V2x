@@ -27,7 +27,7 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 		ShowTIME( 0x061Cu, SampleSet[SamplerSelect].sample_time );
 		ShowTIME( 0x0C1Cu, SampleSet[SamplerSelect].suspend_time );
 		ShowI16U( 0x121Cu, SampleSet[SamplerSelect].set_loops, 0x0200u, NULL );
-		ShowI16U( 0x181Cu, Configure.SetFlow[SamplerSelect], 0x0200u, NULL );
+		ShowI16U( 0x181Cu, Configure.SetFlow[SamplerSelect], 0x0301u, "L/m" );
 		
 		item = Menu_Select2( menu, item + 1u, FALSE, Show_std_clock );
 
@@ -36,7 +36,7 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 		case 1:	if ( EditTIME( 0x061Cu, &( SampleSet[SamplerSelect].sample_time )))					{ changed = TRUE; }	break;
 		case 2:	if ( EditTIME( 0x0C1Cu, &( SampleSet[SamplerSelect].suspend_time )))				{ changed = TRUE; }	break;
 		case 3:	if ( EditI16U( 0x121Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))	{ changed = TRUE; }	break;
-		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0200u ))		{ ConfigureSave();}	break;	
+		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))		{ ConfigureSave();}	break;	
 			
 		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
 		}

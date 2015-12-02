@@ -8,7 +8,7 @@
 * 修订人: 
 *******************************************************************************/
 #include "AppDEF.H"
-#include <stm32f10x.h>
+
 /********************************** 数据定义 ***********************************
 //	标定数据
 *******************************************************************************/
@@ -224,7 +224,7 @@ static	void	menu_Calibrate_Ba( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -381,7 +381,7 @@ void	menu_Calibrate_Te( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -538,7 +538,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -695,7 +695,7 @@ void	menu_Calibrate_Heater_Temp( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -863,7 +863,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -1028,7 +1028,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -1194,7 +1194,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while( opt_exit != option );
@@ -1347,7 +1347,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while ( opt_exit != option );
@@ -1430,40 +1430,39 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 			changed = TRUE;
 			break;
 		case K_OK:
-			Flow32 = Configure.SetFlow[SamplerSelect];
-			
-		if( SamplerSelect == SP_TSP )
+		
+			if( SamplerSelect == SP_TSP )
 			{
+				Flow32 = Configure.SetFlow[SamplerSelect];
 				LcmMask( 0x0800u, 3u, CHARsz );
 
 				if ( EditI32U( 0x080Cu, &Flow32, fmt ) )
 				{
 					changed = TRUE;
 					Flown = ( FP32 ) Flow32;
-					if( * p_FlowK != 0 )
-						Flow  = Flow / ( * p_FlowK * 0.001 );
-					else
-						Flow = Flown;
-					if(Flow != 0)
-						* p_FlowK =(uint16_t) ( Flown * 100 / Flow ) ;
+					if( * p_FlowK >= 100 )
+					{
+						if(Flow != 0)
+							* p_FlowK =(uint16_t) ( ( Flown / (Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) );	//( (Flown * 100) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+					}
 					else
 						* p_FlowK = 1000;
 				}
 			}
 			else
 			{
+				Flow32 = Configure.SetFlow[SamplerSelect] * 100u;
 				LcmMask( 0x0C00u, 3u, CHARsz );
 
 				if ( EditI32U( 0x0C0Cu, &Flow32, fmt ) )
 				{
 					changed = TRUE;
 					Flown = ( FP32 ) Flow32;
-					if( * p_FlowK != 0 )
-						Flow  = Flow / ( * p_FlowK * 0.001 );
-					else
-						Flow = Flown;
-					if(Flow != 0)
-						* p_FlowK =(uint16_t) ( Flown / Flow ) ;
+					if( * p_FlowK >= 100 )
+					{
+						if( Flow != 0)
+							* p_FlowK =(uint16_t) ( ( Flown / (FP32)(Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+					}	
 					else
 						* p_FlowK = 1000;
 				}
@@ -1525,7 +1524,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	}
@@ -1556,13 +1555,13 @@ static	void	CalibrateFlow_1_Point( enum enumSamplerSelect SamplerSelect )
 	uint16_t	*p_FlowK = CalibrateRemote.slope_flow[SamplerSelect];
 	BOOL		changed  = FALSE;
 	uint16_t	fmt;
-	
+	uint16_t	ConfigureSetFlow;
 	switch ( SamplerSelect )
 	{
 	default:
-	case SP_TSP:	fmt = 0x0501u; 	break;
+	case SP_TSP:		fmt = 0x0501u;ConfigureSetFlow = Configure.SetFlow[SamplerSelect]; 	break;
 	case SP_R24_A:
-	case SP_R24_B:	fmt = 0x0503u;	break;
+	case SP_R24_B:	fmt = 0x0503u;ConfigureSetFlow = Configure.SetFlow[SamplerSelect] * 100u;	break;
 	}
 	
 	do {
@@ -1573,8 +1572,8 @@ static	void	CalibrateFlow_1_Point( enum enumSamplerSelect SamplerSelect )
 			ShowSamplerSelect( 0x0115u, SamplerSelect );
 			need_redraw = FALSE;
 		}
-
-		ShowI16U ( 0x080Cu, Configure.SetFlow[SamplerSelect], fmt, "L/m" );
+		
+		ShowI16U ( 0x080Cu,  ConfigureSetFlow, fmt, "L/m" );
 		ShowI16U ( 0x180Cu, * p_FlowK, 0x0503u, NULL );
 
 		option = Menu_Select( menu, option, NULL );
@@ -1601,8 +1600,9 @@ static	void	CalibrateFlow_1_Point( enum enumSamplerSelect SamplerSelect )
 			}
 			break;
 		case 1:
-			if ( EditI16U( 0x080Cu, &Configure.SetFlow[SamplerSelect], fmt ))
+			if ( EditI16U( 0x080Cu, &ConfigureSetFlow, fmt ))
 			{
+				Configure.SetFlow[SamplerSelect] = ConfigureSetFlow / 100u;
 				ConfigureSave();			
 			}
 			break;
@@ -1751,24 +1751,24 @@ void	menu_Select_Calc_Pbv( void )
 {
     static	struct  uMenu  const   menu[] =
     {
-        { 0x0201u, "计算饱和水汽压" },
-        { 0x0C07u, "[不 计 算]" },
-        { 0x1607u, "[参与计算]" },
+        { 0x0201u, "饱和水汽压" },
+        { 0x0C12u, "[不 计 算]" },
+        { 0x1612u, "[参与计算]" },
     };
 
     uint8_t	item;
 
-    cls();
+    Part_cls();
     Menu_Redraw( menu );
 
     if ( Configure .shouldCalcPbv == 0 )
     {
-        Lputs( 0x0C00u, " ->" );
+        Lputs( 0x0C0Eu, "->" );
         item = 1u;
 	}
 	else
 	{
-        Lputs( 0x1600u, " ->" );
+        Lputs( 0x160Eu, "->" );
         item = 2u;
 	}
 
@@ -1788,18 +1788,11 @@ void	menu_Select_Calc_Pbv( void )
 
 static	void	menu_Calibrate_Other( void )
 {
-	static	struct	uMenu const	menu[] = 
-	{
-		{ 0x0202u, "传感器标定" },
-		{ 0x0802u, "大气压" }, { 0x0814u, "环境温度" },
-		{ 0x1002u, "加热器" }, { 0x1019u, "电池电压" },
-		
-	};
 	static	struct	uMenu const	menu1[] = 
 	{
 		{ 0x0202u, "传感器标定" },
-		{ 0x0802u, "大气压" }, { 0x0814u, "环境温度" },
-		{ 0x1002u, "恒温箱" }, { 0x1019u, "电池电压" },
+		{ 0x0802u, "大气压" }, 	{ 0x0814u, "环境温度" },
+		{ 0x1002u, "恒温装置" },	{ 0x1019u, "电池电压" },
 		
 	};
 		static	struct	uMenu const	menu2[] = 
@@ -1807,41 +1800,23 @@ static	void	menu_Calibrate_Other( void )
 		{ 0x0301u, "传感器标定" },
 		{ 0x0802u, "大气压" }, 
 		{ 0x1002u, "环境温度" },
-		{ 0x1802u, "加热器" },
-		
-	};
-	static	struct	uMenu const	menu3[] = 
-	{
-		{ 0x0301u, "传感器标定" },
-		{ 0x0802u, "大气压" }, 
-		{ 0x1002u, "环境温度" },
-		{ 0x1802u, "恒温箱" },
+		{ 0x1802u, "恒温装置" },
 		
 	};
 	uint8_t	item = 1u;
 	
 	do {
-		   cls();
-			  if( Configure.HeaterType == enumHeaterOnly && Configure.Battery_SW == TRUE )
-				{	
-					Menu_Redraw( menu );
-					item = Menu_Select( menu, item, NULL );
-				}
-				else if( Configure.HeaterType != enumHeaterOnly && Configure.Battery_SW == TRUE )
-				{
-          Menu_Redraw( menu1 );
-					item = Menu_Select( menu1, item, NULL );
-				}
-				else if( Configure.HeaterType == enumHeaterOnly && Configure.Battery_SW == FALSE )
-				{
-          Menu_Redraw( menu2 );
-					item = Menu_Select( menu2, item, NULL );
-				}
-				else
-				{
-          Menu_Redraw( menu3 );
-					item = Menu_Select( menu3, item, NULL );
-				}
+		cls();
+		if( Configure.Battery_SW == TRUE )
+		{	
+			Menu_Redraw( menu1 );
+			item = Menu_Select( menu1, item, NULL );
+		}
+		else 
+		{
+			Menu_Redraw( menu2 );
+			item = Menu_Select( menu2, item, NULL );
+		}
 		switch( item )
 		{
 		case 1:	menu_Calibrate_Ba();	break;
@@ -1861,12 +1836,119 @@ static	void	menu_Calibrate_Other( void )
 	} while( enumSelectESC != item );
 }
 
+void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
+{
+	#define	f_len 10u
+	uint16_t	sensor[2][f_len];
+	uint8_t		index;
+	BOOL		cnt_full;
 
+	uint16_t gray  = Configure.DisplayGray;
+	BOOL	graychanged = FALSE;
+	index = 0u;
+	cnt_full = FALSE;
+	cls();
+	switch( SamplerSelect )
+	{
+	case SP_TSP:		Lputs( 0x0404u, "<粉 尘> 自动调零" );	break;
+	case SP_R24_A:	Lputs( 0x0404u, "<日均A> 自动调零" );	break;
+	case SP_R24_B:	Lputs( 0x0404u, "<日均B> 自动调零" );	break;
+	case SP_SHI_C:	Lputs( 0x0404u, "<时均C> 自动调零" );	break;
+	case SP_SHI_D:	Lputs( 0x0404u, "<时均D> 自动调零" );	break;
+	}
+	for(;;)
+	{
+		do {
+			sensor[0][index] = SensorRemote.pf[SamplerSelect];
+			sensor[1][index] = SensorRemote.pr[SamplerSelect];
+			if ( ++index == f_len )
+			{
+				index = 0u;
+				cnt_full = TRUE;
+			}
+	
+			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
+
+			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
+			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
+
+			Lputs( 0x0C06u, "流量:" );
+			ShowFP32( 0x1208u, get_pf( SamplerSelect ), 0x0602u, NULL );
+
+			Lputs( 0x0C14u, "计压:" );
+			ShowFP32( 0x1216u, get_Pr( SamplerSelect ), 0x0602u, NULL );
+	
+
+		} while( ! hitKey( 40u ));
+
+		switch( getKey())
+		{
+		case K_OK:	
+		case K_ESC:		CalibrateSave( );		return;
+		case K_OK_UP:	
+			if ( gray < 2200u )
+			{
+				++gray;
+			}
+			if( ! releaseKey( K_OK_UP,100 ))
+			{
+				while( ! releaseKey( K_OK_UP, 1 ))
+				{
+					++gray;
+					DisplaySetGrayVolt( gray * 0.01f );
+				}
+			}
+			graychanged = true;		
+			break;
+		case K_OK_DOWN:
+			if ( gray >  200u )
+			{
+				--gray;
+			}
+			if( ! releaseKey( K_OK_DOWN, 100 ))
+			{
+				while( ! releaseKey( K_OK_DOWN, 1 ))
+				{
+					--gray;
+					DisplaySetGrayVolt( gray * 0.01f );
+				}			
+			}
+			graychanged = true;
+			break;
+
+		case K_OK_RIGHT:
+			if ( gray < ( 2000u - 50u ))
+			{ 
+				gray += 100u;
+			}
+			graychanged = true;
+			break;
+		case K_OK_LEFT:	
+			if ( gray > ( 200 + 20u ))
+			{
+				gray -= 20u;
+			}
+			graychanged = true;
+			break;
+		default:
+			break;
+		}
+		if( graychanged == true )
+		{
+			DisplaySetGrayVolt( gray * 0.01f );
+			Configure.DisplayGray = gray;
+			ConfigureSave();
+			graychanged = FALSE;
+		}		
+
+	}
+}
 /********************************** 功能说明 ***********************************
 * 主菜单 -> 维护菜单 -> 标定菜单
 *******************************************************************************/
 
-static	void	menu_CalibrateAll( uint8_t configT )
+static	void	menu_CalibrateAll( void )
 {
 	static	struct	uMenu const	menu[] = 
 	{
@@ -1877,18 +1959,11 @@ static	void	menu_CalibrateAll( uint8_t configT )
 	};
 	static	uint8_t	item = 1u;
 	static	uint8_t	sitem = 1u;
-	uint8_t TO = Configure.TimeoutLight;
-	enum	enumSamplerSelect	SamplerSelect = SP_TSP;
+	static	uint8_t TO;
+	TO = Configure.TimeoutLight;
 	Configure.TimeoutLight = 4;
 	DisplaySetTimeout( Configure.TimeoutLight );
-	switch( configT )
-	{
-	case type_KB2400:		SamplerSelect = SP_SHI_C;break;
-	case type_KB2400D:	SamplerSelect = SP_R24_A;break;
-// 	case type_KB6120AD2:SamplerSelect = SP_TSP;	break;
-	case type_KB6120C:	SamplerSelect = SP_TSP; 	break;
-	case type_KB6120B:	SamplerSelect = SP_TSP; 	break;	
-	}
+	SamplerSelect = (enum enumSamplerSelect)SamplerTypeHas[0]; 
 	do {
 		cls();
 		Menu_Redraw( menu );
@@ -1900,16 +1975,8 @@ static	void	menu_CalibrateAll( uint8_t configT )
 		case 3:		Calibrate_Pr( SamplerSelect );sitem = 3;		break;
 		case 5:		Calibrate_pf( SamplerSelect );sitem = 5;		break;
 		case 2:
-			switch ( SamplerSelect )
-			{
-			default:
-			case SP_TSP  : 	//CalibrateZeromain_TSP();	break;
-			case SP_R24_A:		
-			case SP_R24_B:	//CalibrateZeromain_R24();  	break;
-			case SP_SHI_C:		
-			case SP_SHI_D:	//CalibrateZeromain_SHI(); 	
-			break;
-			}sitem = 2;
+			CalibrateZero_main_x( SamplerSelect );
+			sitem = 2;
 			break;
 		case 4:
 			switch ( SamplerSelect )
@@ -1927,19 +1994,20 @@ static	void	menu_CalibrateAll( uint8_t configT )
 			sitem = 6;
 			break;
 		case enumSelectXCH:
-			switch( configT )
 			{
-			case type_KB2400:		SamplerSelect = (enum	enumSamplerSelect) KB2400( SamplerSelect ); break;
-			case type_KB2400D:	SamplerSelect = (enum	enumSamplerSelect) KB2400D( SamplerSelect ); break;
-			case type_KB6120C:	SamplerSelect = (enum	enumSamplerSelect) KB6120C( SamplerSelect ); break;
-			case type_KB6120B:	SamplerSelect = (enum	enumSamplerSelect) KB6120B( SamplerSelect ); break;
-// 			case type_KB6120AD2:SamplerSelect = (enum	SamplerSelect) KB6120AD2( SamplerSelect ); break;
+				uint8_t i = 0;
+				for( i = 0; i < SamplerHasMax; i ++ )
+				{
+					if( SamplerSelect == (enum enumSamplerSelect)SamplerTypeHas[i] )
+						break;
+				}
+				SamplerSelect = (enum enumSamplerSelect)SamplerTypeHas[i+1];
 			}
 			break;	
 		default:
 			break;
 		}
-		if( item == 0xFF )
+		if( item == enumSelectXCH )
 			item = sitem;
 	} while( enumSelectESC != item );
 	Configure.TimeoutLight = TO;
@@ -1948,7 +2016,7 @@ static	void	menu_CalibrateAll( uint8_t configT )
 
 void	menu_Calibrate( void )
 {
-	menu_CalibrateAll( Configure.InstrumentType );
+	menu_CalibrateAll();
 }
 
 /********************************** 功能说明 ***********************************
@@ -2114,7 +2182,7 @@ void	menu_Calibrate_Battery( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}
 	} while( opt_exit != option );
 }

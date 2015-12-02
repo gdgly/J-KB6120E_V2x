@@ -515,7 +515,7 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 		cls();

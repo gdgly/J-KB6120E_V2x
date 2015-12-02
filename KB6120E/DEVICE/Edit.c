@@ -27,7 +27,7 @@ struct RTCtm {
 
 static struct RTCtm Tm;
 
-const	char	*	WEEK_STR[] = { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
+const	char	*	WEEK_STR[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
  /*¼ÆËã¹«Àú*/
 void	GregorianDay(struct RTCtm * tim,const uClock * standard)
 {
@@ -309,7 +309,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 					DisplaySetGrayVolt( gray * 0.01f );
 					Configure.DisplayGray = gray;
 					ConfigureSave();
-					graychanged = FALSE;;
+					graychanged = FALSE;
 				}		
 
     }
@@ -456,7 +456,7 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 					DisplaySetGrayVolt( gray * 0.01f );
 					Configure.DisplayGray = gray;
 					ConfigureSave();
-					graychanged = FALSE;;
+					graychanged = FALSE;
 				}		
 
     }
@@ -633,7 +633,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 					DisplaySetGrayVolt( gray * 0.01f );
 					Configure.DisplayGray = gray;
 					ConfigureSave();
-					graychanged = FALSE;;
+					graychanged = FALSE;
 				}		
 
     }
@@ -811,7 +811,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 					DisplaySetGrayVolt( gray * 0.01f );
 					Configure.DisplayGray = gray;
 					ConfigureSave();
-					graychanged = FALSE;;
+					graychanged = FALSE;
 				}		
 
     }

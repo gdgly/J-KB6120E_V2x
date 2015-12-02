@@ -250,7 +250,7 @@ void	ConfigureLoad( void )
 {
 
 	Eload( x_Configure, &Configure, sizeof(Configure));
-	if ( Configure.DataValidMask != eDataValidMask )
+	if ( Configure.DataValidMask != 0x5A8B )
 	{
 		ConfigureLoadDefault();
 		Configure.DataValidMask = 0x5A8B;

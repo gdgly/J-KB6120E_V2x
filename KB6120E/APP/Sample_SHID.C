@@ -233,7 +233,7 @@ void  _task_Sample_SHI_D( void )
 							File.run_loops  = iloop;
 							File.set_time 	= SampleSet[SamplerSelect].suspend_time;
 
-							File.set_flow 	= Configure.SetFlow[SamplerSelect];
+							File.set_flow 	= Configure.SetFlow[SamplerSelect] * 100;
 
 							File.sample_begin = now_minute * 60u + 1u;
 						}

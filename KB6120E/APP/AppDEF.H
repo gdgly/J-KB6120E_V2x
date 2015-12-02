@@ -272,6 +272,9 @@ extern	void	EditionSelsct( void );
 extern	void	menu_Select_Calc_Pbv( void );
 //	SensorRead.c
 extern	void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect );
+extern	uint16_t	average( uint16_t const * pArray, const uint8_t count );
+
+extern	void	menu_ConfigureDisplay( void );
 
 #include "SENSOR.H"
 #include "EEPROM.H"

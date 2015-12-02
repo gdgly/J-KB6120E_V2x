@@ -208,7 +208,7 @@ void	menu_ConfigureDisplay( void )
 		case 1:	
 			if ( EditI16U( 0x080Cu, &gray, 0x0502u ))
 			{
-				if ( gray > 2000u ){ gray = 2000u; }
+				if ( gray > 2200u ){ gray = 2200u; }
 				if ( gray <  200u ){ gray =  200u; }
 				DisplaySetGrayVolt( gray * 0.01f );
 				changed = TRUE;
@@ -275,10 +275,9 @@ void	menu_ConfigureEx( void )
 		{
 		case 1:	menu_FactoryDebug();		break;	
 	 	case 3:	menu_Instr_Config();		break;
-		case 5:	menu_ExName();		break;
-		case 2:	menu_Sample_Sum();		break;
-//		case 4:	menu_Configure_PrProtect();	break;
-		case 4:	menu_ConfigureDisplay();	break;
+		case 5:	menu_ExName();					break;
+		case 2:	menu_Sample_Sum();			break;
+		case 4:	menu_ConfigureDisplay();break;
 		case 6:	ShowEdition_Inner();  getKey();	break;
 		default:	break;
 		}

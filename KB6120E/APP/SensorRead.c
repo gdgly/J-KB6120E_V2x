@@ -551,7 +551,7 @@ void	menu_FactoryDebug( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	} while ( opt_exit != option );
@@ -566,7 +566,7 @@ void	menu_FactoryDebug( void )
 * 传感器自动调零
 	由于程序需要访问传感器缓冲区中的原始数据，所以放在此处。
 *******************************************************************************/
-static	uint16_t	average( uint16_t const * pArray, const uint8_t count )
+uint16_t	average( uint16_t const * pArray, const uint8_t count )
 {	//	计算缓冲区中前N个数的平均值
 	uint32_t	sum = 0u;
 	uint8_t 	i;
@@ -674,7 +674,7 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 	}
@@ -776,7 +776,7 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 // 			DisplaySetGrayVolt( gray * 0.01f );
 // 			Configure.DisplayGray = gray;
 // 			ConfigureSave();
-// 			graychanged = FALSE;;
+// 			graychanged = FALSE;
 // 		}		
 
 // 	}

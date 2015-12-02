@@ -9,9 +9,6 @@
 *******************************************************************************/
 #include "AppDEF.H"
 
-/********************************** 数据定义 ***********************************
-*  系统配置
-*******************************************************************************/
 struct	uConfigure	Configure;
 
 /********************************** 功能说明 ***********************************
@@ -150,152 +147,211 @@ static	void	menu_SetupClock( void )
 					DisplaySetGrayVolt( gray * 0.01f );
 					Configure.DisplayGray = gray;
 					ConfigureSave();
-					graychanged = FALSE;;
+					graychanged = FALSE;
 				}		
 
     }
     while( opt_exit != option );
 }
 
+static	void	menu_ChangePassword( void )
+{
+ BOOL Done = FALSE;
+ 
+ do{
+		cls();
+		Lputs( 0x0808u, "请输入新密码:" );
+		if ( EditI32U( 0x0E0Cu, &Configure.Password, 0x0600u ))
+		{			 
+			 MsgBox( "密码修改成功!", vbOKOnly );
+			 ConfigureSave();
+		}
+		Done = TRUE;
+ }while( !Done );
+ 
+}
+
+
+
+void	Instrument_Set( void )
+{
+	uint8_t	item = 1u;
+	static	struct uMenu  const  menu[] =
+	{
+			{ 0x0301u, "维护" },
+			{ 0x0802u, "时间设置" },
+			{ 0x1002u, "密码设置" },
+			{ 0x1802u, "显示设置" },
+	};
+		do
+	{
+		cls();
+		Menu_Redraw( menu );
+
+		item = Menu_Select( menu, item, NULL );
+		switch( item )
+		{
+		case 1:
+			menu_SetupClock();
+				break;
+		case 2:
+			menu_ChangePassword();
+				break;
+		case 3:
+			menu_ConfigureDisplay();
+			break;
+		default:
+				break;
+		}
+	}
+	while( enumSelectESC != item );
+}
+
+
+
+
+
+void menu_SamplerSum( void )
+{
+	static	struct uMenu  const  menu[] =
+	{
+			{ 0x0102u, "采样器采样记录" },
+			{ 0x1A06u, "退出" }, { 0x1A18u, "清除" }
+	};
+	uint8_t	item = 1u;
+	uint8_t i;
+	static	char	* Table;
+	static	char Table2[] = { 0x0D, 0x13, };
+	static	char Table3[] = { 0x0C, 0x10, 0x14, };
+	static	char Table4[] = { 0x0B, 0x0E, 0x11, 0x14, };
+	static	char Table5[] = { 0x0A, 0x0D, 0x10, 0x13, 0x16, };
+	static	char	* TableSampler[] = 
+	{
+		"粉 尘:",
+		"日均A:",
+		"日均B:",
+		"时均C:",
+		"时均D:",
+	};
+	switch( SamplerHasMax  )
+	{
+	case 2: Table = Table2;	break;
+	case 3:	Table = Table3;	break;
+	case 4:	Table = Table4;	break;
+	case 5:	Table = Table5;	break;
+	default:
+		break;
+	}
+	do
+	{
+		cls();			
+		Lputs( 0x0605u, "采样器" );		 Lputs( 0x0616u, "采样次数" );
+		for( i = 0; i < SamplerHasMax; i ++ )
+		{
+			Lputs		( (Table[i] * 256 + 0x06 ), TableSampler[SamplerTypeHas[i]] );
+			ShowI16U( (Table[i] * 256 + 0x12 ), SampleSet[(enum enumSamplerSelect)SamplerTypeHas[i]].FileNum, 0x0400u, " 次" );
+		}
+		Menu_Redraw( menu );
+
+		item = Menu_Select( menu, item, NULL );
+		switch( item )
+		{
+		case 1:
+			item = enumSelectESC;
+			break;
+		case 2:
+			beep();
+			if ( vbYes == MsgBox( "清除所有文件 ?", vbYesNo | vbDefaultButton2 ) )
+			{
+				File_Clean();
+				SampleSet[SP_TSP].FileNum =
+				SampleSet[SP_R24_A].FileNum =
+				SampleSet[SP_R24_B].FileNum =
+				SampleSet[SP_SHI_C].FileNum =
+				SampleSet[SP_SHI_D].FileNum = 0u;
+				SampleSetSave();
+			}
+			break;
+		default:
+			break;
+		}
+	}while( enumSelectESC != item );
+
+}
+
+
 
 /********************************** 功能说明 ***********************************
-*	系统配置 -> 大气压
+*  配置标况流量的定义温度
 *******************************************************************************/
-static	void	menu_Configure_Ba( void )
+static	void	menu_SelectTstd( void )
 {
-    static const struct uMenu menu[] =
+    static  struct  uMenu  const  menu[] =
     {
-        { 0x0301u, "配置大气压" },
-        { 0x0802u, "方式" },
-        { 0x1002u, "预测大气压" },
-        { 0x1802u, "输入" }
+        { 0x0301u, "选择标况温度" },
+        { 0x080Au, " 0℃(273K)" },
+        { 0x100Au, "20℃(293K)" },
+        { 0x180Au, "25℃(298K)" }
     };
-		static const struct uMenu menu1[] =
-    {
-        { 0x0101u, "配置大气压" },
-        { 0x0802u, "方式" },
-     
-    };
-    uint8_t item = 1u;
-    BOOL	need_redraw = TRUE;
+    uint8_t	item;
 
-    uint8_t 	Mothed_Ba = Configure.Mothed_Ba;
-    uint16_t	set_Ba    = Configure.set_Ba;
+    uint8_t	SetTstd = Configure.SetTstd;
     BOOL	changed = FALSE;
+
+    cls();
+    Menu_Redraw( menu );
 
     do
     {
-        if ( need_redraw )
-        {
-            cls();
-           if( Mothed_Ba == enumUserInput )
-            Menu_Redraw( menu );
-					else
-						Menu_Redraw( menu1 );
-            need_redraw = FALSE;
-        }
-				if( Mothed_Ba == enumUserInput )
-					ShowI16U( 0x180Cu, set_Ba, 0x0602u, "kPa" );
-
-        switch ( Mothed_Ba )
+        switch ( SetTstd )
         {
         default:
-        case enumUserInput:
-            Lputs( 0x080Cu, "[预测输入]" );
+        case enum_273K:
+            Lputs( 0x0800u,"->"	);
+            Lputs( 0x1000u,"  "	);
+            Lputs( 0x1800u,"  "	);
+            item = 1;
             break;
-        case enumMeasureBa:
-            Lputs( 0x080Cu, "[实时测量]" );
+        case enum_293K:
+            Lputs( 0x0800u,"  "	);
+            Lputs( 0x1000u,"->"	);
+            Lputs( 0x1800u,"  "	);
+            item = 2;
+            break;
+        case enum_298K:
+            Lputs( 0x0800u,"  "	);
+            Lputs( 0x1000u,"  "	);
+            Lputs( 0x1800u,"->"	);
+            item = 3;
             break;
         }
-        if( Mothed_Ba == enumUserInput )
-					item = Menu_Select( menu, item, NULL );
-				else
-					item = Menu_Select( menu1, item, NULL );
-
+        item = Menu_Select( menu, item, NULL );
         switch ( item )
         {
-        case 0:
-					if ( changed )
-					{
-							need_redraw = TRUE;
-							switch( MsgBox( "保存修改结果 ?", vbYesNoCancel + vbDefaultButton3 ))
-							{
-							case vbYes:
-									Configure.Mothed_Ba = Mothed_Ba;
-									Configure.set_Ba    = set_Ba;
-									ConfigureSave();
-									break;
-							case vbNo:
-									break;
-							case vbCancel:
-									item = 1u;
-									break;
-							default:
-									break;
-							}
-					}
-					break;
-
         case 1:
-					switch ( Mothed_Ba )
-					{
-					default:
-					case enumUserInput:
-							Mothed_Ba = enumMeasureBa;
-							break;
-					case enumMeasureBa:
-							Mothed_Ba = enumUserInput;
-							break;
-					}
-					changed = TRUE;
-					need_redraw = TRUE;	 
-					break;
-        case 2:
-					if( Mothed_Ba == enumUserInput )
-          {
-						cls();
-            Lputs( 0x0202u, "测量大气压" );
-            do
-            {
-                FP32 Ba = get_Ba();
-                set_Ba = Ba * 100.0f + 0.5f;
-                if ( set_Ba > 12000u )
-                {
-                    set_Ba = 12000u;
-                }
-                if ( set_Ba <  3000u )
-                {
-                    set_Ba =  3000u;
-                }
-                ShowI16U( 0x0C05u, set_Ba, 0x0602u, "kPa" );
-            }
-            while ( ! hitKey( 100u ));
-            ( void ) getKey();
+            SetTstd = enum_273K;
             changed = TRUE;
-					}
-            need_redraw = TRUE;
+            break;
+        case 2:
+            SetTstd = enum_293K;
+            changed = TRUE;
             break;
         case 3:
-           if ( EditI16U( 0x180Cu, &set_Ba, 0x0602u ))
-            {
-                changed = TRUE;
-            }
-            if ( set_Ba > 12000u )
-            {
-                set_Ba = 12000u;
-            }
-            if ( set_Ba <  3000u )
-            {
-                set_Ba =  3000u;
-            }break;
-
+            SetTstd = enum_298K;
+            changed = TRUE;
+            break;
         default:
             break;
         }
     }
-    while ( 0u != item );
-}
+    while( enumSelectESC != item );
 
+    if ( changed )
+    {
+        Configure.SetTstd = SetTstd;
+        ConfigureSave();
+    }
+}
 /********************************** 功能说明 ***********************************
 *  系统配置 -> 恒温箱
 *******************************************************************************/
@@ -500,6 +556,283 @@ static	void	menu_ConfigureHCBox( void )
 }
 
 /********************************** 功能说明 ***********************************
+*	系统配置 -> 大气压
+*******************************************************************************/
+static	void	menu_Configure_Ba( void )
+{
+    static const struct uMenu menu[] =
+    {
+        { 0x0301u, "配置大气压" },
+        { 0x0802u, "方式" },
+        { 0x1002u, "预测大气压" },
+        { 0x1802u, "输入" }
+    };
+		static const struct uMenu menu1[] =
+    {
+        { 0x0101u, "配置大气压" },
+        { 0x0802u, "方式" },
+     
+    };
+    uint8_t item = 1u;
+    BOOL	need_redraw = TRUE;
+
+    uint8_t 	Mothed_Ba = Configure.Mothed_Ba;
+    uint16_t	set_Ba    = Configure.set_Ba;
+    BOOL	changed = FALSE;
+
+    do
+    {
+        if ( need_redraw )
+        {
+            cls();
+           if( Mothed_Ba == enumUserInput )
+            Menu_Redraw( menu );
+					else
+						Menu_Redraw( menu1 );
+            need_redraw = FALSE;
+        }
+				if( Mothed_Ba == enumUserInput )
+					ShowI16U( 0x180Cu, set_Ba, 0x0602u, "kPa" );
+
+        switch ( Mothed_Ba )
+        {
+        default:
+        case enumUserInput:
+            Lputs( 0x080Cu, "[预测输入]" );
+            break;
+        case enumMeasureBa:
+            Lputs( 0x080Cu, "[实时测量]" );
+            break;
+        }
+        if( Mothed_Ba == enumUserInput )
+					item = Menu_Select( menu, item, NULL );
+				else
+					item = Menu_Select( menu1, item, NULL );
+
+        switch ( item )
+        {
+        case 0:
+					if ( changed )
+					{
+							need_redraw = TRUE;
+							switch( MsgBox( "保存修改结果 ?", vbYesNoCancel + vbDefaultButton3 ))
+							{
+							case vbYes:
+									Configure.Mothed_Ba = Mothed_Ba;
+									Configure.set_Ba    = set_Ba;
+									ConfigureSave();
+									break;
+							case vbNo:
+									break;
+							case vbCancel:
+									item = 1u;
+									break;
+							default:
+									break;
+							}
+					}
+					break;
+
+        case 1:
+					switch ( Mothed_Ba )
+					{
+					default:
+					case enumUserInput:
+							Mothed_Ba = enumMeasureBa;
+							break;
+					case enumMeasureBa:
+							Mothed_Ba = enumUserInput;
+							break;
+					}
+					changed = TRUE;
+					need_redraw = TRUE;	 
+					break;
+        case 2:
+					if( Mothed_Ba == enumUserInput )
+          {
+						cls();
+            Lputs( 0x0202u, "测量大气压" );
+            do
+            {
+                FP32 Ba = get_Ba();
+                set_Ba = Ba * 100.0f + 0.5f;
+                if ( set_Ba > 12000u )
+                {
+                    set_Ba = 12000u;
+                }
+                if ( set_Ba <  3000u )
+                {
+                    set_Ba =  3000u;
+                }
+                ShowI16U( 0x0C05u, set_Ba, 0x0602u, "kPa" );
+            }
+            while ( ! hitKey( 100u ));
+            ( void ) getKey();
+            changed = TRUE;
+					}
+            need_redraw = TRUE;
+            break;
+        case 3:
+           if ( EditI16U( 0x180Cu, &set_Ba, 0x0602u ))
+            {
+                changed = TRUE;
+            }
+            if ( set_Ba > 12000u )
+            {
+                set_Ba = 12000u;
+            }
+            if ( set_Ba <  3000u )
+            {
+                set_Ba =  3000u;
+            }break;
+
+        default:
+            break;
+        }
+    }
+    while ( 0u != item );
+}
+
+
+
+static	void 	menu_Pr_Portect( void )
+{
+	uint8_t	item = 1u;
+	uint8_t i;
+	BOOL Changed = FALSE;
+	static	char	* Table;
+	static	char Table2[] = {
+	0x0D, 
+	0x13, };
+	static	char Table3[] = {
+	0x0C, 
+	0x10, 
+	0x14, };
+	static	char Table4[] = { 
+	0x0B, 
+	0x0E, 
+	0x11, 
+	0x14, };
+	static	char Table5[] = { 
+	0x0A, 
+	0x0D, 
+	0x10, 
+	0x13, 
+	0x16, };
+
+	static	struct	uMenu  menu2[] =
+	{
+		{ 0x0201u, "限压保护"},
+		{ 0x0D05u, "时均C"	},
+		{ 0x1305u, "时均D"	} ,
+	};	
+	static	struct	uMenu  menu3[] =
+	{
+		{ 0x0301u, "限压保护"},
+		{ 0x0C05u, "粉 尘"	},
+		{ 0x1005u, "时均C"	},
+		{ 0x1405u, "时均D"	} ,
+	};	
+	static	struct	uMenu  menu4[] =
+	{
+		{ 0x0401u, "限压保护"},
+		{ 0x0B05u, "日均A"	},
+		{ 0x0E05u, "日均B"	},
+		{ 0x1105u, "时均C"	},
+		{ 0x1405u, "时均D"	} ,
+	};
+	static	struct	uMenu  menu5[] =
+	{
+		{ 0x0501u, "限压保护"},
+		{ 0x0A05u, "粉 尘"	},
+		{ 0x0D05u, "日均A"	},
+		{ 0x1005u, "日均B"	},
+		{ 0x1305u, "时均C"	},
+		{ 0x1605u, "时均D"	} ,
+	};
+	static	struct	uMenu * menu[] =
+	{
+		menu2,
+		menu3,
+		menu4,
+		menu5,
+	};
+	switch( SamplerHasMax  )
+	{
+	case 2: Table = Table2;	break;
+	case 3:	Table = Table3;	break;
+	case 4:	Table = Table4;	break;
+	case 5:	Table = Table5;	break;
+	default:
+		break;
+	}
+	do
+	{
+		cls();			
+		Lputs( 0x0605u, "采样器" );		 Lputs( 0x0614u, "限压值" );
+		for( i = 0; i < SamplerHasMax; i ++ )
+		{
+			Lputs		( (Table[i] * 256 + 0x0D ), ":" );
+			ShowI16U( (Table[i] * 256 + 0x12 ), Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[i]], 0x0502u, " KPa" );
+		}
+		Menu_Redraw( menu[SamplerHasMax-2] );
+
+		item = Menu_Select( menu[SamplerHasMax-2], item, NULL );
+		switch( item )
+		{
+		case 1:
+			if(  EditI16U( ( Table[0] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]], 0x0502 ))
+			{
+// 				if( SamplerSelect == SP_TSP )
+// 				{
+// 					if( Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]] > 500 )
+// 						Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]] = 500;
+// 				}
+// 				else
+// 				{
+// 					if( Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]] > 1000 )
+// 						Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]] = 1000;						
+// 				}
+				Changed = TRUE;
+			}
+			break;
+		case 2:
+			if(  EditI16U( ( Table[1] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[1]], 0x0502 ))
+			{
+				Changed = TRUE;
+			}
+			break;
+		case 3:
+			if(  EditI16U( ( Table[2] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[2]], 0x0502 ))
+			{
+				Changed = TRUE;
+			}
+			break;
+		case 4:
+			if(  EditI16U( ( Table[3] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[3]], 0x0502 ))
+			{
+				Changed = TRUE;
+			}
+			break;
+		case 5:
+			if(  EditI16U( ( Table[4] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[4]], 0x0502 ))
+			{
+				Changed = TRUE;
+			}
+			break;
+		default:
+			break;
+		}		
+	}while( enumSelectESC != item );
+	
+	if( Changed == TRUE )
+	{
+		ConfigureSave();
+	}
+}
+
+
+/********************************** 功能说明 ***********************************
 *  系统配置 -> 采样开启的延时方式
 *******************************************************************************/
 static	void	menu_SelectDelayMode( void )
@@ -605,6 +938,7 @@ static	void	menu_SelectTimeMode( void )
     }
 }
 
+
 static	void	menu_ConfigureTime( void )
 {
     static	struct uMenu  const	menu[] =
@@ -636,480 +970,141 @@ static	void	menu_ConfigureTime( void )
     while ( enumSelectESC != item );
 }
 
-/********************************** 功能说明 ***********************************
-*  系统配置 -> 采样流量
-* 用户正常使用过程中不需要修改，原则上修改完采样流量后需要重新标定。
-* 时均采样流量在采样前由用户设置，不在此处设置，对应的需要分段标定。
-* 有这样有几种可能的组合：
-	粉尘 1.05m3（KB-1000）
-	粉尘 100L（KB-120F，KB6120A，KB6120B）
-	粉尘 100L + 0.2L 两路（KB-6120C）
-	日均 0.2L 两路（恒温恒流系列）
 
-*******************************************************************************/
-static	void	Configure_Flow_KB1000( void )
+static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
 {
-    MsgBox( "TODO KB-1000", vbOKOnly );
-}
-
-static	void	Configure_Flow_KB2400( void )
-{
-    static	struct  uMenu  const  menu[] =
+	 static	struct  uMenu  const   menu[] =
     {
-        { 0x0201u, "设置采样流量" },
-        { 0x0C00u, "日均A" },
-        { 0x1400u, "日均B" },
-
+        { 0x0201u, "流量量程选择 (L/m)" },
+        { 0x0C12u, "[0.2 - 1.0]" },
+        { 0x1612u, "[0.5 - 2.0]" },
     };
-    uint8_t	item = 0u;
-    BOOL	changed = FALSE;
-    BOOL	need_redraw = TRUE;
-
-    do
-    {
-        if ( need_redraw )
-        {
-            cls();
-            Menu_Redraw( menu );
-            need_redraw = FALSE;
-        }
-
-        ShowI16U( 0x0C0Fu, Configure.SetFlow[SP_R24_A], 0x0503u, " L/m" );
-        ShowI16U( 0x140Fu, Configure.SetFlow[SP_R24_B], 0x0503u, " L/m" );
-
-        item = Menu_Select( menu, item + 1u, NULL );
-        switch( item )
-        {
-        case 0:
-            if ( changed )
-            {
-                need_redraw = TRUE;
-                switch( MsgBox( "保存修改结果 ?", vbYesNoCancel + vbDefaultButton3 ))
-                {
-                case vbYes:
-                    ConfigureSave();
-                    break;
-                case vbNo:
-                    ConfigureLoad();
-                    break;
-                case vbCancel:
-                    item = 1u;
-                    break;
-                default:
-                    break;
-                }
-            }
-            break;
-        case 1:
-            if( EditI16U( 0x0C0Fu, & Configure.SetFlow[SP_R24_A], 0x0503u ))
-            {
-                if ( Configure.SetFlow[SP_R24_A] >  300u )
-                {
-                    Configure.SetFlow[SP_R24_A] =  300u;
-                }
-                if ( Configure.SetFlow[SP_R24_A] <  100u )
-                {
-                    Configure.SetFlow[SP_R24_A] =  100u;
-                }
-                changed = TRUE;
-            }
-            break;
-        case 2:
-            if( EditI16U( 0x140Fu, & Configure.SetFlow[SP_R24_B], 0x0503u ))
-            {
-                if ( Configure.SetFlow[SP_R24_B] >  300u )
-                {
-                    Configure.SetFlow[SP_R24_B] =  300u;
-                }
-                if ( Configure.SetFlow[SP_R24_B] <  100u )
-                {
-                    Configure.SetFlow[SP_R24_B] =  100u;
-                }
-                changed = TRUE;
-            }
-            break;
-        default:
-            break;
-        }
-    }
-    while( enumSelectESC != item );
-}
-
-static	void	Configure_Flow_KB120F( void )
-{
-    //	for kb120f, kb6120, kb6120b
-    static	struct  uMenu  const  menu[] =
-    {
-			{ 0x0201u, "设置粉尘流量" },
-			{ 0x0C00u, "流 量" },
-			{ 0x1400u, "限 压" }
-    };
-    uint8_t	item = 0u;
-    BOOL	changed = FALSE;
-    BOOL	need_redraw = TRUE;
-
-    do
-    {
-			if ( need_redraw )
-			{
-				cls();
-				Menu_Redraw( menu );
-				need_redraw = FALSE;
-			}
-			ShowI16U( 0x0C11u, Configure.SetFlow[SP_TSP], 0x0501u, " L/m" );
-			if ( Configure.Pr_Portect[SamplerSelect] != 0u )
-			{
-				ShowI16U( 0x1411u, Configure.Pr_Portect[SamplerSelect], 0x0502u, " kPa" );
-			}
-			else
-			{
-				Lputs( 0x1411, "   [停用]   " );
-			}
-
-			item = Menu_Select( menu, item + 1u, NULL );
-			switch( item )
-			{
-			case 0:
-				if ( changed )
-				{
-					need_redraw = TRUE;
-					switch( MsgBox( "保存修改结果 ?", vbYesNoCancel + vbDefaultButton3 ))
-					{
-					case vbYes:
-						ConfigureSave();
-						break;
-					case vbNo:
-						ConfigureLoad();
-						break;
-					case vbCancel:
-						item = 1u;
-						break;
-					default:
-							break;
-					}
-				}
-				break;
-			case 1:
-				if( EditI16U( 0x0C11u, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
-				{
-					if ( Configure.SetFlow[SP_TSP  ] > 1400u )
-					{
-						Configure.SetFlow[SP_TSP  ] = 1400u;
-					}
-					if ( Configure.SetFlow[SP_TSP  ] <  600u )
-					{
-						Configure.SetFlow[SP_TSP  ] =  600u;
-					}
-					changed = TRUE;
-				}
-				break;
-
-			case 2:
-				ShowI16U( 0x1411u, Configure.Pr_Portect[SamplerSelect], 0x0502u, " kPa" );
-
-				if( EditI16U( 0x1411u, & Configure.Pr_Portect[SamplerSelect], 0x0502u ))
-				{
-					if ( Configure.Pr_Portect[SamplerSelect] > 2000u )
-					{
-						Configure.Pr_Portect[SamplerSelect] = 2000u;
-					}
-					changed = TRUE;
-				}
-				break;
-			default:
-					break;
-       }
-    }
-    while( enumSelectESC != item );
-}
-
-static	void	Configure_Flow_KB6120C( void )
-{
-    static	struct  uMenu  const  menu[] =
-    {
-        { 0x0401u, "设置采样流量" },
-        { 0x0800u, "日均A" },
-				{ 0x0C00u, "日均B" },
-        { 0x1200u, "粉 尘" },
-        { 0x1600u, "限 压" },
-    };
-    uint8_t	item = 0u;
-    BOOL	changed = FALSE;
-    BOOL	need_redraw = TRUE;
-
-    do
-    {
-			if ( need_redraw )
-			{
-				cls();
-				Menu_Redraw( menu );
-				need_redraw = FALSE;
-			}
-
-			ShowI16U( 0x080Fu, Configure.SetFlow[SP_R24_A], 0x0503u, " L/m" );
-			ShowI16U( 0x0C0Fu, Configure.SetFlow[SP_R24_B], 0x0503u, " L/m" );
-			ShowI16U( 0x120Fu, Configure.SetFlow[SP_TSP  ], 0x0501u, " L/m" );
-			if ( Configure.Pr_Portect[SamplerSelect]!= 0u )
-			{
-				ShowI16U( 0x1611u, Configure.Pr_Portect[SamplerSelect], 0x0502u," kPa" );
-			}
-			else
-			{
-				Lputs( 0x1611, "[停用]      " );
-			}
-
-        item = Menu_Select( menu, item + 1u, NULL );
-        switch( item )
-        {
-        case 0:
-					if ( changed )
-					{
-							need_redraw = TRUE;
-							switch( MsgBox( "保存修改结果 ?", vbYesNoCancel + vbDefaultButton3 ))
-							{
-							case vbYes:
-									ConfigureSave();
-									break;
-							case vbNo:
-									ConfigureLoad();
-									break;
-							case vbCancel:
-									item = 1u;
-									break;
-							default:
-									break;
-							}
-					}
-					break;
-        case 1:
-          if( EditI16U( 0x080Fu, & Configure.SetFlow[SP_R24_A], 0x0503u ))
-					{
-							if ( Configure.SetFlow[SP_R24_A] >  300u )
-							{
-									Configure.SetFlow[SP_R24_A] =  300u;
-							}
-							if ( Configure.SetFlow[SP_R24_A] <  100u )
-							{
-									Configure.SetFlow[SP_R24_A] =  100u;
-							}
-							changed = TRUE;
-					}
-					break;
-				case 2:
-					if( EditI16U( 0x0C0Fu, & Configure.SetFlow[SP_R24_B], 0x0503u ))
-            {
-                if ( Configure.SetFlow[SP_R24_B] >  300u )
-                {
-                    Configure.SetFlow[SP_R24_B] =  300u;
-                }
-                if ( Configure.SetFlow[SP_R24_B] <  100u )
-                {
-                    Configure.SetFlow[SP_R24_B] =  100u;
-                }
-                changed = TRUE;
-            }
-           break;
-        case 3:
-           if( EditI16U( 0x120Fu, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
-            {
-                if ( Configure.SetFlow[SP_TSP  ] > 1400u )
-                {
-                    Configure.SetFlow[SP_TSP  ] = 1400u;
-                }
-                if ( Configure.SetFlow[SP_TSP  ] <  600u )
-                {
-                    Configure.SetFlow[SP_TSP  ] =  600u;
-                }
-                changed = TRUE;
-            }
-           break;  
-        case 4:
-           if( EditI16U( 0x1611u, &Configure.Pr_Portect[SamplerSelect], 0x0502u ) )
-					{
-						if ( Configure.Pr_Portect[SamplerSelect]> 2000u )
-						{
-							Configure.Pr_Portect[SamplerSelect]= 2000u;
-						}
-						changed = TRUE;
-					}
-					break;
-        default:
-            break;
-        }
-    }
-    while( enumSelectESC != item );
-}
-
-static	void	menu_ConfigureFlow( void )
-{
-    BOOL	hasPumpTSP = ( enumPumpNone != Configure.PumpType[SP_TSP ] );
-    BOOL	hasPumpR24 = (( enumPumpNone != Configure.PumpType[SP_R24_A] ) || ( enumPumpNone != Configure.PumpType[SP_R24_B] ));
-
-    if ( enumOrifice_2 == Configure.PumpType[SP_TSP ] )
-    {
-        Configure_Flow_KB1000();	//	大流量
-    }
-    else if (( ! hasPumpR24 ) && (   hasPumpTSP ))
-    {
-        Configure_Flow_KB120F();	//	中流量
-    }
-    else if ((   hasPumpR24 ) && ( ! hasPumpTSP ))
-    {
-        Configure_Flow_KB2400();	//	恒温恒流
-    }
-    else 
-			if ((   hasPumpR24 ) && (   hasPumpTSP ))
-    {
-        Configure_Flow_KB6120C();	//	KB-6120C，TSP泵+日均泵
-    }
-    else // (  ! hasPumpR24 ) && ( ! hasPumpTSP ))
-    {
-        //	什么都没装，不合理的设置。或者可能是最简单的KB-6E，不需要设置任何流量。
-//         MsgBox( "无须设置", vbOKOnly );
-    }
-}
-
-/********************************** 功能说明 ***********************************
-*  配置标况流量的定义温度
-*******************************************************************************/
-static	void	menu_SelectTstd( void )
-{
-    static  struct  uMenu  const  menu[] =
-    {
-        { 0x0301u, "选择标况温度" },
-        { 0x080Au, " 0℃(273K)" },
-        { 0x100Au, "20℃(293K)" },
-        { 0x180Au, "25℃(298K)" }
-    };
+		BOOL changed = FALSE;
     uint8_t	item;
 
-    uint8_t	SetTstd = Configure.SetTstd;
-    BOOL	changed = FALSE;
-
-    cls();
+    Part_cls();
     Menu_Redraw( menu );
-
-    do
-    {
-        switch ( SetTstd )
-        {
-        default:
-        case enum_273K:
-            Lputs( 0x0800u,"->"	);
-            Lputs( 0x1000u,"  "	);
-            Lputs( 0x1800u,"  "	);
-            item = 1;
-            break;
-        case enum_293K:
-            Lputs( 0x0800u,"  "	);
-            Lputs( 0x1000u,"->"	);
-            Lputs( 0x1800u,"  "	);
-            item = 2;
-            break;
-        case enum_298K:
-            Lputs( 0x0800u,"  "	);
-            Lputs( 0x1000u,"  "	);
-            Lputs( 0x1800u,"->"	);
-            item = 3;
-            break;
-        }
-        item = Menu_Select( menu, item, NULL );
-        switch ( item )
-        {
-        case 1:
-            SetTstd = enum_273K;
-            changed = TRUE;
-            break;
-        case 2:
-            SetTstd = enum_293K;
-            changed = TRUE;
-            break;
-        case 3:
-            SetTstd = enum_298K;
-            changed = TRUE;
-            break;
-        default:
-            break;
-        }
-    }
-    while( enumSelectESC != item );
-
-    if ( changed )
-    {
-        Configure.SetTstd = SetTstd;
-        ConfigureSave();
-    }
-}
-static	void	menu_ChangePassword( void )
-{
-
- uint32_t  password;	//	, passwordii
- BOOL Done = FALSE;
- 
- do{
-		cls();
-		password = Configure.Password;
-		Lputs( 0x0808u, "请输入新密码:" );
-		if ( ! EditI32U( 0x0E0Cu, &password, 0x0600u ))
+		do
 		{
-			 Done = TRUE;
+			if ( Configure.PumpType[SamplerSelect] == enumOrifice_1 )
+			{
+				Lputs( 0x0C0Eu, "->" );
+				item = 1u;
+			}
+			else	
+			{
+				Lputs( 0x160Eu, "->" );
+				item = 2u;
+			}
+
+			item = Menu_Select( menu, item, NULL );
+
+			switch( item )
+			{
+			case 1:
+				Configure.PumpType[SamplerSelect] = enumOrifice_1;
+				changed = TRUE;
+				break;
+			case 2:
+				Configure.PumpType[SamplerSelect] = enumOrifice_2;	
+				changed = TRUE;
+				break;
+			default:
+				break;
+			}
+		} while ( enumSelectESC != item );
+		
+		if( changed )
+		{
+			ConfigureSave();
+		}		
+}
+
+
+
+static	void	menu_Configure_Flow_TSP( void )
+{
+	BOOL	Done = FALSE;
+	do{	
+		Part_cls();
+		Lputs( 0x0C10, "粉尘流量设置");
+		ShowI16U( 0x1210u, Configure.SetFlow[SP_TSP], 0x0501u, "L/m" );
+		if( EditI16U( 0x1210u, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
+		{
+			if ( Configure.SetFlow[SP_TSP  ] > 1400u )
+			{
+				Configure.SetFlow[SP_TSP  ] = 1400u;
+			}
+			if ( Configure.SetFlow[SP_TSP  ] <  600u )
+			{
+				Configure.SetFlow[SP_TSP  ] =  600u;
+			}	
+			Done = TRUE;
+			if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
+				ConfigureSave();
+			else
+				ConfigureLoad();
 		}
 		
- }while( !Done );
- 
+	}while( !Done );		
+	
 }
+
 static	void	menu_SelectOther( void )
 {
-		static  struct  uMenu  const  menu1[] =
-    {
-        { 0x0301u, 	"其他配置" 		},
-        { 0x0802u,  "饱和水汽压"		},
-        { 0x1002u, 	"粉尘流量" 	},
-				{ 0x1802u,  "量程选择"		},
-    };
-		static  struct  uMenu  const  menu2[] =
-    {
-        { 0x0201u, 	"其他配置" 		},
-        { 0x0C02u,  "饱和水汽压"		},
-//         { 0x1002u, 	"粉尘流量" 	},
-				{ 0x1502u,  "量程选择"		},
-    };
+	static  struct  uMenu  menu1[] =
+	{
+		{ 0x0401u, 	"其他配置" 	},
+		{ 0x0602u,  "水汽压"	},
+		{ 0x0C02u,  "C路量程"},
+		{ 0x1202u,  "D路量程"},
+		{ 0x1802u, 	"粉尘泵" 	},
+	};
+	static  struct  uMenu  menu2[] =
+	{
+		{ 0x0201u, 	"其他配置" 	},
+		{ 0x0802u,  "水汽压"	},
+		{ 0x1002u,  "C路量程"},
+		{ 0x1802u,  "D路量程"},
+	};
+	static  struct  uMenu  * menu;
 		uint8_t	item = 1;
-    
+
 		do{
 			cls();
-			Menu_Redraw( menu1 );
-			item = Menu_Select( menu1, item, NULL );
+			if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
+				menu = menu1;
+			else
+				menu = menu2;
+			Menu_Redraw( menu );
+			item = Menu_Select( menu, item, NULL );
 			switch ( item )
 			{
 			case 1:
 				menu_Select_Calc_Pbv( );
 				break;
 			case 2:	
+				menu_SelectRange( SP_SHI_C );
 				break;
-// 			case 3:
-// 				menu_ChangePassword( );menu_SelectTstd( );
-// 				break;
+			case 3:
+				menu_SelectRange( SP_SHI_D );
+				break;
+			case 4:
+				menu_Configure_Flow_TSP();
+				break;
 			default:
 				break;
 			}
 		}while( enumSelectESC != item );
 }
 /********************************** 功能说明 ***********************************
-*  系统配置（允许用户操作的部分）
-
-时间，日期、时间、实时钟 可以放在维护主菜单
-大气压（预测/实测），环境温度
-恒温箱（恒温方式、恒温温度）未安装 或者 加热器未安装
-？文件号，文件使用情况
-延时方式、计时方式，或者放在配置时间选项。
-？显示屏对比度？灰度？
+*  采样配置（允许用户操作的部分）
 *******************************************************************************/
 static	void	menu_SampleConfigure( void )
 {
 		static	struct	uMenu  const menu[] =
     {
-        { 0x0302u, "配置"  },
+        { 0x0302u, "采样设定"  },
         { 0x0802u, "标况温度"},	{ 0x0814u, "限压保护" },
         { 0x1002u, "恒温装置"},	{ 0x1014u, "计时方式" },
         { 0x1802u, "大气压"  },	{ 0x1814u, "其他设置" } 
@@ -1134,6 +1129,7 @@ static	void	menu_SampleConfigure( void )
 				menu_Configure_Ba();
 				break;
 			case 2:
+				menu_Pr_Portect();
 				break;
 			case 4:
 				menu_ConfigureTime();
@@ -1147,41 +1143,6 @@ static	void	menu_SampleConfigure( void )
     }
     while ( enumSelectESC != item );
 }
-
-extern	menu_ConfigureDisplay( void );
-void	Instrument_Set( void )
-{
-	uint8_t	item = 1u;
-	static	struct uMenu  const  menu[] =
-	{
-			{ 0x0301u, "维护" },
-			{ 0x0802u, "时间设置" },
-			{ 0x1002u, "密码设置" },
-			{ 0x1802u, "显示设置" },
-	};
-		do
-	{
-		cls();
-		Menu_Redraw( menu );
-
-		item = Menu_Select( menu, item, NULL );
-		switch( item )
-		{
-		case 1:
-			menu_SetupClock();
-				break;
-		case 2:
-			menu_ChangePassword();
-				break;
-		case 3:
-			menu_ConfigureDisplay();
-			break;
-		default:
-				break;
-		}
-	}
-	while( enumSelectESC != item );
-}
 /********************************** 功能说明 ***********************************
 *	主菜单 -> 维护菜单
 *******************************************************************************/
@@ -1189,21 +1150,12 @@ extern	void	menu_ConfigureEx( void );
 extern	menu_Clean_FileNum( void );
 void	menu_Maintenance( void )
 {
-
-
-//     static	struct uMenu  const  menu[] =
-//     {
-//         { 0x0202u, "维护" },
-//         { 0x0C07u, "配置" }, { 0x0C19u, "标定" },
-//         { 0x1807u, "记录" }, { 0x1819u, "版本" }
-//     };
-	 static	struct uMenu  const  menu[] =
+	static	struct uMenu  const  menu[] =
 	{
 			{ 0x0302u, "维护" },
 			{ 0x0802u, "仪器设置" }, { 0x0814u, "仪器标定" },
 			{ 0x1002u, "采样累计" }, { 0x1014u, "采样设定" },
 			{ 0x1802u, "运行记录" }, { 0x1814u, "型号版本" }
-
 	};
 	uint8_t	item = 1u;
 
@@ -1236,7 +1188,7 @@ void	menu_Maintenance( void )
 			menu_Calibrate();
 				break;
 		case 3:
-			menu_Clean_FileNum();
+			menu_SamplerSum();
 			break;
 		case 4:
 			menu_SampleConfigure();
@@ -1296,6 +1248,9 @@ void	menu_Maintenance( void )
 // 				Done = TRUE;
 // 		}	
 
-
+// 	static	char Table2[] = { 0x0C, 0x14, };
+// 	static	char Table3[] = { 0x0A, 0x10, 0x16, };
+// 	static	char Table4[] = { 0x08, 0x0C, 0x12, 0x16, };
+// 	static	char Table5[] = { 0x06, 0x0A, 0x0E, 0x12, 0x16, };
 
 

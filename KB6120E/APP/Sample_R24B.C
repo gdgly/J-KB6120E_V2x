@@ -233,7 +233,7 @@ void  _task_Sample_R24_B( void )
 							File.run_loops  = iloop;
 							File.set_time 	= SampleSet[SamplerSelect].sample_time;
 
-							File.set_flow 	= Configure.SetFlow[SamplerSelect];
+							File.set_flow 	= Configure.SetFlow[SamplerSelect] * 100;
 
 							File.sample_begin = now_minute * 60u + 1u;
 						}

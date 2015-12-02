@@ -572,7 +572,7 @@ void	Query_File_TSP( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 		
@@ -833,7 +833,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 	}
 		
@@ -1054,7 +1054,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 // 			DisplaySetGrayVolt( gray * 0.01f );
 // 			Configure.DisplayGray = gray;
 // 			ConfigureSave();
-// 			graychanged = FALSE;;
+// 			graychanged = FALSE;
 // 		}		
 
 // 	} while ( opt_exit != option );
@@ -1245,7 +1245,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 // 			DisplaySetGrayVolt( gray * 0.01f );
 // 			Configure.DisplayGray = gray;
 // 			ConfigureSave();
-// 			graychanged = FALSE;;
+// 			graychanged = FALSE;
 // 		}		
 
 // 	} while ( opt_exit != option );
@@ -1507,7 +1507,7 @@ void	PowerLog_Query( void )
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
-			graychanged = FALSE;;
+			graychanged = FALSE;
 		}		
 
 		}
