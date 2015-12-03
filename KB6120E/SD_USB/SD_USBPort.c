@@ -374,14 +374,7 @@ void SD_Init(void)
 			}                                   				
 		}
 		
-		// 	i = CH376ReadBlock( buf );  /* 如果需要,可以读取数据块CH376_CMD_DATA.DiskMountInq,返回长度 */
-		// 	if ( i == sizeof( INQUIRY_DATA ) )  /* U盘的厂商和产品信息 */
-		// 	{  
-		// 		buf[ i ] = 0;
-		// 	}
-		// 	s = CH376DiskCapacity( (PUINT32) buf  ); 
 
-		// 	s = CH376DiskQuery ( (PUINT32) buf );	/* 查询磁盘剩余空间信息,扇区数 */	
 	}
 	SD_File_Creat();
 }
@@ -393,7 +386,7 @@ void	SD_File_Creat( void )
 {	
 	BOOL SetFlag = FALSE;
 	
-	Byte_CREAT_CON_DIR("\\Sampler");	//创建工作目录	( 如果已经存在，直接打开 )
+	Byte_CREAT_CON_DIR("\\SAMPLER");	//创建工作目录	( 如果已经存在，直接打开 )
 	
 	for ( i = 0; i < SP_Max; i ++ ) 
 	{
@@ -411,15 +404,15 @@ void	SD_File_Creat( void )
 		}
 	}
 	
-	if( ! ByteLoad( "\\Sampler\\POWER", 0, (uint8_t *) bufread, 15 ) )
+	if( ! ByteLoad( "\\SAMPLER\\POWER", 0, (uint8_t *) bufread, 15 ) )
 	{  
-		Byte_CREAT_WRITE_PATH( "\\Sampler\\POWER", sdinit,16 );// 不正常 重新创建
-		ByteFill( "\\Sampler\\POWER", 16, ( 100 + 4 -  sizeof ( sdinit ) ));
+		Byte_CREAT_WRITE_PATH( "\\SAMPLER\\POWER", sdinit,16 );// 不正常 重新创建
+		ByteFill( "\\SAMPLER\\POWER", 16, ( 100 + 4 -  sizeof ( sdinit ) ));
 	}
 	if( strncmp( (char*)sdinit, (char*)bufread, 15 ) ) //检测文件是否正常 返回零为正常
 	{
-		Byte_CREAT_WRITE_PATH( "\\Sampler\\POWER", sdinit,16 );//非零 不正常 重新创建
-		ByteFill( "\\Sampler\\POWER", 16, (100 + 4 - sizeof ( sdinit ) ));
+		Byte_CREAT_WRITE_PATH( "\\SAMPLER\\POWER", sdinit,16 );//非零 不正常 重新创建
+		ByteFill( "\\SAMPLER\\POWER", 16, (100 + 4 - sizeof ( sdinit ) ));
 	}	
 	if(SetFlag == TRUE )
 	{
@@ -445,8 +438,8 @@ const	char	* const USB_Loading[6]=
 };
 	uint8_t USBinit[512]={"USBInitSuccessful"};	
 	uint8_t i;
-	Byte_CREAT_CON_DIR("\\Sampler");	//创建工作目录	( 如果已经存在，直接打开 )
-	for( i =0; i < SamplerHasMax; i ++ )
+	Byte_CREAT_CON_DIR("\\SAMPLER");	//创建工作目录	( 如果已经存在，直接打开 )
+	for( i = 0; i < SamplerHasMax; i ++ )
 	{
 		Lputs( 0x0C0A,USB_Loading[SamplerTypeHas[i]]); 
 		if( ! ByteLoad( Save_NameChar[SamplerTypeHas[i]], 0, (uint8_t *) bufread, 15 ) )
@@ -458,6 +451,7 @@ const	char	* const USB_Loading[6]=
 			Byte_CREAT_WRITE_PATH( Save_NameChar[SamplerTypeHas[i]], USBinit,512 );//非零 不正常 重新创建
 		}
 	}	
+ 
 }
 
 
@@ -495,7 +489,6 @@ uint8_t USB_Init(void)
 					return 4; 										 //	勉强正常
 				}                                   				
 			}
-
 		}
 		else
 			return 2;													 //	U盘未连接! 
@@ -506,7 +499,14 @@ uint8_t USB_Init(void)
 
 /********  (C) COPYRIGHT 2015 青岛金仕达电子科技有限公司  **** End Of File ****/
 
+		// 	i = CH376ReadBlock( buf );  /* 如果需要,可以读取数据块CH376_CMD_DATA.DiskMountInq,返回长度 */
+		// 	if ( i == sizeof( INQUIRY_DATA ) )  /* U盘的厂商和产品信息 */
+		// 	{  
+		// 		buf[ i ] = 0;
+		// 	}
+		// 	s = CH376DiskCapacity( (PUINT32) buf  ); 
 
+		// 	s = CH376DiskQuery ( (PUINT32) buf );	/* 查询磁盘剩余空间信息,扇区数 */	
 
 
 

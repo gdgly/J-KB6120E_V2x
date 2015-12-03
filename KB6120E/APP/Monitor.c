@@ -579,7 +579,7 @@ static	void	monitor_R24_A ( void )
 	uint8_t option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumSamplerSelect  SamplerSelect = SP_R24_A;
+	const	enum	enumSamplerSelect  SamplerSelect = SP_R24_A;
 	
 	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -623,7 +623,7 @@ static	void	monitor_R24_B ( void )
 	uint8_t option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumSamplerSelect  SamplerSelect = SP_R24_A;
+	const	enum	enumSamplerSelect  SamplerSelect = SP_R24_B;
 	
 	while ( ( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -640,8 +640,8 @@ static	void	monitor_R24_B ( void )
 		
 		PumpWorkFlag();
 		
-	Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	
-		
+		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();
+
 		switch ( option )
 		{
 		case opt_qt_1:	ShowTimeState( SamplerSelect );	
@@ -653,6 +653,7 @@ static	void	monitor_R24_B ( void )
 
 		disposeKey( SamplerSelect, &option, opt_max );
 	}
+
 
 }
 
@@ -668,7 +669,7 @@ static	void	monitor_SHI_C ( void )
 	uint8_t	option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumSamplerSelect  SamplerSelect = SP_SHI_C;
+	const	enum	enumSamplerSelect  SamplerSelect = SP_SHI_C;
 
 	while (( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -712,7 +713,7 @@ static	void	monitor_SHI_D ( void )
 	uint8_t	option = opt_min;
 	uint16_t	iDelay = 1200u;	//	延时一段时间返回默认状态
 
-	enum	enumSamplerSelect  SamplerSelect = SP_SHI_C;
+	const	enum	enumSamplerSelect  SamplerSelect = SP_SHI_D;
 
 	while (( opt_exit != option ) && Sampler_isRunning( SamplerSelect ))
 	{
@@ -731,7 +732,8 @@ static	void	monitor_SHI_D ( void )
 
 		PumpWorkFlag();
 		
-		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	
+		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();
+
 		switch ( option )
 		{
 		case opt_qt_1:	ShowTimeState( SamplerSelect);	break;
@@ -795,7 +797,6 @@ void	monitor ( void )
 		case SP_R24_B:	monitor_R24_B();	break;
 		case SP_SHI_C:	monitor_SHI_C();	break;
 		case SP_SHI_D:	monitor_SHI_D();	break;
-// 		case SP_AIR:	monitor_AIR();	break;
 		}
 	
 	}	
@@ -815,7 +816,6 @@ void	SamplerTypeShow( uint16_t yx )
 		case SP_R24_B:	Lputs( yx, "<日均B>" );	break;
 		case SP_SHI_C:	Lputs( yx, "<时均C>" );	break;
 		case SP_SHI_D:	Lputs( yx, "<时均D>" );	break;
-// 		case SP_AIR:		Lputs( yx, "<大 气>" );	break;
 		default:				Lputs( yx, "<未 知>" );	break;
 		}
 }
@@ -849,49 +849,6 @@ void	SamplerTypeSwitch( void )
 		SamplerSelect =(enum enumSamplerSelect )SamplerTypeHas[0];
 	else
 		SamplerSelect = (enum	enumSamplerSelect)SamplerTypeHas[SamplerExchange];
-// 	switch ( SamplerSelect )
-// 	{
-// 	case SP_ALL:	if ( hasPumpTSP ) 
-// 								SamplerSelect = SP_TSP; 
-// 							else if ( hasPumpR24 ) 
-// 								SamplerSelect = SP_R24;
-// 							else if( hasPumpSHI) 
-// 								SamplerSelect = SP_SHI;
-// 							else if( hasPumpAIR ) 
-// 								SamplerSelect = SP_AIR;
-// 		break;
-// 		
-// 	case SP_TSP:	if ( hasPumpR24 ) 
-// 								SamplerSelect = SP_R24;
-// 							else if( hasPumpSHI) 
-// 								SamplerSelect = SP_SHI;
-// 							else if( hasPumpAIR ) 
-// 								SamplerSelect = SP_AIR;
-// 		break;	
-// 	case SP_R24:	if( hasPumpSHI) 
-// 								SamplerSelect = SP_SHI;
-// 							else if( hasPumpAIR ) 
-// 								SamplerSelect = SP_AIR;
-// 							else if( hasPumpTSP ) 
-// 								SamplerSelect = SP_TSP;					
-// 		break;
-// 	case SP_SHI:	if( hasPumpAIR ) 
-// 								SamplerSelect = SP_AIR;
-// 							else if( hasPumpTSP ) 
-// 								SamplerSelect = SP_TSP;	
-// 							else if ( hasPumpR24 ) 
-// 								SamplerSelect = SP_R24;			
-// 		break;
-// 	case SP_AIR:	if( hasPumpTSP ) .
-
-// 								SamplerSelect = SP_TSP;	
-// 							else if ( hasPumpR24 ) 
-// 								SamplerSelect = SP_R24;
-// 							else if( hasPumpSHI) 
-// 								SamplerSelect = SP_SHI;							
-// 		break;
-// 	default:	break;
-// 	}
 }
 
 void	menu_show_env_state( void )

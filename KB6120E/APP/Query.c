@@ -12,158 +12,98 @@
 /**
 	文件打印
 */
-// static	BOOL	PromptTest( void ){	return	FALSE; }
+static	BOOL	PromptTest( void ){	return	FALSE; }
 
-// static	void	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
-// {
-// 	CHAR	sbuffer[40];
-// 	struct	tm	t_tm;
-// 	time_t	now;
+extern	char	* const	TableSampler[];
 
-// 	while( ! PrinterInit( PromptTest ))
-// 	{
-// 		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
-// 		{
-// 			return;
-// 		}
-// 	}
-//   sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
-// 	PrinterPutString( sbuffer );
-// 	PrinterPutString( "粉尘采样记录" );
-// 	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );	PrinterPutString( sbuffer );
+static	void	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
+{
+	CHAR	sbuffer[40];
+	struct	tm	t_tm;
+	time_t	now;
 
-// 	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
-// 	sprintf( sbuffer, "开始时间:%2d月%2d日 %02d:%02d", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
-// 	PrinterPutString( sbuffer );
+	while( ! PrinterInit( PromptTest ))
+	{
+		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
+		{
+			return;
+		}
+	}
+  sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
+	PrinterPutString( sbuffer );
+	PrinterPutString( "日均采样记录" );
+	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );	PrinterPutString( sbuffer );
 
-// 	sprintf( sbuffer, "设置采样时间: %02u:%02u", pFile->set_time / 60u, pFile->set_time % 60u );	PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "设置采样流量: %5.1f L/m", pFile->set_flow * 0.1f );							PrinterPutString( sbuffer );
+	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
+	sprintf( sbuffer, "开始时间:%2d月%2d日 %02d:%02d", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
+	PrinterPutString( sbuffer );
 
-// 	sprintf( sbuffer, "累计采样时间: %02u:%02u", pFile->sum_min / 60u, pFile->sum_min % 60u ); 		PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(工): %7.1f L", pFile->vd  );										PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(标): %7.1f L", pFile->vnd );										PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(工): %6.2f L/m", (FP32)pFile->vd  / pFile->sum_min );				PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(标): %6.2f L/m", (FP32)pFile->vnd / pFile->sum_min );				PrinterPutString( sbuffer );
+	sprintf( sbuffer, "设置采样时间: %02u:%02u", pFile->set_time / 60u, pFile->set_time % 60u );	PrinterPutString( sbuffer );
+	sprintf( sbuffer, "设置采样流量: %5.1f L/m", pFile->set_flow * 0.1f );							PrinterPutString( sbuffer );
 
-// 	sprintf( sbuffer, "平均计前温度: %6.2f ℃ ", pFile->sum_tr / pFile->sum_min );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前压力: %6.2f kPa", pFile->sum_pr / pFile->sum_min );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均大气压力: %6.2f kPa", pFile->sum_Ba / pFile->sum_min );					PrinterPutString( sbuffer );
+	sprintf( sbuffer, "累计采样时间: %02u:%02u", pFile->sum_min / 60u, pFile->sum_min % 60u ); 		PrinterPutString( sbuffer );
+	sprintf( sbuffer, "采样体积(工): %7.1f L", pFile->vd  );										PrinterPutString( sbuffer );
+	sprintf( sbuffer, "采样体积(标): %7.1f L", pFile->vnd );										PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均流量(工): %6.2f L/m", (FP32)pFile->vd  / pFile->sum_min );				PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均流量(标): %6.2f L/m", (FP32)pFile->vnd / pFile->sum_min );				PrinterPutString( sbuffer );
 
-// 	now = get_Now();
-// 	(void)_localtime_r ( &now, &t_tm );
-// 	sprintf( sbuffer, "  == %4d/%2d/%2d %02d:%02d:%02d ==  ",
-// 	t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
-// 	PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均计前温度: %6.2f ℃ ", pFile->sum_tr / pFile->sum_min );					PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均计前压力: %6.2f kPa", pFile->sum_pr / pFile->sum_min );					PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均大气压力: %6.2f kPa", pFile->sum_Ba / pFile->sum_min );					PrinterPutString( sbuffer );
 
-// 	PrinterPutString( " " );	PrinterPutString( " " );
-// }
+	now = get_Now();
+	(void)_localtime_r ( &now, &t_tm );
+	sprintf( sbuffer, "  == %4d/%2d/%2d %02d:%02d:%02d ==  ",
+	t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
+	PrinterPutString( sbuffer );
 
-// static	void	Print_File_R24( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
-// {
-// 	CHAR	sbuffer[40];
-// 	struct	tm	t_tm;
-// 	time_t	now;
+	PrinterPutString( " " );	PrinterPutString( " " );
+}
 
-// 	while( ! PrinterInit( PromptTest ))
-// 	{
-// 		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
-// 		{
-// 			return;
-// 		}
-// 	}
+static	void	Print_File_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
+{
+	CHAR	sbuffer[40];
+	struct	tm	t_tm;
+	time_t	now;
 
-// 	sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
-// 	PrinterPutString( sbuffer );
-// 	PrinterPutString( "日均采样记录" );
-// 	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );	PrinterPutString( sbuffer );
+	while( ! PrinterInit( PromptTest ))
+	{
+		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
+		{
+			return;
+		}
+	}
 
-// 	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
-// 	sprintf( sbuffer, "开始时间:%2d月%2d日 %02d:%02d", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
-// 	PrinterPutString( sbuffer );
+	sprintf( sbuffer, "\r\n%s型 %s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
+	PrinterPutString( sbuffer );
+	PrinterPutString( TableSampler[SamplerSelect] );
+	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );	PrinterPutString( sbuffer );
 
-// 	sprintf( sbuffer, "设置采样时间: A %02u:%02u",	pFile->set_time[SamplerSelect] / 60u, pFile->set_time[SamplerSelect] % 60u );	PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "设置采样流量: A %5.3f L/m",	pFile->set_flow[SamplerSelect] * 0.001f );								PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "累计采样时间: A %02u:%02u",	pFile->sum_min[SamplerSelect] / 60u, pFile->sum_min[SamplerSelect] % 60u );		PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(标): A %7.1fL",		pFile->vnd[SamplerSelect] );											PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(标): A %6.3f L/m",	(FP32)pFile->vnd[SamplerSelect] / pFile->sum_min[SamplerSelect] );				PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(工): A %7.1fL",		pFile->vd[SamplerSelect] );											PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(工): A %6.3f L/m",	(FP32)pFile->vd[SamplerSelect] / pFile->sum_min[SamplerSelect] );				PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前温度: A %6.2f ℃",	pFile->sum_tr[SamplerSelect] / pFile->sum_min[SamplerSelect] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前压力: A %6.2f kPa",	pFile->sum_pr[SamplerSelect] / pFile->sum_min[SamplerSelect] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均大气压力: %6.2f kPa",	pFile->sum_Ba / pFile->sum_min[SamplerSelect] );						PrinterPutString( sbuffer );
+	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
+	sprintf( sbuffer, "开始时间:%2d月%2d日 %02d:%02d", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
+	PrinterPutString( sbuffer );
 
-// 	sprintf( sbuffer, "设置采样时间: B %02u:%02u",	pFile->set_time[SP_SP2] / 60u, pFile->set_time[SP_SP2] % 60u );	PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "设置采样流量: B %5.3f L/m",	pFile->set_flow[SP_SP2] * 0.001f );								PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "累计采样时间: B %02u:%02u",	pFile->sum_min[SP_SP2] / 60u, pFile->sum_min[SP_SP2] % 60u );		PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(标): B %7.1fL",		pFile->vnd[SP_SP2] );											PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(标): B %6.3f L/m",	(FP32)pFile->vnd[SP_SP2] / pFile->sum_min[SP_SP2] );				PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(工): B %7.1fL",		pFile->vd[SP_SP2] );											PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(工): B %6.3f L/m",	(FP32)pFile->vd[SP_SP2] / pFile->sum_min[SP_SP2] );				PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前温度: B %6.2f ℃ ",	pFile->sum_tr[SP_SP2] / pFile->sum_min[SP_SP2] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前压力: B %6.2f kPa",	pFile->sum_pr[SP_SP2] / pFile->sum_min[SP_SP2] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均大气压力: %6.2f kPa",	pFile->sum_Ba / pFile->sum_min[SP_SP2] );						PrinterPutString( sbuffer );
-// 	
+	sprintf( sbuffer, "设置采样时间:  %02u:%02u",	pFile->set_time / 60u, pFile->set_time % 60u );	PrinterPutString( sbuffer );
+	sprintf( sbuffer, "设置采样流量:  %5.3f L/m",	pFile->set_flow * 0.001f );								PrinterPutString( sbuffer );
+	sprintf( sbuffer, "累计采样时间:  %02u:%02u",	pFile->sum_min / 60u, pFile->sum_min % 60u );		PrinterPutString( sbuffer );
+	sprintf( sbuffer, "采样体积(标):  %7.1fL",		pFile->vnd );											PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均流量(标):  %6.3f L/m",	(FP32)pFile->vnd / pFile->sum_min );				PrinterPutString( sbuffer );
+	sprintf( sbuffer, "采样体积(工):  %7.1fL",		pFile->vd );											PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均流量(工):  %6.3f L/m",	(FP32)pFile->vd / pFile->sum_min );				PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均计前温度:  %6.2f ℃",	pFile->sum_tr / pFile->sum_min );					PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均计前压力:  %6.2f kPa",	pFile->sum_pr / pFile->sum_min );					PrinterPutString( sbuffer );
+	sprintf( sbuffer, "平均大气压力: %6.2f kPa",	pFile->sum_Ba / pFile->sum_min );						PrinterPutString( sbuffer );	
 
-// 	now = get_Now();	(void)_localtime_r ( &now, &t_tm );
-// 	sprintf( sbuffer, "  == %4d/%2d/%2d %02d:%02d:%02d ==  ",
-// 		t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
-// 	PrinterPutString( sbuffer );
+	now = get_Now();	(void)_localtime_r ( &now, &t_tm );
+	sprintf( sbuffer, "  == %4d/%2d/%2d %02d:%02d:%02d ==  ",
+		t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
+	PrinterPutString( sbuffer );
 
-// 	PrinterPutString( " " );	PrinterPutString( " " );
-// }
+	PrinterPutString( " " );	PrinterPutString( " " );
+}
 
-// static	void	Print_File_SHI( uint16_t FileNum, struct uFile_SHI const * pFile )
-// {
-// 	CHAR	sbuffer[40];
-// 	struct	tm	t_tm;
-// 	time_t	now;
 
-// 	while( ! PrinterInit( PromptTest ))
-// 	{
-// 		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
-// 		{
-// 			return;
-// 		}
-// 	}
-
-// 	sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
-// 	PrinterPutString( sbuffer );
-// 	PrinterPutString( "时均采样记录" );
-// 	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );	PrinterPutString( sbuffer );
-
-// 	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
-// 	sprintf( sbuffer, "开始时间:%2d月%2d日 %02d:%02d", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
-// 	PrinterPutString( sbuffer );
-
-// 	sprintf( sbuffer, "设置采样时间: C %02u:%02u",	pFile->set_time[SamplerSelect] / 60u, pFile->set_time[SamplerSelect] % 60u );		PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "设置采样流量: C %5.1f L/m",	pFile->set_flow[SamplerSelect] * 0.1f );									PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "累计采样时间: C %02u:%02u",	pFile->sum_min[SamplerSelect] / 60u, pFile->sum_min[SamplerSelect] % 60u );			PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(标): C %7.1fL",		pFile->vnd[SamplerSelect] );												PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(标): C %6.1f L/m",	(FP32)pFile->vnd[SamplerSelect] / pFile->sum_min[SamplerSelect] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(工): C %7.1fL",		pFile->vd[SamplerSelect] );												PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(工): C %6.1f L/m",	(FP32)pFile->vd[SamplerSelect] / pFile->sum_min[SamplerSelect] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前温度: C %6.2f ℃",	pFile->sum_tr[SamplerSelect] / pFile->sum_min[SamplerSelect] );						PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前压力: C %6.2f kPa",	pFile->sum_pr[SamplerSelect] / pFile->sum_min[SamplerSelect] );						PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均大气压力: %6.2f kPa",	pFile->sum_Ba / pFile->sum_min[SamplerSelect] );							PrinterPutString( sbuffer );
-
-// 	sprintf( sbuffer, "设置采样时间: D %02u:%02u",	pFile->set_time[SP_SP2] / 60u, pFile->set_time[SP_SP2] % 60u );		PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "设置采样流量: D %5.1f L/m",	pFile->set_flow[SP_SP2] * 0.1f );									PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "累计采样时间: D %02u:%02u",	pFile->sum_min[SP_SP2] / 60u, pFile->sum_min[SP_SP2] % 60u );			PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(标): D %7.1fL",		pFile->vnd[SP_SP2] );												PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(标): D %6.1f L/m",	(FP32)pFile->vnd[SP_SP2] / pFile->sum_min[SP_SP2] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "采样体积(工): D %7.1fL",		pFile->vd[SP_SP2] );												PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均流量(工): D %6.1f L/m",	(FP32)pFile->vd[SP_SP2] / pFile->sum_min[SP_SP2] );					PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前温度: D %6.2f ℃ ",	pFile->sum_tr[SP_SP2] / pFile->sum_min[SP_SP2] );						PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均计前压力: D %6.2f kPa",	pFile->sum_pr[SP_SP2] / pFile->sum_min[SP_SP2] );						PrinterPutString( sbuffer );
-// 	sprintf( sbuffer, "平均大气压力: %6.2f kPa",	pFile->sum_Ba / pFile->sum_min[SP_SP2] );							PrinterPutString( sbuffer );
-// 	
-// 	now = get_Now();	(void)_localtime_r ( &now, &t_tm );
-// 	sprintf( sbuffer, "  == %4d/%2d/%2d %02d:%02d:%02d ==  ",
-// 		t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );						PrinterPutString( sbuffer );
-// 	PrinterPutString( " " );	PrinterPutString( " " );
-// }
-
-// /***/
+/***/
 // static	void	Print_File_AIR( uint16_t FileNum, struct uFile_AIR const * pFile )
 // {
 // 	CHAR	sbuffer[40];
@@ -224,7 +164,7 @@ static void FPrintf_TSP(uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFil
 		{
 		//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
 		case 1:
-// 			Print_File_TSP( FileNum, pFile );
+			Print_File_TSP( FileNum, pFile );
 			state = TRUE;	
 			break;
 		case 2:		
@@ -244,7 +184,7 @@ static void FPrintf_TSP(uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFil
 }
 
 /*********************************************************************/
-static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFile)
+static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFile )
 {
 	  static	struct uMenu  const  menu[] =
 	{
@@ -267,7 +207,7 @@ static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t File
 		{
 		//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
 		case 1:
-// 			Print_File_R24( FileNum, pFile );
+			Print_File_R24_SHI( SamplerSelect, FileNum, pFile );
 			state = TRUE;	
 			break;
 		case 2:		
@@ -611,10 +551,9 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 				Lputs( 0x1202u, "标况体积:" );	ShowFP32( 0x1213u, File.vnd,  									0x0602u, "L " );
 				Lputs( 0x1602u, "采样时间:" );	ShowTIME( 0x1615u, File.sum_min  );
 				Lputs( 0x1A02u, "设置时间:" );	ShowTIME( 0x1A15u, File.set_time );
-				break;
-			
+				break;			
+			}
 		}
-		
 		switch ( getKey())
 		{
 		case K_UP:		//	向前（时间较早的文件）查找
@@ -751,7 +690,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 			ConfigureSave();
 			graychanged = FALSE;
 		}		
-	}
+	
 		
 	} while ( opt_exit != option );
 	
@@ -900,9 +839,9 @@ void	menu_SampleQuery( void )	//enum enumSamplerSelect SamplerSelect )
 	switch ( SamplerSelect )
 	{
 		case SP_TSP:		Query_File_TSP();	break;
-		case SP_R24_A:
-		case SP_R24_B:
-		case SP_SHI_C:
+		case SP_R24_A:	Query_File_SHI_R24(SamplerSelect );break;
+		case SP_R24_B:	Query_File_SHI_R24(SamplerSelect );break;
+		case SP_SHI_C:	Query_File_SHI_R24(SamplerSelect );break;
 		case SP_SHI_D:	Query_File_SHI_R24(SamplerSelect );break;
 		default:
 			break;

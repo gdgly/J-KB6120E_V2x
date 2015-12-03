@@ -132,23 +132,23 @@ void	Sampler_BootResume( void )
 	//	应根据仪器型号来确定有哪些采样需要开启
   uint32_t Rsec = get_Now();
 	  			
-	if( Configure.PumpType[SP_TSP] ==  enumOrifice_1 )
+// 	if( Configure.PumpType[SP_TSP] ==  enumOrifice_1 )
 		if ( SampleSet[SP_TSP].start != 0 )
 		   Sample_R( SP_TSP );
 
-	if( Configure.PumpType[SP_R24_A] ==  enumOrifice_1 )
+// 	if( Configure.PumpType[SP_R24_A] ==  enumOrifice_1 )
 		if ( SampleSet[SP_R24_A].start != 0 )
 			Sample_R( SP_R24_A );
 			
-	if( Configure.PumpType[SP_R24_B] ==  enumOrifice_1 )
+// 	if( Configure.PumpType[SP_R24_B] ==  enumOrifice_1 )
 		if ( SampleSet[SP_R24_B].start != 0 )
 			Sample_R( SP_R24_B );
 
-	if( Configure.PumpType[SP_SHI_C] ==  enumOrifice_1 )
+// 	if( Configure.PumpType[SP_SHI_C] ==  enumOrifice_1 )
 		if ( SampleSet[SP_SHI_C].start != 0 )
 			Sample_R( SP_SHI_C );
 			
-	if( Configure.PumpType[SP_SHI_D] ==  enumOrifice_1 )
+// 	if( Configure.PumpType[SP_SHI_D] ==  enumOrifice_1 )
 		if ( SampleSet[SP_SHI_D].start != 0 )
 			Sample_R( SP_SHI_D );
 

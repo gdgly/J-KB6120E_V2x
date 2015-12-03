@@ -119,9 +119,9 @@ void  _task_Sample_SHI_D( void )
 				{
 				default:
 				case enumBySet:	//	根据采样时间设置运行，扣除掉电，按设置时间运行
-					if ( now_minute < ( start + SampleSet[SamplerSelect].suspend_time ))
+					if ( now_minute < ( start + SampleSet[SamplerSelect].sample_time ))
 					{
-						Q_Sampler[SamplerSelect].timer = (uint16_t)(( start + SampleSet[SamplerSelect]. suspend_time ) - now_minute );	//	剩余运行时间（倒计时）
+						Q_Sampler[SamplerSelect].timer = (uint16_t)(( start + SampleSet[SamplerSelect]. sample_time ) - now_minute );	//	剩余运行时间（倒计时）
 					}
 					else
 					{
@@ -129,9 +129,9 @@ void  _task_Sample_SHI_D( void )
 					}
 					break;
 				case enumBySum:	//	不扣掉电，按累计时间运行
-					if ( File.sum_min         < SampleSet[SamplerSelect].suspend_time )
+					if ( File.sum_min         < SampleSet[SamplerSelect].sample_time )
 					{
-						Q_Sampler[SamplerSelect].timer = SampleSet[SamplerSelect]. suspend_time - File.sum_min;			//	剩余运行时间（倒计时）
+						Q_Sampler[SamplerSelect].timer = SampleSet[SamplerSelect]. sample_time - File.sum_min;			//	剩余运行时间（倒计时）
 					}
 					else
 					{
@@ -177,7 +177,7 @@ void  _task_Sample_SHI_D( void )
 				}
 
 				//	保护压力设置成零，禁止保护功能。
-				if (Configure.Pr_Portect[SamplerSelect] != 0u )
+				if ( Configure.Pr_Portect[SamplerSelect] != 0u )
 				{
 					FP32	Pr_Protect = Configure.Pr_Portect[SamplerSelect] * 0.01f;
 					
@@ -231,7 +231,7 @@ void  _task_Sample_SHI_D( void )
 						{	//	空文件，初始化
 							File.set_loops	= SampleSet[SamplerSelect].set_loops;
 							File.run_loops  = iloop;
-							File.set_time 	= SampleSet[SamplerSelect].suspend_time;
+							File.set_time 	= SampleSet[SamplerSelect].sample_time;
 
 							File.set_flow 	= Configure.SetFlow[SamplerSelect] * 100;
 
@@ -306,7 +306,7 @@ void  _task_Sample_SHI_D( void )
 			{
 			default:
 			case enumBySet:	//	根据采样时间设置运行，扣除掉电，按设置时间运行
-				start = ( start + SampleSet[SamplerSelect].suspend_time );
+				start = ( start + SampleSet[SamplerSelect].sample_time );
 				break;	
 			case enumBySum:	//	根据累计时间设置运行，不扣掉电，从当前时间延时
 				start = now_minute;
@@ -336,3 +336,5 @@ void  _task_Sample_SHI_D( void )
 
 	//	osThreadTerminate( osThreadGetId());
 }
+
+

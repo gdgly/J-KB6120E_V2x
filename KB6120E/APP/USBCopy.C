@@ -71,43 +71,43 @@ BOOL USBPrint_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFile )
 	CHAR	sbuffer[512];
 	CHAR	sbuffert[40];
 	static	uint32_t s;
-	s = ByteGetSize("\\Sampler\\TSP") / 512 ;	
+	s = ByteGetSize("\\SAMPLER\\TSP") / 512 ;	
  	memset( sbuffer, 0x00, 512 );	 
-	sprintf( sbuffert, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
+	sprintf( sbuffert, "\r\n%s型 %s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-  sprintf( sbuffert, "粉尘采样记录\r\n");
+  sprintf( sbuffert, "    粉尘采样记录\r\n");
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );	
-	sprintf( sbuffert, "文件:%3u [第%2u次/共%2u次]\r\n", FileNum, pFile->run_loops, pFile->set_loops );
+	sprintf( sbuffert, "文件:%4u [第%2u次/共%2u次]\r\n", FileNum, pFile->run_loops, pFile->set_loops );
   strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
 	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
-	sprintf( sbuffert, "开始时间:%2d月%2d日 %02d:%02d\r\n", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
+	sprintf( sbuffert, "开始时间:   %d月%d日 %02d:%02d\r\n", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "设置采样时间: %02u:%02u\r\n", pFile->set_time / 60u, pFile->set_time % 60u );
+	sprintf( sbuffert, "设置采样时间:    %02u:%02u\r\n", pFile->set_time / 60u, pFile->set_time % 60u );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "设置采样流量: %5.1f L/m\r\n", pFile->set_flow * 0.1f );
+	sprintf( sbuffert, "设置采样流量:    %5.1f L/m\r\n", pFile->set_flow * 0.1f );
   strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "累计采样时间: %02u:%02u\r\n", pFile->sum_min / 60u, pFile->sum_min % 60u );
+	sprintf( sbuffert, "累计采样时间:    %02u:%02u\r\n", pFile->sum_min / 60u, pFile->sum_min % 60u );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "采样体积(工): %7.1f L\r\n", pFile->vd  );
+	sprintf( sbuffert, "采样体积(工): %8.1f L\r\n", pFile->vd  );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "采样体积(标): %7.1f L\r\n", pFile->vnd );
+	sprintf( sbuffert, "采样体积(标): %8.1f L\r\n", pFile->vnd );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );  
-	sprintf( sbuffert, "平均流量(工): %6.2f L/m\r\n", (FP32)pFile->vd  / pFile->sum_min );				
+	sprintf( sbuffert, "平均流量(工):    %5.1f L/m\r\n", (FP32)pFile->vd  / pFile->sum_min );				
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "平均流量(标): %6.2f L/m\r\n", (FP32)pFile->vnd / pFile->sum_min );	
+	sprintf( sbuffert, "平均流量(标):    %5.1f L/m\r\n", (FP32)pFile->vnd / pFile->sum_min );	
   strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "平均计前温度: %6.2f ℃\r\n", pFile->sum_tr / pFile->sum_min );
+	sprintf( sbuffert, "平均计前温度:   %6.2f ℃\r\n", pFile->sum_tr / pFile->sum_min );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "平均计前压力: %6.2f kPa\r\n", pFile->sum_pr / pFile->sum_min );
+	sprintf( sbuffert, "平均计前压力:   %6.2f kPa\r\n", pFile->sum_pr / pFile->sum_min );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );                 
-	sprintf( sbuffert, "平均大气压力: %6.2f kPa\r\n", pFile->sum_Ba / pFile->sum_min );	
+	sprintf( sbuffert, "平均大气压力:   %6.2f kPa\r\n", pFile->sum_Ba / pFile->sum_min );	
   strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
 	now = get_Now( );(void)_localtime_r ( &now, &t_tm );	
 	sprintf( sbuffert, "  == %4d/%2d/%2d %02d:%02d:%02d ==\r\n",
 	t_tm.tm_year + 1900, t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 ); 
 	delay_us(1);	
-	if( !USBSave("\\Sampler\\TSP", s + 1, ( uint8_t *)sbuffer, ( sizeof( sbuffer ) + 511 ) / 512 ) )
+	if( !USBSave("\\SAMPLER\\TSP", s + 1, ( uint8_t *)sbuffer, ( sizeof( sbuffer ) + 511 ) / 512 ) )
 	{
 		SD_Init();
 		return FALSE; 
@@ -117,13 +117,13 @@ BOOL USBPrint_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFile )
 	return TRUE;
 }
 /************************************************************************/
-static	char	* const	TableSampler[] = 
+char	* const	TableSampler[] = 
 {
-	"粉 尘采样记录\r\n",
-	"日均A采样记录\r\n",
-	"日均B采样记录\r\n",
-	"时均C采样记录\r\n",
-	"时均D采样记录\r\n",
+	"    粉 尘采样记录\r\n",
+	"    日均A采样记录\r\n",
+	"    日均B采样记录\r\n",
+	"    时均C采样记录\r\n",
+	"    时均D采样记录\r\n",
 };
 
 BOOL USBPrint_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
@@ -131,29 +131,29 @@ BOOL USBPrint_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, s
 	struct	tm	t_tm;
 	time_t	now;
 	static	uint32_t s;
-	CHAR	sbuffer[1024];
+	CHAR	sbuffer[512];
 	CHAR	sbuffert[40];
 
 	s = ByteGetSize( Save_NameChar[SamplerSelect] ) / 512;	//	选择文件
- 	memset( sbuffer, 0x00, 1024 );	
-	sprintf( sbuffert, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
+ 	memset( sbuffer, 0x00, 512 );	
+	sprintf( sbuffert, "\r\n%s型 %s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
   sprintf( sbuffert, TableSampler[SamplerSelect]);				//	显示类型
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
 	sprintf( sbuffert, "文件:%3u [第%2u次/共%2u次]\r\n", FileNum, pFile->run_loops, pFile->set_loops );	
 	strcat( sbuffer, sbuffert );memset( sbuffert, 0x00, 40 );
 	(void)_localtime_r ( &pFile->sample_begin, &t_tm );
-	sprintf( sbuffert, "开始时间:%2d月%2d日 %02d:%02d\r\n", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
+	sprintf( sbuffert, "开始时间:%d月%d日 %02d:%02d\r\n", t_tm.tm_mon + 1, t_tm.tm_mday, t_tm.tm_hour, t_tm.tm_min );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "设置采样时间: %02u:%02u\r\n",	pFile->set_time / 60u, pFile->set_time % 60u );
+	sprintf( sbuffert, "设置采样时间:  %02u:%02u\r\n",	pFile->set_time / 60u, pFile->set_time % 60u );
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );	
-	sprintf( sbuffert, "设置采样流量: %5.3f L/m\r\n",	pFile->set_flow * 0.001f );								
+	sprintf( sbuffert, "设置采样流量:  %5.3f L/m\r\n",	pFile->set_flow * 0.001f );								
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );	
-	sprintf( sbuffert, "累计采样时间: %02u:%02u\r\n",	pFile->sum_min / 60u, pFile->sum_min % 60u );		
+	sprintf( sbuffert, "累计采样时间:  %02u:%02u\r\n",	pFile->sum_min / 60u, pFile->sum_min % 60u );		
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );	
-	sprintf( sbuffert, "采样体积(标): %7.1fL\r\n",		pFile->vnd );											
+	sprintf( sbuffert, "采样体积(标):%7.2f L\r\n",		pFile->vnd );											
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
-	sprintf( sbuffert, "平均流量(标): %6.3f L/m\r\n",	(FP32)pFile->vnd / pFile->sum_min );			
+	sprintf( sbuffert, "平均流量(标):  %5.3f L/m\r\n",	(FP32)pFile->vnd / pFile->sum_min );			
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );
 	sprintf( sbuffert, "平均计前温度: %6.2f ℃\r\n",	pFile->sum_tr / pFile->sum_min );				
 	strcat( sbuffer, sbuffert );	memset( sbuffert, 0x00, 40 );

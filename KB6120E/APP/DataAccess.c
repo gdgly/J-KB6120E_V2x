@@ -79,11 +79,11 @@ BOOL	SDEsave( const char * BUF_Name, uint32_t address,   uint8_t * buffer, uint3
 
 const	char	* const Save_NameChar[SP_Max] =
 {
-	"\\Sampler\\TSP",
-	"\\Sampler\\R24_A",
-	"\\Sampler\\R24_B",
-	"\\Sampler\\SHI_C",
-	"\\Sampler\\SHI_D",
+	"\\SAMPLER\\TSP",
+	"\\SAMPLER\\R24_A",
+	"\\SAMPLER\\R24_B",
+	"\\SAMPLER\\SHI_C",
+	"\\SAMPLER\\SHI_D",
 };
 void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct	uFile_TSP_SHI_R24	* pFile )
 {
@@ -140,7 +140,7 @@ void	File_Clean( void )
 // 	Byte_CREAT_WRITE_PATH( "\\SD_AIR\\AIR.TXT", sdinit, 16 );//  重新创建
 // 	ByteFill( "\\SD_AIR\\AIR.TXT", 16, ( FilePageSize_AIR - 16 ) + FilePageSize_AIR );
 
-	Byte_CREAT_CON_DIR( "\\Sampler" );
+	Byte_CREAT_CON_DIR( "\\SAMPLER" );
 	for( i = 0; i < SP_Max; i ++)
 	{
 		Byte_CREAT_WRITE_PATH( Save_NameChar[i], sdinit, 16 );//  重新创建
@@ -342,14 +342,14 @@ void	PowerLogSave_PowerBoot( void )
 {
 	struct	uPowerLog	log;
 	uint32_t	now;
-	PowerLogIndex = (ByteGetSize("\\Sampler\\POWER") -100)/8;
+	PowerLogIndex = (ByteGetSize("\\SAMPLER\\POWER") -100)/8;
 
 	log.shut =	Powertime_Read( PSHUT );//	BKP最后存储时间 作为 关机时间
 	powertime[3] = (uint8_t)(log.shut >> 24 );
 	powertime[2] = (uint8_t)(log.shut >> 16 );
 	powertime[1] = (uint8_t)(log.shut >>  8 );
 	powertime[0] = (uint8_t) log.shut;
-	SDEsave("\\Sampler\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) + 4 , powertime, 4);
+	SDEsave("\\SAMPLER\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) + 4 , powertime, 4);
 	
 	PowerLogIndex = ( PowerLogIndex % PowerLogIndex_Max ) + 1u;
 	now = get_Now();
@@ -360,7 +360,7 @@ void	PowerLogSave_PowerBoot( void )
 	powertime[2] = (uint8_t)(log.boot >> 16 );
 	powertime[1] = (uint8_t)(log.boot >>  8 );
 	powertime[0] = (uint8_t) log.boot;
-	SDEsave("\\Sampler\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) , powertime, 4);
+	SDEsave("\\SAMPLER\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) , powertime, 4);
 }
 
 void	PowerLogSave_PowerShut( void )
@@ -381,17 +381,17 @@ void		PowerLogLoad( uint16_t index, struct uPowerLog * pLog )
 		i =  PowerLogIndex - index ;
 	else
 		i = 0;
-		SDEload("\\Sampler\\POWER",x_PowerLogBase + ( PowerLogSize * i ),  pLog, 8 );
+		SDEload("\\SAMPLER\\POWER",x_PowerLogBase + ( PowerLogSize * i ),  pLog, 8 );
 }
 
 
 void PowerLog_Clean( void )
 {
-	Byte_CREAT_CON_DIR( "\\Sampler" );
-	Byte_CREAT_WRITE_PATH( "\\Sampler\\POWER", sdinit,16 );
-	ByteFill( "\\Sampler\\POWER", 16, ( x_PowerLogBase + 4 -  sizeof ( sdinit )));
-	PowerLogIndex = ( ByteGetSize( "\\Sampler\\POWER" ) - 100 ) / 8;
-	SDEsave( "\\Sampler\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) , powertime, 4 );
+	Byte_CREAT_CON_DIR( "\\SAMPLER" );
+	Byte_CREAT_WRITE_PATH( "\\SAMPLER\\POWER", sdinit,16 );
+	ByteFill( "\\SAMPLER\\POWER", 16, ( x_PowerLogBase + 4 -  sizeof ( sdinit )));
+	PowerLogIndex = ( ByteGetSize( "\\SAMPLER\\POWER" ) - 100 ) / 8;
+	SDEsave( "\\SAMPLER\\POWER", x_PowerLogBase + ( PowerLogSize * PowerLogIndex ) , powertime, 4 );
 }
 
 /********************************** 功能说明 ***********************************
