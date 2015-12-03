@@ -387,7 +387,7 @@ void SD_Init(void)
 }
 
 #define	FilePageSize_TSP_SHI_R24  40u
-extern	const	char	* const Save_NameChar[SP_Max];
+
 uint8_t  sdinit[16]={"SDInitSuccessful"};
 void	SD_File_Creat( void )
 {	

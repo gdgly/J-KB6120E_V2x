@@ -1,6 +1,6 @@
 void  _task_Sample_R24_A( void )
 {
-	const enum enumSamplerSelect	SamplerSelect =   SP_R24_A;
+	const enum enumSamplerSelect	SamplerSelect = SP_R24_A;
 
 	BOOL	PumpState;
 

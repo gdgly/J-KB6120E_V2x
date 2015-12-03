@@ -225,7 +225,7 @@ void menu_SamplerSum( void )
 	static	char Table3[] = { 0x0C, 0x10, 0x14, };
 	static	char Table4[] = { 0x0B, 0x0E, 0x11, 0x14, };
 	static	char Table5[] = { 0x0A, 0x0D, 0x10, 0x13, 0x16, };
-	static	char	* TableSampler[] = 
+	static	char	* const	TableSampler[] = 
 	{
 		"粉 尘:",
 		"日均A:",
@@ -359,7 +359,7 @@ static	void	Configure_HCBox( void )
 {
     static  CHAR  const  MDS[][6] =
     {
-        { "S关闭" }, { "H加热" }, { "C制冷" } , { "A自动" }
+        { "S停用" }, { "H加热" }, { "C制冷" } , { "A自动" }
     };
     static	struct	uMenu	const	menu[] =
     {
@@ -839,29 +839,29 @@ static	void	menu_SelectDelayMode( void )
 {
     static	struct  uMenu  const   menu[] =
     {
-        { 0x0201u, "选择采样开始方式" },
-        { 0x0C07u, "[定时启动]" },
-        { 0x1407u, "[延时启动]" },
+			{ 0x0201u, "选择采样开始方式" },
+			{ 0x0C14u, "[定时启动]" },
+			{ 0x1414u, "[延时启动]" },
     };
 
     uint8_t	item;
 
-    cls();
+    Part_cls();
     Menu_Redraw( menu );
     switch ( Configure.Mothed_Delay )
     {
     default:
-        Lputs( 0x0C00u, " >>" );
-        item = 1u;
-        break;
+			Lputs( 0x0C0Eu, " >>" );
+			item = 1u;
+			break;
     case enumByAccurate:
-        Lputs( 0x0C00u, " ->" );
-        item = 1u;
-        break;
+			Lputs( 0x0C0Eu, " ->" );
+			item = 1u;
+			break;
     case enumByDelay:
-        Lputs( 0x1400u, " ->" );
-        item = 2u;
-        break;
+			Lputs( 0x140Eu, " ->" );
+			item = 2u;
+			break;
     }
 
     item = Menu_Select( menu, item, NULL );
@@ -869,23 +869,27 @@ static	void	menu_SelectDelayMode( void )
     switch( item )
     {
     case 1:
-        if ( Configure.Mothed_Delay != enumByAccurate )
-        {
-            Configure.Mothed_Delay = enumByAccurate;
-            ConfigureSave();
-        }
-        break;
+			if ( Configure.Mothed_Delay != enumByAccurate )
+			{
+					Configure.Mothed_Delay = enumByAccurate;
+					ConfigureSave();
+			}
+			break;
     case 2:
-        if ( Configure.Mothed_Delay != enumByDelay )
-        {
-            SampleSet[SP_TSP].delayt = 1u;
-            SampleSetSave();
-            Configure.Mothed_Delay = enumByDelay;
-            ConfigureSave();
-        }
-        break;
+			if ( Configure.Mothed_Delay != enumByDelay )
+			{
+				uint8_t i;
+				for( i = 0; i < SP_Max; i ++ )
+				{
+					SampleSet[(enum enumSamplerSelect)i].delayt = 1u;
+				}	
+				SampleSetSave();
+				Configure.Mothed_Delay = enumByDelay;
+				ConfigureSave();
+			}
+			break;
     default:
-        break;
+			break;
     }
 }
 
@@ -897,26 +901,26 @@ static	void	menu_SelectTimeMode( void )
     static	struct uMenu  const	menu[] =
     {
         { 0x0201u, "选择采样计时方式" },
-        { 0x0C07u, "[停电扣除]" },
-        { 0x1407u, "[停电补齐]" },
+        { 0x0C14u, "[停电扣除]" },
+        { 0x1414u, "[停电补齐]" },
     };
 
     uint8_t item;
 
-    cls();
+    Part_cls();
     Menu_Redraw( menu );
     switch ( Configure.Mothed_Sample )
     {
     default:
-        Lputs( 0x0C00u, " >>" );
+        Lputs( 0x0C0Eu, " >>" );
         item = 1u;
         break;
     case enumBySet:
-        Lputs( 0x0C00u, " ->" );
+        Lputs( 0x0C0Eu, " ->" );
         item = 1u;
         break;
     case enumBySum:
-        Lputs( 0x1400u, " ->" );
+        Lputs( 0x140Eu, " ->" );
         item = 2u;
         break;
     }
@@ -944,15 +948,15 @@ static	void	menu_ConfigureTime( void )
     static	struct uMenu  const	menu[] =
     {
         { 0x0201u, "选择时间控制方式" },
-        { 0x0C02u, "开机延时方式" },
-        { 0x1402u, "采样定时方式" },
+        { 0x0C02u, "开机延时" },
+        { 0x1402u, "采样定时" },
     };
 
     uint8_t item = 1;
-
+		cls();
     do
-    {
-        cls();
+    {			
+        Part_cls();
         Menu_Redraw( menu );
         item = Menu_Select( menu, item, NULL );
         switch ( item )
@@ -1024,29 +1028,25 @@ static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
 
 static	void	menu_Configure_Flow_TSP( void )
 {
-	BOOL	Done = FALSE;
-	do{	
-		Part_cls();
-		Lputs( 0x0C10, "粉尘流量设置");
-		ShowI16U( 0x1210u, Configure.SetFlow[SP_TSP], 0x0501u, "L/m" );
-		if( EditI16U( 0x1210u, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
+	Part_cls();
+	Lputs( 0x0C10, "粉尘流量设置");
+	ShowI16U( 0x1210u, Configure.SetFlow[SP_TSP], 0x0501u, "L/m" );
+	if( EditI16U( 0x1210u, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
+	{
+		if ( Configure.SetFlow[SP_TSP  ] > 1400u )
 		{
-			if ( Configure.SetFlow[SP_TSP  ] > 1400u )
-			{
-				Configure.SetFlow[SP_TSP  ] = 1400u;
-			}
-			if ( Configure.SetFlow[SP_TSP  ] <  600u )
-			{
-				Configure.SetFlow[SP_TSP  ] =  600u;
-			}	
-			Done = TRUE;
-			if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
-				ConfigureSave();
-			else
-				ConfigureLoad();
+			Configure.SetFlow[SP_TSP  ] = 1400u;
 		}
+		if ( Configure.SetFlow[SP_TSP  ] <  600u )
+		{
+			Configure.SetFlow[SP_TSP  ] =  600u;
+		}	
 		
-	}while( !Done );		
+		if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
+			ConfigureSave();
+		else
+			ConfigureLoad();
+	}
 	
 }
 

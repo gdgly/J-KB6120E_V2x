@@ -1279,14 +1279,13 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 			{
 				changed = TRUE;
 				Flown = ( FP32 ) Flow32;
-				if( slope != 0 )
-					Flow  = Flow / ( slope * 0.001 );
+				if( slope >= 100 )
+				{
+					if( Flow != 0)
+						slope =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[SamplerSelect] / slope) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+				}	
 				else
-					Flow = Flown / 1000;
-				if( Flow != 0 )				
-					slope =(uint16_t) ( Flown / Flow ) ; 
-				else
-					slope = 1000; 
+					slope = 1000;
 			}
 			cls();
 			break;
@@ -1443,7 +1442,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					if( * p_FlowK >= 100 )
 					{
 						if(Flow != 0)
-							* p_FlowK =(uint16_t) ( ( Flown / (Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) );	//( (Flown * 100) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) );	//( (Flown * 1000) / ((Configure.SetFlow[SamplerSelect] ) / (* p_FlowK * 0.001)) );
 					}
 					else
 						* p_FlowK = 1000;
@@ -1461,7 +1460,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					if( * p_FlowK >= 100 )
 					{
 						if( Flow != 0)
-							* p_FlowK =(uint16_t) ( ( Flown / (FP32)(Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
 					}	
 					else
 						* p_FlowK = 1000;

@@ -1,6 +1,6 @@
 void  _task_Sample_R24_B( void )
 {
-	const enum enumSamplerSelect       SamplerSelect = SP_R24_B;
+	const enum enumSamplerSelect	SamplerSelect = SP_R24_B;
 
 	BOOL	PumpState;
 
@@ -260,21 +260,7 @@ void  _task_Sample_R24_B( void )
 							File.sum_min += 1u;
 						}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-							File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );
+					File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );
 					}
 					now_minute = tt;
 				}
@@ -285,7 +271,7 @@ void  _task_Sample_R24_B( void )
 				Q_Sampler[SamplerSelect].vnd      = File.vnd;
 
 			}
-			
+
 			//	1.2 结束当前采样
 			if ( File.sum_min > 0u )
 			{
@@ -336,3 +322,4 @@ void  _task_Sample_R24_B( void )
 
 	//	osThreadTerminate( osThreadGetId());
 }
+

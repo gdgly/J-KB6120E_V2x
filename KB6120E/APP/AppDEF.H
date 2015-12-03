@@ -276,6 +276,7 @@ extern	uint16_t	average( uint16_t const * pArray, const uint8_t count );
 
 extern	void	menu_ConfigureDisplay( void );
 
+extern	const	char	* const Save_NameChar[SP_Max];
 #include "SENSOR.H"
 #include "EEPROM.H"
 

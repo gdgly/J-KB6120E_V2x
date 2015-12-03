@@ -112,7 +112,7 @@ void	show_env_state( void )
 			}
 			else	//	OutValue == 0.0f
 			{			
-				Lputs( 0x1510u, "输 出:" );		Lputs( 0x1814u," [关闭]    " );
+				Lputs( 0x1510u, "输 出:" );		Lputs( 0x1814u,"   --       " );
 			}
 		}
 		break;
@@ -130,7 +130,7 @@ void	show_env_state( void )
 				}
 				else
 				{			
-					Lputs( 0x1510u, "输 出:");	Lputs( 0x1814u," [关闭]    " );
+					Lputs( 0x1510u, "输 出:");	Lputs( 0x1814u,"   --       " );
 				}
 			}
 			else
@@ -307,7 +307,7 @@ static	void	ShowPumpBefore( enum enumSamplerSelect SamplerSelect )
 				Lputs ( 0x0A02u, "标况体积: " 	);		ShowFP32    ( 0x0A13u, p->vnd, 0x0600u, "L" );
 				Lputs ( 0x0E02u, "工   况: "	);		ShowFP32    ( 0x0E11u, flow,   0x0701u, "L/m" );
 				Lputs ( 0x1202u, "标   况: "	);		ShowFP32    ( 0x1211u, fstd,   0x0701u, "L/m" );	
-				Lputs ( 0x1602u, "输   出:   ");	ShowPercent ( 0x1615u, OutValue );
+				Lputs ( 0x1602u, "输   出:   ");		ShowPercent ( 0x1615u, OutValue );
 
 			}
 			break;
@@ -315,22 +315,22 @@ static	void	ShowPumpBefore( enum enumSamplerSelect SamplerSelect )
 		case SP_R24_B:
 		case SP_SHI_C:
 		case SP_SHI_D:
-			Lputs ( 0x0602u, "标况体积: "	);		ShowFP32 ( 0x0611u, p->vnd,  0x0702u, "L" );
+			Lputs ( 0x0602u, "标况体积: "	);		ShowFP32 ( 0x0613u, p->vnd,  0x0702u, "L" );
 			Lputs ( 0x0A02u, "标   况: "	);		ShowFP32 ( 0x0A13u, fstd,    0x0703u, "L/m" );
-			Lputs ( 0x0E02u, "输   出: "	);		ShowPercent ( 0x0E15u, OutValue );
+			Lputs ( 0x0E02u, "输   出: "	);		ShowPercent ( 0x0E17u, OutValue );
 		switch ( Configure.HeaterType		)
 		{
 		default:
 		case enumHeaterNone:	break;	//	MsgBox( "未安装恒温箱", vbOKOnly );	break;
 		case enumHCBoxOnly://			空格->防止花屏
 			Lputs ( 0x1202u, "恒温箱温度:  " );	ShowFP32 ( 0x1215u, get_HCBoxTemp(),     0x0602u, "℃" );
-			Lputs ( 0x1602u, "恒温箱输出:" );		ShowFP32 ( 0x1615u, get_HCBoxOutput(),   0x0501u, "% " );
-			Lputs ( 0x1A02u, "恒温箱风扇:" );		ShowI16U ( 0x1A15u, get_HCBoxFanSpeed(), 0x0500u, "RPM" );
+			Lputs ( 0x1602u, "恒温箱输出:" );		ShowFP32 ( 0x1617u, get_HCBoxOutput(),   0x0501u, "% " );
+			Lputs ( 0x1A02u, "恒温箱风扇:" );		ShowI16U ( 0x1A17u, get_HCBoxFanSpeed(), 0x0500u, "rpm" );
 			break;	
 		case enumHeaterOnly:
 			Lputs ( 0x1202u, "加热器            " );	
 			Lputs ( 0x1602u, "加热器温度:" );		ShowFP32 ( 0x1615u, get_HeaterTemp(),     0x0602u, "℃" );
-			Lputs ( 0x1A02u, "加热器输出:" );		ShowFP32 ( 0x1A15u, get_HeaterOutput(),   0x0501u, "%" );
+			Lputs ( 0x1A02u, "加热器输出:" );		ShowFP32 ( 0x1A17u, get_HeaterOutput(),   0x0501u, "%" );
 			break;
 		case enumHCBoxHeater:
 // 			set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
@@ -596,11 +596,7 @@ static	void	monitor_R24_A ( void )
 		
 		PumpWorkFlag();
 		
-		switch ( SamplerSelect )
-		{
-		case SP_R24_A:		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();	break;
-		case SP_R24_B:		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	break;
-		}
+		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();
 
 		switch ( option )
 		{
@@ -644,12 +640,8 @@ static	void	monitor_R24_B ( void )
 		
 		PumpWorkFlag();
 		
-		switch ( SamplerSelect )
-		{
-		case SP_R24_A:		Lputs ( 0x010Eu, "日均A" );		Show_std_clock();	break;
-		case SP_R24_B:		Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	break;
-		}
-
+	Lputs ( 0x010Eu, "日均B" );		Show_std_clock();	
+		
 		switch ( option )
 		{
 		case opt_qt_1:	ShowTimeState( SamplerSelect );	
@@ -695,12 +687,7 @@ static	void	monitor_SHI_C ( void )
 
 		PumpWorkFlag();
 		
-
-		switch ( SamplerSelect )
-		{
-		case SP_SHI_C:		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();break;
-		case SP_SHI_D:		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	break;
-		}
+		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();
 
 		switch ( option )
 		{
@@ -744,13 +731,7 @@ static	void	monitor_SHI_D ( void )
 
 		PumpWorkFlag();
 		
-
-		switch ( SamplerSelect )
-		{
-		case SP_SHI_C:		Lputs ( 0x010Eu, "时均C" );		Show_std_clock();break;
-		case SP_SHI_D:		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	break;
-		}
-
+		Lputs ( 0x010Eu, "时均D" );		Show_std_clock();	
 		switch ( option )
 		{
 		case opt_qt_1:	ShowTimeState( SamplerSelect);	break;
