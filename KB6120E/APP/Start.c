@@ -58,7 +58,7 @@ void	menu_Main( void )
 
 		cls();
 		Menu_Redraw( menu );
-		SamplerTypeShow( 0x010Eu );		
+		SamplerTypeShow( 0x010Fu );		
 		WBMP( 0x1818, menu[1].yx-0x04, SAMPLESET );
 		WBMP( 0x1818, menu[2].yx-0x04, SAMPLE );
 		WBMP( 0x1818, menu[3].yx-0x04, QUERY );

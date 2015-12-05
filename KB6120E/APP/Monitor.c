@@ -549,12 +549,13 @@ void	monitor_TSP( void )
 			}
 		}	
 		
-		SamplerTypeShow( 0x010Eu );
+// 		SamplerTypeShow( 0x010Eu );
+		
 		WBMP( 0x0290,0x0502, STROCK);
 		WBMP( 0x0290,0x0514, STROCK);
 		Show_std_clock();
 		PumpWorkFlag();
-		
+		Lputs ( 0x010Eu, "粉 尘" );
 		switch ( option )
 		{
 		case opt_qt_1:	ShowTimeState( SamplerSelect );	break;
@@ -809,15 +810,21 @@ enum  enumSamplerSelect  SamplerSelect; 	//	= SP_TSP;
 
 void	SamplerTypeShow( uint16_t yx )
 {
+static	const	char STROCKx[] =
+{
+	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+};
 		switch ( SamplerSelect )
 		{
-		case SP_TSP: 		Lputs( yx, "<粉 尘>" );	break;
-		case SP_R24_A:	Lputs( yx, "<日均A>" );	break;
-		case SP_R24_B:	Lputs( yx, "<日均B>" );	break;
-		case SP_SHI_C:	Lputs( yx, "<时均C>" );	break;
-		case SP_SHI_D:	Lputs( yx, "<时均D>" );	break;
-		default:				Lputs( yx, "<未 知>" );	break;
+		case SP_TSP: 		Lputs( yx, "粉 尘" );	break;
+		case SP_R24_A:	Lputs( yx, "日均A" );	break;
+		case SP_R24_B:	Lputs( yx, "日均B" );	break;
+		case SP_SHI_C:	Lputs( yx, "时均C" );	break;
+		case SP_SHI_D:	Lputs( yx, "时均D" );	break;
+		default:				Lputs( yx, "未 知" );	break;
 		}
+		WBMP( 0x0240,yx+0x0300, STROCKx); //显示横线
 }
 uint8_t	SamplerTypeHas[SP_Max];
 uint8_t SamplerHasMax = 0;

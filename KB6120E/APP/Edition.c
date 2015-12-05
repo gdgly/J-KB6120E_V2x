@@ -137,8 +137,8 @@ void	ConfigureLoadDefault_KB6120E( void )
 				 
 		Configure.SetTstd = enum_293K;			//	标况流量的定义温度 
 		
-		Configure.Mothed_Delay = enumByDelay;	//	采样开始时间方式
-		Configure.Mothed_Sample = enumBySet;	//	采样时间控制方式
+		Configure.Mothed_Delay = enumByDelay;	//	采样开始时间方式--延时启动
+		Configure.Mothed_Sample = enumBySet;	//	采样时间控制方式--停电扣除
 
 		Configure.Mothed_Ba = enumMeasureBa;	//	大气压力获取方式
 		Configure.set_Ba    = 10133u;			//	保存用户输入气压

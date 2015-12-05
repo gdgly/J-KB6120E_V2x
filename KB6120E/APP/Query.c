@@ -156,7 +156,7 @@ static void FPrintf_TSP(uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFil
 	{
 		cls();
 		Menu_Redraw( menu );
-		SamplerTypeShow( 0x010Eu );
+		SamplerTypeShow( 0x010Fu );
      
 		item = Menu_Select( menu, item, NULL );
 		
@@ -199,7 +199,7 @@ static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t File
 	{
 		cls();
 		Menu_Redraw( menu );
-		SamplerTypeShow( 0x010Eu );
+		SamplerTypeShow( 0x010Fu );
      
 		item = Menu_Select( menu, item, NULL );
 		

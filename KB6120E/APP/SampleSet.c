@@ -36,7 +36,15 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 		case 1:	if ( EditTIME( 0x061Cu, &( SampleSet[SamplerSelect].sample_time )))					{ changed = TRUE; }	break;
 		case 2:	if ( EditTIME( 0x0C1Cu, &( SampleSet[SamplerSelect].suspend_time )))				{ changed = TRUE; }	break;
 		case 3:	if ( EditI16U( 0x121Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))	{ changed = TRUE; }	break;
-		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))		{ ConfigureSave();}	break;	
+		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))
+						{
+							if( Configure.SetFlow[SamplerSelect] < 1 )
+								Configure.SetFlow[SamplerSelect] = 1;
+							if( Configure.SetFlow[SamplerSelect] > 10 )
+								 Configure.SetFlow[SamplerSelect] = 10;
+								ConfigureSave();
+						}	
+						break;	
 			
 		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
 		}
@@ -96,7 +104,7 @@ void	menu_SampleSetup( void )
 {
 	static	struct uMenu  const  menu_x[] =
 	{
-		{ 0x0401u, "设 置" },
+		{ 0x0401u, "采样设置" },
 		{ 0x060Eu, "采样时间" },
 		{ 0x0C0Eu, "间隔时间" },
 		{ 0x120Eu, "采样次数" },
@@ -105,7 +113,7 @@ void	menu_SampleSetup( void )
 	
 	static	struct uMenu  const  menu_TSP[] =
 	{
-		{	0x0301u, "设 置" },
+		{	0x0301u, "采样设置" },
 		{ 0x080Eu, "采样时间" },
 		{ 0x100Eu, "间隔时间" },
 		{ 0x180Eu, "采样次数" },
@@ -115,7 +123,7 @@ void	menu_SampleSetup( void )
 
 	do {
 		monitor();
-		SamplerTypeShow( 0x010Eu );
+		SamplerTypeShow( 0x010Fu );
 		switch ( SamplerSelect )
 		{		
 		case SP_TSP:		done = setup_TSP( SamplerSelect, menu_TSP );	break;
@@ -136,7 +144,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 {
 	static	struct uMenu  const  menu_Accurate[] =
 	{
-		{ 0x0301u, "采 样" },
+		{ 0x0301u, "启动采样" },
 		{ 0x100Eu, "开始时间" },
 		{ 0x1814u, "调零" }, 
 		{ 0x181Cu, "启动" },
@@ -144,14 +152,14 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 
 	static	struct uMenu  const  menu_Delay[] =
 	{
-		{ 0x0301u, "采 样" },
+		{ 0x0301u, "启动采样" },
 		{ 0x100Eu, "延时时间" },
 		{ 0x1814u, "调零" }, 
 		{ 0x181Cu, "启动" },
 	};
 	static	struct uMenu  const  menuL[] =
 	{
-		{ 0x0401u, "      " },
+		{ 0x0401u, "启动采样" },
 		{ 0x0606u, "设置" },	//	设置默认采样参数，原则上不需要每次都修改
 		{ 0x0C06u, "采样" },	//	调整每次采样都需要确认的参数，并启动采样
 		{ 0x1206u, "查询" },	//	查看对应采样器的采样记录文件，及打印功能
@@ -179,7 +187,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 		{
 			cls();			
 			Menu_Redraw( menuL );
-			SamplerTypeShow( 0x010Eu );
+			SamplerTypeShow( 0x010Fu );
 			WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
 			WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
 			WBMP( 0x1818, menuL[3].yx-0x04, QUERY );

@@ -949,7 +949,7 @@ static	void	menu_ConfigureTime( void )
     {
         { 0x0201u, "选择时间控制方式" },
         { 0x0C02u, "开机延时" },
-        { 0x1402u, "采样定时" },
+        { 0x1402u, "停电计时" },
     };
 
     uint8_t item = 1;
