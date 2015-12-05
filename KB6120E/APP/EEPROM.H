@@ -21,6 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 extern	void	ConfigureSave( void );
 extern	void	ConfigureLoad( void );
+extern	void	PIDSave( void );
+extern	void	PIDLoad( void );
 extern	void	ConfigureLoadDefault( void );
 extern	void	CalibrateSave( void );	
 extern	void	CalibrateLoad( void );

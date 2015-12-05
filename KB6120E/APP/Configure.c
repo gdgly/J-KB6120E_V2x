@@ -1152,14 +1152,16 @@ void	menu_Maintenance( void )
 {
 	static	struct uMenu  const  menu[] =
 	{
-			{ 0x0302u, "维护" },
+			{ 0x0302u, "仪器维护" },
 			{ 0x0802u, "仪器设置" }, { 0x0814u, "仪器标定" },
 			{ 0x1002u, "采样累计" }, { 0x1014u, "采样设定" },
 			{ 0x1802u, "运行记录" }, { 0x1814u, "型号版本" }
 	};
 	uint8_t	item = 1u;
 
-	uint32_t  password = InputPassword();
+	uint32_t  password = 0;
+	if(Configure.Password != 0 )
+		password = InputPassword();
 	if ( ! Sampler_isRunning( SP_Max ))
 	{
 		if (( Configure.Password  != password ) && ( SysPassword1a != password ))

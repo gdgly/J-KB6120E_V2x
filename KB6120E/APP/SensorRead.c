@@ -679,6 +679,227 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 
 	}
 }
+
+
+void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect )
+{
+	Part_cls();
+	switch( SamplerSelect )
+	{
+	case SP_TSP:		Lputs( 0x080Eu, "粉 尘 自动调零" );	break;
+	case SP_R24_A:	Lputs( 0x080Eu, "日均A 自动调零" );	break;
+	case SP_R24_B:	Lputs( 0x080Eu, "日均B 自动调零" );	break;
+	case SP_SHI_C:	Lputs( 0x080Eu, "时均C 自动调零" );	break;
+	case SP_SHI_D:	Lputs( 0x080Eu, "时均D 自动调零" );	break;
+	}
+	KB6102_CalibrateZero( SamplerSelect );
+}
+
+
+
+/********************************** 功能说明 ***********************************
+*  恒温箱、加热器 通讯
+*******************************************************************************/
+void	set_HeaterTemp( FP32 SetTemp )//;, bool EnableHeater )
+{
+	{
+		uint16_t	RegAddress = 9u;
+		uint8_t 	RegValue   = 0x01;
+		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+	}
+	{
+		uint16_t	RegAddress = 40009u;
+		uint16_t	RegValue   = (uint16_t)( SetTemp * 16.0f );
+
+		//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
+		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+	}
+}
+
+FP32	get_HeaterTemp( void )
+{
+	uint16_t	Value = SensorRemote.HeaterRunTemp;
+	FP32		Temp = _CV_DS18B20_Temp( Value );
+	FP32		slope  = CalibrateRemote.slope_Heater_Temp * 0.001f;
+	FP32		origin = CalibrateRemote.origin_Heater_Temp * 0.01f;
+
+	return	(( Temp + 273.15f ) - origin ) * slope;
+}
+
+FP32	get_HeaterOutput( void )
+{
+	return	SensorRemote.HeaterOutValue * 0.1f;
+}
+
+uint16_t	get_FanSpeed( void )
+{
+	return	SensorRemote.HCBoxFanSpeed ;
+}
+
+void	set_HCBoxTemp( FP32 TempSet, uint8_t ModeSet )
+{
+	uint16_t	RegAddress = 40006u;
+	uint16_t	RegValueBuf[2];
+
+	RegValueBuf[0] = (uint16_t)( TempSet * 16.0f );
+	RegValueBuf[1] = (uint16_t)( ModeSet );
+	//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
+	eMBMWrite( SubSlave, RegAddress, 2u, RegValueBuf );
+}
+
+FP32	get_HCBoxTemp( void )
+{
+	uint16_t	Value = SensorRemote.HCBoxRunTemp;
+	FP32		Temp = _CV_DS18B20_Temp( Value );
+	FP32		slope  = CalibrateRemote.slope_Heater_Temp * 0.001f;
+	FP32		origin = CalibrateRemote.origin_Heater_Temp * 0.01f;
+
+	return	(( Temp + 273.15f ) - origin ) * slope;
+}
+
+FP32	get_HCBoxOutput( void )
+{
+	return	( SensorRemote.HCBoxOutValue - 1000 ) * 0.1;
+}
+
+uint16_t	get_HCBoxFanSpeed( void )
+{
+	return	SensorRemote.HCBoxFanSpeed;
+}
+
+
+void	HCBox_Init( void )
+{
+	switch ( Configure.HeaterType )
+	{
+	default:
+	case enumHeaterNone:	break;	//	MsgBox( "未安装恒温箱", vbOKOnly );	break;
+	case enumHCBoxOnly:
+		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
+		break;
+	case enumHeaterOnly:
+		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
+		break;
+	case enumHCBoxHeater:
+		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
+		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
+		break;
+	}
+
+}
+
+struct	uPID_Parament HCBoxPID;
+
+void	HCBoxPIDParament( void )
+{
+	BOOL changed = FALSE;
+	uint8_t item = 0;
+	static struct uMenu const menu[] =
+	{
+		{ 0x0601, "恒温箱参数"	},
+
+		{ 0x0606, "加热 Kp:" 	},
+		{ 0x0906, "加热 Ti:" 	},
+		{ 0x0C06, "加热 Td:" 	},		
+		{ 0x1006, "制冷 Kp:" 	},
+		{ 0x1306, "制冷 Ti:" 	},
+		{ 0x1606, "制冷 Td:" 	},
+	};
+		cls();
+		Menu_Redraw( menu );
+		PIDLoad();
+	do
+	{
+		
+		ShowI16U( 0x0618, HCBoxPID.Kp[0], 0x0300, NULL );//EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u )
+		ShowI16U( 0x0918, HCBoxPID.Ti[0], 0x0300, NULL );
+		ShowI16U( 0x0C18, HCBoxPID.Td[0], 0x0300, NULL );
+		ShowI16U( 0x1018, HCBoxPID.Kp[1], 0x0300, NULL );
+		ShowI16U( 0x1318, HCBoxPID.Ti[1], 0x0300, NULL );
+		ShowI16U( 0x1618, HCBoxPID.Td[1], 0x0300, NULL );
+		
+		item = Menu_Select( menu, item + 1, NULL);
+		
+		switch( item )
+		{
+			case 1:	EditI16U( 0x0618, &HCBoxPID.Kp[0], 0x0300 );	changed = TRUE;	break;
+			case 2:	EditI16U( 0x0918, &HCBoxPID.Ti[0], 0x0300 );	changed = TRUE;	break;
+			case 3:	EditI16U( 0x0C18, &HCBoxPID.Td[0], 0x0300 );	changed = TRUE;	break;
+			case 4:	EditI16U( 0x1018, &HCBoxPID.Kp[1], 0x0300 );	changed = TRUE;	break;
+			case 5:	EditI16U( 0x1318, &HCBoxPID.Ti[1], 0x0300 );	changed = TRUE;	break;
+			case 6:	EditI16U( 0x1618, &HCBoxPID.Td[1], 0x0300 );	changed = TRUE;	break;
+		}
+	}while( enumSelectESC != item );
+	
+	if( changed == TRUE )
+	{
+		eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
+		delay(100);                                       
+		eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
+		delay(100);                                       
+		eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
+		delay(100);                                       
+		eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
+		delay(100);
+		eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
+		delay(100);
+		eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
+		delay(100);
+		PIDSave();
+	}
+	
+}
+void	PIDSet( void )
+{
+	PIDLoad();
+	eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
+	delay(100);                                       
+	eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
+	delay(100);                                       
+	eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
+	delay(100);                                       
+	eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
+	delay(100);
+	eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
+	delay(100);
+	eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
+	delay(100);
+
+}
+/********  (C) COPYRIGHT 2015 青岛金仕达电子科技有限公司  **** End Of File ****/
+
+/*
+Lputs( 0x0606, "加热 Kp:" );
+Lputs( 0x0606, "加热 Ti:" );
+Lputs( 0x0606, "加热 Td:" );
+Lputs( 0x0606, "制冷 Kp:" );
+Lputs( 0x0606, "制冷 Ti:" );
+Lputs( 0x0606, "制冷 Td:" );
+**/
+// void	CalibrateZeromain_R24( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "日均   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_R24_A, SP_R24_B );
+// }
+
+// void	CalibrateZeromain_SHI( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "时均   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_SHI_C, SP_SHI_D );
+// }
+
+// void	CalibrateZeromain_TSP( void )
+// {
+// 	cls();
+// 	Lputs( 0x0402u, "粉尘   自动调零" );
+// 	KB6102Main_CalibrateZero( SP_TSP, SP_TSP );
+// }
+
+
+
+
 // static	void	KB6102Main_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 // {
 // 	#define	f_len 10u
@@ -783,135 +1004,4 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 // }
 
 
-void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect )
-{
-	Part_cls();
-	switch( SamplerSelect )
-	{
-	case SP_TSP:		Lputs( 0x080Eu, "粉 尘 自动调零" );	break;
-	case SP_R24_A:	Lputs( 0x080Eu, "日均A 自动调零" );	break;
-	case SP_R24_B:	Lputs( 0x080Eu, "日均B 自动调零" );	break;
-	case SP_SHI_C:	Lputs( 0x080Eu, "时均C 自动调零" );	break;
-	case SP_SHI_D:	Lputs( 0x080Eu, "时均D 自动调零" );	break;
-	}
-	KB6102_CalibrateZero( SamplerSelect );
-}
 
-// void	CalibrateZeromain_R24( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "日均   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_R24_A, SP_R24_B );
-// }
-
-// void	CalibrateZeromain_SHI( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "时均   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_SHI_C, SP_SHI_D );
-// }
-
-// void	CalibrateZeromain_TSP( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "粉尘   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_TSP, SP_TSP );
-// }
-
-
-
-
-
-
-/********************************** 功能说明 ***********************************
-*  恒温箱、加热器 通讯
-*******************************************************************************/
-void	set_HeaterTemp( FP32 SetTemp )//;, bool EnableHeater )
-{
-	{
-		uint16_t	RegAddress = 9u;
-		uint8_t 	RegValue   = 0x01;
-		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
-	}
-	{
-		uint16_t	RegAddress = 40009u;
-		uint16_t	RegValue   = (uint16_t)( SetTemp * 16.0f );
-
-		//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
-		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
-	}
-}
-
-FP32	get_HeaterTemp( void )
-{
-	uint16_t	Value = SensorRemote.HeaterRunTemp;
-	FP32		Temp = _CV_DS18B20_Temp( Value );
-	FP32		slope  = CalibrateRemote.slope_Heater_Temp * 0.001f;
-	FP32		origin = CalibrateRemote.origin_Heater_Temp * 0.01f;
-
-	return	(( Temp + 273.15f ) - origin ) * slope;
-}
-
-FP32	get_HeaterOutput( void )
-{
-	return	SensorRemote.HeaterOutValue * 0.1f;
-}
-
-uint16_t	get_FanSpeed( void )
-{
-	return	SensorRemote.HCBoxFanSpeed ;
-}
-
-void	set_HCBoxTemp( FP32 TempSet, uint8_t ModeSet )
-{
-	uint16_t	RegAddress = 40006u;
-	uint16_t	RegValueBuf[2];
-
-	RegValueBuf[0] = (uint16_t)( TempSet * 16.0f );
-	RegValueBuf[1] = (uint16_t)( ModeSet );
-	//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
-	eMBMWrite( SubSlave, RegAddress, 2u, RegValueBuf );
-}
-
-FP32	get_HCBoxTemp( void )
-{
-	uint16_t	Value = SensorRemote.HCBoxRunTemp;
-	FP32		Temp = _CV_DS18B20_Temp( Value );
-	FP32		slope  = CalibrateRemote.slope_Heater_Temp * 0.001f;
-	FP32		origin = CalibrateRemote.origin_Heater_Temp * 0.01f;
-
-	return	(( Temp + 273.15f ) - origin ) * slope;
-}
-
-FP32	get_HCBoxOutput( void )
-{
-	return	( SensorRemote.HCBoxOutValue - 1000 ) * 0.1;
-}
-
-uint16_t	get_HCBoxFanSpeed( void )
-{
-	return	SensorRemote.HCBoxFanSpeed;
-}
-
-
-void	HCBox_Init( void )
-{
-	switch ( Configure.HeaterType )
-	{
-	default:
-	case enumHeaterNone:	break;	//	MsgBox( "未安装恒温箱", vbOKOnly );	break;
-	case enumHCBoxOnly:
-		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
-		break;
-	case enumHeaterOnly:
-		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
-		break;
-	case enumHCBoxHeater:
-		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
-		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
-		break;
-	}
-
-}
-
-/********  (C) COPYRIGHT 2015 青岛金仕达电子科技有限公司  **** End Of File ****/

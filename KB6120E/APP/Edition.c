@@ -161,15 +161,22 @@ void	ConfigureLoad_KB6120C( void )
 {
 		Configure.InstrumentType = type_KB6120C;//6120C
 		
-		Configure.PumpType[SP_TSP  ] = enumOrifice_1;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
-		Configure.PumpType[SP_R24_A] = enumOrifice_1;	Configure.SetFlow[SP_R24_A]  =  2u;	//	日均1 采样流量 0.200 L/m
-		Configure.PumpType[SP_R24_B] = enumOrifice_1;	Configure.SetFlow[SP_R24_B]  =  2u;	//	日均2 采样流量 0.200 L/m
-		Configure.PumpType[SP_SHI_C] = enumOrifice_1; Configure.SetFlow[SP_SHI_C]  =  5u;	//	时均1 采样流量 0.5 L/m
-		Configure.PumpType[SP_SHI_D] = enumOrifice_1; Configure.SetFlow[SP_SHI_D]  =  5u;	//	时均2 采样流量 0.5 L/m
-
+		Configure.PumpType[SP_TSP  ] = enumOrifice_1;	
+		Configure.SetFlow[SP_TSP  ]  = 1000u;	Configure.Pr_Portect[SP_TSP  ]  =  5u; 		//	粉尘  采样流量 100.0	L/m		限压值	  5KPa
 		
-
+		Configure.PumpType[SP_R24_A] = enumOrifice_1;	
+		Configure.SetFlow[SP_R24_A]  =  	2u;	Configure.Pr_Portect[SP_R24_A]  = 10u;		//	日均1 采样流量 0.200	L/m		限压值	 10KPa
 		
+		Configure.PumpType[SP_R24_B] = enumOrifice_1;	
+		Configure.SetFlow[SP_R24_B]  =  	2u;	Configure.Pr_Portect[SP_R24_B]  = 10u;		//	日均2 采样流量 0.200	L/m		限压值	 10KPa
+		
+		Configure.PumpType[SP_SHI_C] = enumOrifice_1; 
+		Configure.SetFlow[SP_SHI_C]  =  	5u;	Configure.Pr_Portect[SP_SHI_C]  = 10u;		//	时均1 采样流量 0.5 	L/m		限压值	 10KPa
+		
+		Configure.PumpType[SP_SHI_D] = enumOrifice_1; 
+		Configure.SetFlow[SP_SHI_D]  =  	5u;	Configure.Pr_Portect[SP_SHI_D]  = 10u;		//	时均2 采样流量 0.5 	L/m		限压值	 10KPa
+
+
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
 		
 		Configure.Battery_SW = FALSE;    //电池是否存在

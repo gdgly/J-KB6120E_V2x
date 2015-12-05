@@ -190,7 +190,7 @@ __task	int32_t	main( void )
 	
 	delay( 1500u );		//配合下位机初始化
 	SENSOR_Init();		//	modbus通信初始化
-	
+	PIDSet();
 	delay( 500 );
 	HCBox_Init();
 	delay( 500 );

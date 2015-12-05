@@ -96,7 +96,7 @@ void	menu_SampleSetup( void )
 {
 	static	struct uMenu  const  menu_x[] =
 	{
-		{ 0x0401u, "采样设置" },
+		{ 0x0401u, "设 置" },
 		{ 0x060Eu, "采样时间" },
 		{ 0x0C0Eu, "间隔时间" },
 		{ 0x120Eu, "采样次数" },
@@ -105,7 +105,7 @@ void	menu_SampleSetup( void )
 	
 	static	struct uMenu  const  menu_TSP[] =
 	{
-		{	0x0301u, "采样设置" },
+		{	0x0301u, "设 置" },
 		{ 0x080Eu, "采样时间" },
 		{ 0x100Eu, "间隔时间" },
 		{ 0x180Eu, "采样次数" },
@@ -136,7 +136,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 {
 	static	struct uMenu  const  menu_Accurate[] =
 	{
-		{ 0x0301u, "启动采样" },
+		{ 0x0301u, "采 样" },
 		{ 0x100Eu, "开始时间" },
 		{ 0x1814u, "调零" }, 
 		{ 0x181Cu, "启动" },
@@ -144,7 +144,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 
 	static	struct uMenu  const  menu_Delay[] =
 	{
-		{ 0x0301u, "启动采样" },
+		{ 0x0301u, "采 样" },
 		{ 0x100Eu, "延时时间" },
 		{ 0x1814u, "调零" }, 
 		{ 0x181Cu, "启动" },

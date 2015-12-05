@@ -205,6 +205,15 @@ struct	uSamplerQuery
 };
 
 extern	struct	uSamplerQuery	Q_Sampler[SP_Max];
+
+
+struct	uPID_Parament 
+{
+	uint16_t Kp[2];
+	uint16_t Ti[2];
+	uint16_t Td[2];
+};
+extern	struct	uPID_Parament HCBoxPID;
 /********************************** 功能说明 ***********************************
 *	菜单项处理
 *******************************************************************************/
@@ -273,9 +282,9 @@ extern	void	menu_Select_Calc_Pbv( void );
 //	SensorRead.c
 extern	void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect );
 extern	uint16_t	average( uint16_t const * pArray, const uint8_t count );
-
+extern	void	HCBoxPIDParament( void );
 extern	void	menu_ConfigureDisplay( void );
-
+extern	void	PIDSet( void );
 extern	const	char	* const Save_NameChar[SP_Max];
 #include "SENSOR.H"
 #include "EEPROM.H"

@@ -1993,15 +1993,16 @@ static	void	menu_CalibrateAll( void )
 			sitem = 6;
 			break;
 		case enumSelectXCH:
-			{
-				uint8_t i = 0;
-				for( i = 0; i < SamplerHasMax; i ++ )
-				{
-					if( SamplerSelect == (enum enumSamplerSelect)SamplerTypeHas[i] )
-						break;
-				}
-				SamplerSelect = (enum enumSamplerSelect)SamplerTypeHas[i+1];
-			}
+// 			{
+// 				uint8_t i = 0;
+// 				for( i = 0; i < SamplerHasMax; i ++ )
+// 				{
+// 					if( SamplerSelect == (enum enumSamplerSelect)SamplerTypeHas[i] )
+// 						break;
+// 				}
+// 				SamplerSelect = (enum enumSamplerSelect)SamplerTypeHas[i+1];
+// 			}
+			SamplerTypeSwitch();
 			break;	
 		default:
 			break;

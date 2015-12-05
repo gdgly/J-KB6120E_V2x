@@ -337,7 +337,7 @@ void	Query_File_TSP( void )
 			if( fname > SampleSet[SP_TSP].FileNum )
 			{
 				beep();//	到达最后，"后"面无有效数据
-				File_Load_TSP_SHI_R24 ( SamplerSelect, fname, &File );
+				File_Load_TSP_SHI_R24 ( SamplerSelect, FileNum, &File );
 			}
 			else	
 			{

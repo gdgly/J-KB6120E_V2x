@@ -70,7 +70,7 @@ BOOL	SDEsave( const char * BUF_Name, uint32_t address,   uint8_t * buffer, uint3
 #define	x_Reserve		0x0800u
 //	4.文件存储空间( 起始地址：4K，区域大小：无限 )
 #define	x_File_Base		0x1000u
-
+#define	x_PID 	0x1100u	//	配置参数
 /********************************** 功能说明 ***********************************
 *	文件存取
 *******************************************************************************/
@@ -239,8 +239,14 @@ void	CalibrateLoad( void )
 		CalibrateRemote.DataValidMask = 0x5AA4u;
 	}
 }
-
-
+void	PIDSave( void )
+{
+	Esave( x_PID, &HCBoxPID, sizeof(HCBoxPID));
+}
+void	PIDLoad( void )
+{
+	Eload( x_PID, &HCBoxPID, sizeof(HCBoxPID));
+}
 void	ConfigureSave( void )
 {
 	Esave( x_Configure, &Configure, sizeof(Configure));

@@ -194,12 +194,12 @@ void	menu_ConfigureDisplay( void )
 		ShowI16U( 0x100Cu, light, 0x0300u, " % " );
 		switch ( ltime )
 		{
-		case 0:	Lputs( 0x180Cu, "[关闭]" );	break;
-		case 1:	Lputs( 0x180Cu, "[15秒]" );	break;
-		case 2:	Lputs( 0x180Cu, "[30秒]" );	break;
-		case 3:	Lputs( 0x180Cu, "[60秒]" );	break;
+		case 0:	Lputs( 0x180Cu, "[关闭] " );	break;
+		case 1:	Lputs( 0x180Cu, "[15秒] " );	break;
+		case 2:	Lputs( 0x180Cu, "[30秒] " );	break;
+		case 3:	Lputs( 0x180Cu, "[60秒] " );	break;
 		default:
-		case 4:	Lputs( 0x180Cu, "[常亮]" );	break;
+		case 4:	Lputs( 0x180Cu, "[常亮] " );	break;
 		}
 		item = Menu_Select( menu, item, NULL );
 
@@ -244,6 +244,9 @@ static	menu_Instr_Config( void )
 {
 	Configure_Instrument();
 }
+
+
+
 /********************************** 功能说明 ***********************************
 *	扩展配置（只能厂家操作的部分）
 
@@ -278,7 +281,7 @@ void	menu_ConfigureEx( void )
 		case 5:	menu_ExName();					break;
 		case 2:	menu_Sample_Sum();			break;
 		case 4:	menu_ConfigureDisplay();break;
-		case 6:	ShowEdition_Inner();  getKey();	break;
+		case 6:	HCBoxPIDParament();			break;	//	ShowEdition_Inner();  getKey();	break;
 		default:	break;
 		}
 	} while( enumSelectESC != item );
