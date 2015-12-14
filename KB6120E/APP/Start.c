@@ -173,7 +173,6 @@ __task	int32_t	main( void )
   beep();
 	RTOS_Init();		//	尽早执行
   
-	EditionSelsct();	//	型号选择
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行
@@ -190,7 +189,7 @@ __task	int32_t	main( void )
 	
 	delay( 1500u );		//配合下位机初始化
 	SENSOR_Init();		//	modbus通信初始化
-	PIDSet();
+// 	PIDSet();
 	delay( 500 );
 	HCBox_Init();
 	delay( 500 );

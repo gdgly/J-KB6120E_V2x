@@ -544,7 +544,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 				Lputs( 0x1802u, "设置次数:" );	ShowI16U( 0x1816u, File.set_loops,   0x0200u, NULL );
 				break;		
 			case opt_A_A1:
-				Lputs( 0x0110u, "A" );Lputs( 0x011Bu, "[2/2]" );
+				Lputs( 0x011Bu, "[2/2]" );
 				Lputs( 0x0602u, "温 度:" );		ShowFP32( 0x0615u, File.sum_tr/ File.sum_min, 	0x0402u, "℃" );
 				Lputs( 0x0A02u, "压 力:" );		ShowFP32( 0x0A15u, File.sum_pr / File.sum_min, 	0x0402u, "kPa" );
 				Lputs( 0x0E02u, "标况流量:" );	ShowFP32( 0x0E15u, File.vnd / File.sum_min, 		0x0403u, "L/m" );	

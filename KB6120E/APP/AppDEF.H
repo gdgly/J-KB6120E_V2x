@@ -29,9 +29,9 @@ enum enumExNameIdent
 extern CHAR  const * const szTypeIdent[];
 extern CHAR  const * const szNameIdent[];
 
-#define	SysPassword1a	000001UL
-#define	SysPassword2a	000001UL
-
+#define	SysPassword1a	1
+#define	SysPassword2a	100
+#define	SysPassword3a	1000
 
 enum	enumSampleState
 {
@@ -207,13 +207,13 @@ struct	uSamplerQuery
 extern	struct	uSamplerQuery	Q_Sampler[SP_Max];
 
 
-struct	uPID_Parament 
-{
-	uint16_t Kp[2];
-	uint16_t Ti[2];
-	uint16_t Td[2];
-};
-extern	struct	uPID_Parament HCBoxPID;
+// struct	uPID_Parament 
+// {
+// 	uint16_t Kp[2];
+// 	uint16_t Ti[2];
+// 	uint16_t Td[2];
+// };
+// extern	struct	uPID_Parament HCBoxPID;
 /********************************** 功能说明 ***********************************
 *	菜单项处理
 *******************************************************************************/
@@ -270,13 +270,7 @@ extern BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt );
 
 //	Edition.C
 extern	void	Animation( void );
-extern	uint8_t KB2400 		( enum	enumSamplerSelect SamplerSelect );
-extern	uint8_t KB2400D		( enum	enumSamplerSelect SamplerSelect );
-extern	uint8_t KB6120B		( enum	enumSamplerSelect SamplerSelect );
-extern	uint8_t KB6120C		( enum	enumSamplerSelect SamplerSelect );
-extern	uint32_t	eDataValidMask; 
-extern	void	EditionSelsct( void );
-
+extern	void menu_ExName( void );
 //	Calibrate.c
 extern	void	menu_Select_Calc_Pbv( void );
 //	SensorRead.c

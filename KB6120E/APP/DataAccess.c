@@ -239,14 +239,14 @@ void	CalibrateLoad( void )
 		CalibrateRemote.DataValidMask = 0x5AA4u;
 	}
 }
-void	PIDSave( void )
-{
-	Esave( x_PID, &HCBoxPID, sizeof(HCBoxPID));
-}
-void	PIDLoad( void )
-{
-	Eload( x_PID, &HCBoxPID, sizeof(HCBoxPID));
-}
+// void	PIDSave( void )
+// {
+// 	Esave( x_PID, &HCBoxPID, sizeof(HCBoxPID));
+// }
+// void	PIDLoad( void )
+// {
+// 	Eload( x_PID, &HCBoxPID, sizeof(HCBoxPID));
+// }
 void	ConfigureSave( void )
 {
 	Esave( x_Configure, &Configure, sizeof(Configure));
@@ -259,7 +259,7 @@ void	ConfigureLoad( void )
 	if ( Configure.DataValidMask != 0x5A8B )
 	{
 		ConfigureLoadDefault();
-		Configure.DataValidMask = 0x5A8B;
+// 		Configure.DataValidMask = 0x5A8B;
 	}
 }
 void	SampleSetSave( void )

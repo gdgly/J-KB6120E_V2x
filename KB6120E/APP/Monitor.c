@@ -174,7 +174,14 @@ static	void Sampler_Tdfilter( void )
 			fstdx[1][SP_TSP] = fstdx[2][SP_TSP];
 			fstdx[2][SP_TSP] = fstdx[3][SP_TSP];
 			fstdx[3][SP_TSP] = get_fstd( SP_TSP );
-		}    
+		}  
+		else
+		{
+			fstdx[0][SP_TSP] = 
+			fstdx[1][SP_TSP] = 
+			fstdx[2][SP_TSP] = 
+			fstdx[3][SP_TSP] = 0;
+		}
 		if( Sampler_isRunning( SP_SHI_C ) )
 		{
 			fstdx[0][SP_SHI_C] = fstdx[1][SP_SHI_C];
@@ -182,12 +189,26 @@ static	void Sampler_Tdfilter( void )
 			fstdx[2][SP_SHI_C] = fstdx[3][SP_SHI_C];
 			fstdx[3][SP_SHI_C] = get_fstd( SP_SHI_C );
 		}	
+		else
+		{
+			fstdx[0][SP_SHI_C] = 
+			fstdx[1][SP_SHI_C] = 
+			fstdx[2][SP_SHI_C] = 
+			fstdx[3][SP_SHI_C] = 0;
+		}
 		if( Sampler_isRunning( SP_SHI_D ) )
 		{
 			fstdx[0][SP_SHI_D] = fstdx[1][SP_SHI_D];
 			fstdx[1][SP_SHI_D] = fstdx[2][SP_SHI_D];
 			fstdx[2][SP_SHI_D] = fstdx[3][SP_SHI_D];
 			fstdx[3][SP_SHI_D] = get_fstd( SP_SHI_D );
+		}
+		else
+		{
+			fstdx[0][SP_SHI_D] = 
+			fstdx[1][SP_SHI_D] = 
+			fstdx[2][SP_SHI_D] = 
+			fstdx[3][SP_SHI_D] = 0;
 		}
 		if( Sampler_isRunning( SP_R24_A ) )
 		{		
@@ -196,12 +217,26 @@ static	void Sampler_Tdfilter( void )
 			fstdx[2][SP_R24_A] = fstdx[3][SP_R24_A];
 			fstdx[3][SP_R24_A] = get_fstd( SP_R24_A );
 		}	
+		else
+		{
+			fstdx[0][SP_R24_A] = 
+			fstdx[1][SP_R24_A] = 
+			fstdx[2][SP_R24_A] = 
+			fstdx[3][SP_R24_A] = 0;
+		}
 		if( Sampler_isRunning( SP_R24_B ) )
 		{
 			fstdx[0][SP_R24_B] = fstdx[1][SP_R24_B];
 			fstdx[1][SP_R24_B] = fstdx[2][SP_R24_B];
 			fstdx[2][SP_R24_B] = fstdx[3][SP_R24_B];
 			fstdx[3][SP_R24_B] = get_fstd( SP_R24_B ); 
+		}
+		else
+		{
+			fstdx[0][SP_R24_B] = 
+			fstdx[1][SP_R24_B] = 
+			fstdx[2][SP_R24_B] = 
+			fstdx[3][SP_R24_B] = 0;
 		}
 	}	   
  
@@ -279,7 +314,7 @@ static	void	ShowPumpBefore( enum enumSamplerSelect SamplerSelect )
 		case SP_R24_B:
 		case SP_SHI_C:
 		case SP_SHI_D:
-			Lputs( 0x0602u, "标况体积: "		 				);	ShowFP32 ( 0x0611u, p->vnd,  0x0702u, "L" );
+			Lputs( 0x0602u, "标况体积: "		 				);	ShowFP32 ( 0x0613u, p->vnd,  0x0702u, "L" );
 			Lputs( 0x0A02u, "                   " );
 			Lputs( 0x0E02u, "                   " );
 			Lputs( 0x1202u, "    泵已关闭        "	);
@@ -382,10 +417,18 @@ void Samplestate_Select( BOOL state )
         {
         case 1:
             Sampler_PauseKey( SamplerSelect );
+						fstdx[0][SamplerSelect] = 
+						fstdx[1][SamplerSelect] = 
+						fstdx[2][SamplerSelect] = 
+						fstdx[3][SamplerSelect] = 0;
 						item = enumSelectESC;
             break;
         case 2:
             Sample_Terminate( SamplerSelect );
+						fstdx[0][SamplerSelect] = 
+						fstdx[1][SamplerSelect] = 
+						fstdx[2][SamplerSelect] = 
+						fstdx[3][SamplerSelect] = 0;
 						item = enumSelectESC;
             break;
         case 3:
@@ -522,7 +565,7 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 		
 		*pOption = option;
 	}
-
+	
 }
 
 
@@ -801,6 +844,7 @@ void	monitor ( void )
 		}
 	
 	}	
+	Sampler_Tdfilter();//	流量滤波
 }
 
 /********************************** 功能说明 ***********************************

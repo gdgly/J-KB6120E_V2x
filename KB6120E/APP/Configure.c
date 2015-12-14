@@ -18,9 +18,9 @@ static	void	menu_SetupClock( void )
 {
     static  struct  uMenu  const  menu[] =
     {
-        { 0x0102u, "设置时间" },
-        { 0x0C00u, "日期" },
-        { 0x1400u, "时间" },
+        { 0x0102u, "时间设置" },
+        { 0x080Eu, "设置日期" },
+        { 0x120Eu, "设置时间" },
     };
     enum
     {
@@ -33,7 +33,7 @@ static	void	menu_SetupClock( void )
 
     uClock standard;
 
-    cls();
+    Part_cls();
     Menu_Redraw( menu );
     do
     {
@@ -41,8 +41,8 @@ static	void	menu_SetupClock( void )
         do
         {
             RTC_Load( &standard );
-            ShowClockDate(0x0C0Cu, &standard );
-            ShowClockTime(0x140Cu, &standard );
+            ShowClockDate(0x0C0Fu, &standard );
+            ShowClockTime(0x160Fu, &standard );
         }
         while ( ! hitKey( 25u ));
         Menu_Item_Mask( menu, option );
@@ -79,13 +79,13 @@ static	void	menu_SetupClock( void )
             switch( option )
             {
             case opt_date:
-                if ( EditClockDate(0x0C0Cu, &standard ))
+                if ( EditClockDate(0x0C0Fu, &standard ))
                 {
                     RTC_Save( &standard );
                 }
                 break;
             case opt_time:
-                if ( EditClockTime(0x140Cu, &standard ))
+                if ( EditClockTime(0x160Fu, &standard ))
                 {
                     RTC_Save( &standard );
                 }
@@ -159,19 +159,96 @@ static	void	menu_ChangePassword( void )
  BOOL Done = FALSE;
  
  do{
-		cls();
-		Lputs( 0x0808u, "请输入新密码:" );
-		if ( EditI32U( 0x0E0Cu, &Configure.Password, 0x0600u ))
+		Part_cls();
+		Lputs( 0x0B10u, "请输入新密码:" );
+		if ( EditI32U( 0x1214u, &Configure.Password, 0x0600u ))
 		{			 
 			 MsgBox( "密码修改成功!", vbOKOnly );
+			 cls();
 			 ConfigureSave();
 		}
 		Done = TRUE;
  }while( !Done );
  
 }
+void	menu_SetDisplay( void )
+{
+	static	struct  uMenu  const  menu[] =
+	{
+		{ 0x0301u, "显示配置" },
+		{ 0x080Eu, "灰度" },
+		{ 0x100Eu, "亮度" },
+		{ 0x180Eu, "定时" },
+	};
+	uint8_t item = 1u;
+	
+	uint16_t gray  = Configure.DisplayGray;
+	uint16_t light = Configure.DisplayLight;
+	uint8_t  ltime = Configure.TimeoutLight;
+	BOOL	changed = FALSE;
+	uint32_t Gray;
+	Part_cls();
+	Menu_Redraw( menu );
+	Gray = (FP32)(gray * 10) / 22u;
+	do {
+		ShowI16U( 0x0816u, Gray,  0x0401u, "% " );
+		ShowI16U( 0x1015u, light, 0x0300u, " % " );
+		switch ( ltime )
+		{
+		case 0:	Lputs( 0x1815u, "[关闭] " );	break;
+		case 1:	Lputs( 0x1815u, "[15秒] " );	break;
+		case 2:	Lputs( 0x1815u, "[30秒] " );	break;
+		case 3:	Lputs( 0x1815u, "[60秒] " );	break;
+		default:
+		case 4:	Lputs( 0x1815u, "[常亮] " );	break;
+		}
+		item = Menu_Select( menu, item, NULL );
 
+		switch( item )
+		{
+		case 1:	
+			if ( EditI32U( 0x0816u, &Gray, 0x0401u ))
+			{
+				if ( Gray > 1000u ){ Gray = 1000u; }
+				if ( Gray <  1u ){ Gray =  1u; }
+				DisplaySetGrayVolt( Gray * 0.022f );
+				changed = TRUE;
+			}
+			break;
+		case 2:
+			if ( EditI16U( 0x1016u, &light, 0x0300u ))
+			{
+				if ( light > 100u ){ light = 100u; }
+				DisplaySetLight( light );
+				changed = TRUE;
+			}
+			break;
+		case 3:	
+			if ( ++ltime > 4 ){  ltime = 0u; }
+			DisplaySetTimeout( ltime );
+			changed = TRUE;
+			break;
+		}
+		
+	} while ( enumSelectESC != item );
+	
+	if ( changed )
+	{
+		Configure.DisplayGray  = Gray * 22 /10;
+		Configure.DisplayLight = light;
+		Configure.TimeoutLight = ltime;
+		ConfigureSave();
+	}
+}
 
+void	Instrument_Comments( void )
+{
+	Lputs( 0x080F,"包括时间设置");
+	Lputs( 0x0C0F,"维护密码的修改");
+	Lputs( 0x100F,"以及液晶屏幕的");
+	Lputs( 0x140F,"显示对比度 亮度");
+	Lputs( 0x180F,"和亮屏时长");
+}
 
 void	Instrument_Set( void )
 {
@@ -179,16 +256,15 @@ void	Instrument_Set( void )
 	static	struct uMenu  const  menu[] =
 	{
 			{ 0x0301u, "维护" },
-			{ 0x0802u, "时间设置" },
-			{ 0x1002u, "密码设置" },
-			{ 0x1802u, "显示设置" },
+			{ 0x0901u, "时间设置" },
+			{ 0x0F01u, "密码设置" },
+			{ 0x1501u, "显示设置" },
 	};
-		do
-	{
-		cls();
+	cls();
+	do{		
+		Part_cls();
 		Menu_Redraw( menu );
-
-		item = Menu_Select( menu, item, NULL );
+		item = Menu_Select( menu, item, Instrument_Comments );	
 		switch( item )
 		{
 		case 1:
@@ -198,11 +274,12 @@ void	Instrument_Set( void )
 			menu_ChangePassword();
 				break;
 		case 3:
-			menu_ConfigureDisplay();
+			menu_SetDisplay();
 			break;
 		default:
 				break;
 		}
+
 	}
 	while( enumSelectESC != item );
 }
@@ -307,21 +384,21 @@ static	void	menu_SelectTstd( void )
         {
         default:
         case enum_273K:
-            Lputs( 0x0800u,"->"	);
-            Lputs( 0x1000u,"  "	);
-            Lputs( 0x1800u,"  "	);
+            Lputs( 0x0802u,"→"	);
+            Lputs( 0x1002u,"  "	);
+            Lputs( 0x1802u,"  "	);
             item = 1;
             break;
         case enum_293K:
-            Lputs( 0x0800u,"  "	);
-            Lputs( 0x1000u,"->"	);
-            Lputs( 0x1800u,"  "	);
+            Lputs( 0x0802u,"  "	);
+            Lputs( 0x1002u,"→"	);
+            Lputs( 0x1802u,"  "	);
             item = 2;
             break;
         case enum_298K:
-            Lputs( 0x0800u,"  "	);
-            Lputs( 0x1000u,"  "	);
-            Lputs( 0x1800u,"->"	);
+            Lputs( 0x0802u,"  "	);
+            Lputs( 0x1002u,"  "	);
+            Lputs( 0x1802u,"→"	);
             item = 3;
             break;
         }
@@ -357,15 +434,15 @@ static	void	menu_SelectTstd( void )
 *******************************************************************************/
 static	void	Configure_HCBox( void )
 {
-    static  CHAR  const  MDS[][6] =
+    static  CHAR  const  MDS[][7] =
     {
-        { "S停用" }, { "H加热" }, { "C制冷" } , { "A自动" }
+        { "[停用]" }, { "[加热]" }, { "[制冷]" } , { "[自动]" }
     };
     static	struct	uMenu	const	menu[] =
     {
         {	0x0201u, "配置恒温箱"	},
-        {	0x0C00u, "控制方式"	},
-        {	0x1400u, "设置温度"	},
+        {	0x0C02u, "控制方式"	},
+        {	0x1402u, "设置温度"	},
     };
     uint8_t 	item = 1u;
 
@@ -384,7 +461,7 @@ static	void	Configure_HCBox( void )
         }
 
         Lputs( 0x0C16U, MDS[SetMode] );
-        ShowI16U( 0x1416U, SetTemp, 0x0501U, "℃" );
+        ShowI16U( 0x1414U, SetTemp, 0x0501U, "℃" );
 
         item = Menu_Select( menu, item, NULL );
         switch( item )
@@ -396,7 +473,7 @@ static	void	Configure_HCBox( void )
 
         case 2u:
             /* 注意: 因为恒温箱的设置温度范围是正数, 所以才可以使用无符号数编辑程序进行编辑 */
-            if ( EditI16U( 0x1416U, &SetTemp, 0x0501U ))
+            if ( EditI16U( 0x1414U, &SetTemp, 0x0501U ))
             {
                 if ( SetTemp <  150u )
                 {
@@ -565,7 +642,7 @@ static	void	menu_Configure_Ba( void )
         { 0x0301u, "配置大气压" },
         { 0x0802u, "方式" },
         { 0x1002u, "预测大气压" },
-        { 0x1802u, "输入" }
+        { 0x1802u, "输入:" }
     };
 		static const struct uMenu menu1[] =
     {
@@ -773,7 +850,7 @@ static	void 	menu_Pr_Portect( void )
 		for( i = 0; i < SamplerHasMax; i ++ )
 		{
 			Lputs		( (Table[i] * 256 + 0x0D ), ":" );
-			ShowI16U( (Table[i] * 256 + 0x12 ), Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[i]], 0x0502u, " KPa" );
+			ShowI16U( (Table[i] * 256 + 0x12 ), Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[i]], 0x0402u, " KPa" );
 		}
 		Menu_Redraw( menu[SamplerHasMax-2] );
 
@@ -781,7 +858,7 @@ static	void 	menu_Pr_Portect( void )
 		switch( item )
 		{
 		case 1:
-			if(  EditI16U( ( Table[0] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]], 0x0502 ))
+			if(  EditI16U( ( Table[0] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]], 0x0402 ))
 			{
 // 				if( SamplerSelect == SP_TSP )
 // 				{
@@ -827,7 +904,17 @@ static	void 	menu_Pr_Portect( void )
 	
 	if( Changed == TRUE )
 	{
-		ConfigureSave();
+		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
+		{
+		case vbYes:
+			ConfigureSave();
+			break;
+		case vbNo:
+			ConfigureLoad();
+			break;
+		case vbCancel:
+			break;
+		}
 	}
 }
 
@@ -855,11 +942,11 @@ static	void	menu_SelectDelayMode( void )
 			item = 1u;
 			break;
     case enumByAccurate:
-			Lputs( 0x0C0Eu, " ->" );
+			Lputs( 0x0C0Eu, " →" );
 			item = 1u;
 			break;
     case enumByDelay:
-			Lputs( 0x140Eu, " ->" );
+			Lputs( 0x140Eu, " →" );
 			item = 2u;
 			break;
     }
@@ -900,14 +987,14 @@ static	void	menu_SelectTimeMode( void )
 {
     static	struct uMenu  const	menu[] =
     {
-        { 0x0201u, "选择采样计时方式" },
+        { 0x0201u, "选择停电计时方式" },
         { 0x0C14u, "[停电扣除]" },
         { 0x1414u, "[停电补齐]" },
     };
 
     uint8_t item;
 
-    Part_cls();
+		Part_cls();
     Menu_Redraw( menu );
     switch ( Configure.Mothed_Sample )
     {
@@ -916,11 +1003,11 @@ static	void	menu_SelectTimeMode( void )
         item = 1u;
         break;
     case enumBySet:
-        Lputs( 0x0C0Eu, " ->" );
+        Lputs( 0x0C0Eu, " →" );
         item = 1u;
         break;
     case enumBySum:
-        Lputs( 0x140Eu, " ->" );
+        Lputs( 0x140Eu, " →" );
         item = 2u;
         break;
     }
@@ -942,14 +1029,24 @@ static	void	menu_SelectTimeMode( void )
     }
 }
 
+static	void	Time_Comments( void )
+{	
+	Lputs( 0x0810, "设置开始采样" );	
+	Lputs( 0x0B10, "时的启动方式" );	
 
+	Lputs( 0x0F10,"---------" );
+
+	Lputs( 0x1210, "设置停电后" );
+	Lputs( 0x1510, "来电恢复采样" );
+	Lputs( 0x1810, "时的计时方式" );
+}
 static	void	menu_ConfigureTime( void )
 {
     static	struct uMenu  const	menu[] =
     {
         { 0x0201u, "选择时间控制方式" },
-        { 0x0C02u, "开机延时" },
-        { 0x1402u, "停电计时" },
+        { 0x0A01u, "开机延时" },
+        { 0x1401u, "停电计时" },
     };
 
     uint8_t item = 1;
@@ -958,7 +1055,7 @@ static	void	menu_ConfigureTime( void )
     {			
         Part_cls();
         Menu_Redraw( menu );
-        item = Menu_Select( menu, item, NULL );
+        item = Menu_Select( menu, item, Time_Comments );
         switch ( item )
         {
         case 1:
@@ -979,25 +1076,26 @@ static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
 {
 	 static	struct  uMenu  const   menu[] =
     {
-        { 0x0201u, "流量量程选择 (L/m)" },
+        { 0x0201u, "非常用采样配置" },
         { 0x0C12u, "[0.2 - 1.0]" },
         { 0x1612u, "[0.5 - 2.0]" },
     };
 		BOOL changed = FALSE;
     uint8_t	item;
 
-    Part_cls();
-    Menu_Redraw( menu );
+    
 		do
 		{
+			Part_cls();
+			Menu_Redraw( menu );
 			if ( Configure.PumpType[SamplerSelect] == enumOrifice_1 )
 			{
-				Lputs( 0x0C0Eu, "->" );
+				Lputs( 0x0C0Eu, "→" );
 				item = 1u;
 			}
 			else	
 			{
-				Lputs( 0x160Eu, "->" );
+				Lputs( 0x160Eu, "→" );
 				item = 2u;
 			}
 
@@ -1017,11 +1115,20 @@ static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
 				break;
 			}
 		} while ( enumSelectESC != item );
-		
-		if( changed )
+	if( changed == TRUE )
+	{
+		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
 		{
+		case vbYes:
 			ConfigureSave();
-		}		
+			break;
+		case vbNo:
+			ConfigureLoad();
+			break;
+		case vbCancel:
+			break;
+		}
+	}
 }
 
 
@@ -1049,35 +1156,50 @@ static	void	menu_Configure_Flow_TSP( void )
 	}
 	
 }
-
+static	void	SlectOther_Comments( void )
+{
+	if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
+	{
+		Lputs(0x0A0F, "包括水汽压设置");
+		Lputs(0x0E0F, "以及两路时均泵的");
+		Lputs(0x120F, "流量量程配置和");
+		Lputs(0x160F, "粉尘泵流量设置");
+	}
+	else
+	{
+		Lputs(0x0B0F, "包括水汽压设置");
+		Lputs(0x100F, "以及两路时均泵的");
+		Lputs(0x150F, "量流量程配置");
+	}
+}
 static	void	menu_SelectOther( void )
 {
 	static  struct  uMenu  menu1[] =
 	{
-		{ 0x0401u, 	"其他配置" 	},
+		{ 0x0401u, 	"非常用采样配置" 	},
 		{ 0x0602u,  "水汽压"	},
-		{ 0x0C02u,  "C路量程"},
-		{ 0x1202u,  "D路量程"},
-		{ 0x1802u, 	"粉尘泵" 	},
+		{ 0x0C01u,  "C路量程"},
+		{ 0x1201u,  "D路量程"},
+		{ 0x1802u, 	"粉尘泵"	},
 	};
 	static  struct  uMenu  menu2[] =
 	{
-		{ 0x0201u, 	"其他配置" 	},
+		{ 0x0301u, 	"非常用采样配置" 	},
 		{ 0x0802u,  "水汽压"	},
-		{ 0x1002u,  "C路量程"},
-		{ 0x1802u,  "D路量程"},
+		{ 0x1001u,  "C路量程"},
+		{ 0x1801u,  "D路量程"},
 	};
 	static  struct  uMenu  * menu;
 		uint8_t	item = 1;
-
+		cls();
 		do{
-			cls();
+			Part_cls();
 			if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
 				menu = menu1;
 			else
 				menu = menu2;
 			Menu_Redraw( menu );
-			item = Menu_Select( menu, item, NULL );
+			item = Menu_Select( menu, item, SlectOther_Comments );
 			switch ( item )
 			{
 			case 1:
@@ -1148,26 +1270,88 @@ static	void	menu_SampleConfigure( void )
 *******************************************************************************/
 extern	void	menu_ConfigureEx( void );
 extern	menu_Clean_FileNum( void );
-void	menu_Maintenance( void )
+void	menu_UserMaintenance( void )
 {
 	static	struct uMenu  const  menu[] =
-	{
-			{ 0x0302u, "仪器维护" },
-			{ 0x0802u, "仪器设置" }, { 0x0814u, "仪器标定" },
-			{ 0x1002u, "采样累计" }, { 0x1014u, "采样设定" },
-			{ 0x1802u, "运行记录" }, { 0x1814u, "型号版本" }
-	};
-	uint8_t	item = 1u;
-
-	uint32_t  password = 0;
-	if(Configure.Password != 0 )
-		password = InputPassword();
-	if ( ! Sampler_isRunning( SP_Max ))
-	{
-		if (( Configure.Password  != password ) && ( SysPassword1a != password ))
 		{
-			return;
+				{ 0x0302u, "仪器维护" },
+				{ 0x0802u, "仪器设置" }, { 0x0814u, "仪器标定" },
+				{ 0x1002u, "采样累计" }, { 0x1014u, "采样设定" },
+				{ 0x1802u, "运行记录" }, { 0x1814u, "型号版本" }
+		};
+		uint8_t	item = 1u;
+
+	do
+		{
+			cls();
+			Menu_Redraw( menu );
+
+			item = Menu_Select( menu, item, NULL );
+			switch( item )
+			{
+			case 1:
+				Instrument_Set();
+				break;
+			case 2:
+				menu_Calibrate();
+					break;
+			case 3:
+				menu_SamplerSum();
+				break;
+			case 4:
+				menu_SampleConfigure();
+				 break;
+			case 5:
+				PowerLog_Query();
+				break;
+			case 6:
+			 ShowEdition();
+				if ( K_RIGHT == getKey())
+				{
+					if ( ! releaseKey( K_RIGHT, 100u ))
+					{
+						beep();
+						menu_ConfigureEx();
+					}
+				}
+				break;
+			default:
+					break;
+			}
 		}
+		while( enumSelectESC != item );
+}
+
+void	menu_Maintenance( void )
+{
+
+	static	uint32_t  password = 0;
+	
+	if ( ! Sampler_isRunning( SP_Max ))
+	{	
+		password = InputPassword();
+		if( password == Configure.Password )
+		{
+			menu_UserMaintenance();
+		}
+		else
+		{
+			switch( password )
+			{
+				default:
+					return;
+				case  SysPassword1a:
+					menu_UserMaintenance();
+					break;
+				case  SysPassword2a:
+					menu_ConfigureEx();
+					break;
+				case  SysPassword3a:
+					menu_ConfigureEx();
+					break;
+			}
+		}	
+	
 	}
 	else
 	{
@@ -1175,46 +1359,8 @@ void	menu_Maintenance( void )
 		return;
 	}
 
-	do
-	{
-		cls();
-		Menu_Redraw( menu );
-
-		item = Menu_Select( menu, item, NULL );
-		switch( item )
-		{
-		case 1:
-			Instrument_Set();
-			break;
-		case 2:
-			menu_Calibrate();
-				break;
-		case 3:
-			menu_SamplerSum();
-			break;
-		case 4:
-			menu_SampleConfigure();
-			 break;
-		case 5:
-			PowerLog_Query();
-			break;
-		case 6:
-		 ShowEdition();
-			if ( K_RIGHT == getKey())
-			{
-				if ( ! releaseKey( K_RIGHT, 100u ))
-				{
-					beep();
-					menu_ConfigureEx();
-				}
-			}
-			break;
-		default:
-				break;
-		}
-	}
-	while( enumSelectESC != item );
 }
+
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/
 // 		if ( Done == FALSE )

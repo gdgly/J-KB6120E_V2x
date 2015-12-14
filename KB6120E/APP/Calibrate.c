@@ -1750,7 +1750,7 @@ void	menu_Select_Calc_Pbv( void )
 {
     static	struct  uMenu  const   menu[] =
     {
-        { 0x0201u, "饱和水汽压" },
+        { 0x0201u, "其他配置" },//饱和水汽压
         { 0x0C12u, "[不 计 算]" },
         { 0x1612u, "[参与计算]" },
     };
@@ -1762,12 +1762,12 @@ void	menu_Select_Calc_Pbv( void )
 
     if ( Configure .shouldCalcPbv == 0 )
     {
-        Lputs( 0x0C0Eu, "->" );
+        Lputs( 0x0C0Eu, "→" );
         item = 1u;
 	}
 	else
 	{
-        Lputs( 0x160Eu, "->" );
+        Lputs( 0x160Eu, "→" );
         item = 2u;
 	}
 

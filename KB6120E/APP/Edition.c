@@ -9,25 +9,6 @@
 *******************************************************************************/
 #include "AppDEF.H"
 #include "BMP.H"
-// // extern	uint32_t	eDataValidMask; 
-void	EditionSelsct( void )
-{
-// 	#define	T_KB6120C
-// //	#define	T_KB6120B
-// //	#define	T_KB2400D
-// //	#define	T_KB2400
-
-// #ifdef	T_KB6120C
-// 	eDataValidMask = 0x5A3A;
-// #elif	defined	T_KB6120B
-// 	eDataValidMask = 0x5A3B;
-// #elif	defined	T_KB2400D
-// 	eDataValidMask = 0x5A3C;
-// #elif	defined	T_KB2400
-// 	eDataValidMask = 0x5A3D;
-// #endif
-
-}
 /********************************** 功能说明 ***********************************
 *  根据仪器型号显示版本信息
 *  根据销售人员要求，可能会改成其他厂家名称，或者干脆不显示。
@@ -79,6 +60,7 @@ void	ShowEdition( void )
     break;
   }
 }
+
 /*开机动画*/
 void	Animation( void )
 {
@@ -121,12 +103,12 @@ CHAR  const * const szTypeIdent[] =
 
 CHAR  const * const szNameIdent[] =
 {
-	"智能综合采样器  ",
-	"综合大气采样器  ",
+	" 智能综合采样器 ",
+	" 综合大气采样器 ",
 	"智能中流量采样器",
 	"智能大流量采样器",
-	"恒温恒流采样器  ",
-	"智能恒流采样器  ",
+	" 恒温恒流采样器 ",
+	" 智能恒流采样器 ",
 };
 void	ConfigureLoadDefault_KB6120E( void )
 {
@@ -162,19 +144,19 @@ void	ConfigureLoad_KB6120C( void )
 		Configure.InstrumentType = type_KB6120C;//6120C
 		
 		Configure.PumpType[SP_TSP  ] = enumOrifice_1;	
-		Configure.SetFlow[SP_TSP  ]  = 1000u;	Configure.Pr_Portect[SP_TSP  ]  =  5u; 		//	粉尘  采样流量 100.0	L/m		限压值	  5KPa
+		Configure.SetFlow[SP_TSP  ]  = 1000u;	Configure.Pr_Portect[SP_TSP  ]  =  500u; 		//	粉尘  采样流量 100.0	L/m		限压值	  5KPa
 		
 		Configure.PumpType[SP_R24_A] = enumOrifice_1;	
-		Configure.SetFlow[SP_R24_A]  =  	2u;	Configure.Pr_Portect[SP_R24_A]  = 10u;		//	日均1 采样流量 0.200	L/m		限压值	 10KPa
+		Configure.SetFlow[SP_R24_A]  =  	2u;	Configure.Pr_Portect[SP_R24_A]  = 1000u;		//	日均1 采样流量 0.200	L/m		限压值	 10KPa
 		
 		Configure.PumpType[SP_R24_B] = enumOrifice_1;	
-		Configure.SetFlow[SP_R24_B]  =  	2u;	Configure.Pr_Portect[SP_R24_B]  = 10u;		//	日均2 采样流量 0.200	L/m		限压值	 10KPa
+		Configure.SetFlow[SP_R24_B]  =  	2u;	Configure.Pr_Portect[SP_R24_B]  = 1000u;		//	日均2 采样流量 0.200	L/m		限压值	 10KPa
 		
 		Configure.PumpType[SP_SHI_C] = enumOrifice_1; 
-		Configure.SetFlow[SP_SHI_C]  =  	5u;	Configure.Pr_Portect[SP_SHI_C]  = 10u;		//	时均1 采样流量 0.5 	L/m		限压值	 10KPa
+		Configure.SetFlow[SP_SHI_C]  =  	5u;	Configure.Pr_Portect[SP_SHI_C]  = 1000u;		//	时均1 采样流量 0.5 	L/m		限压值	 10KPa
 		
 		Configure.PumpType[SP_SHI_D] = enumOrifice_1; 
-		Configure.SetFlow[SP_SHI_D]  =  	5u;	Configure.Pr_Portect[SP_SHI_D]  = 10u;		//	时均2 采样流量 0.5 	L/m		限压值	 10KPa
+		Configure.SetFlow[SP_SHI_D]  =  	5u;	Configure.Pr_Portect[SP_SHI_D]  = 1000u;		//	时均2 采样流量 0.5 	L/m		限压值	 10KPa
 
 
 		Configure.HeaterType = enumHCBoxOnly;	//	只有恒温箱
@@ -239,107 +221,6 @@ void	ConfigureLoad_KB2400( void )
 
 }
 
-// static	void	ConfigureLoad_KB6120AD2( void )
-// {
-// 	Configure.InstrumentType = type_KB6120AD2;
-
-// 	Configure.PumpType[SP_TSP  ] = enumOrifice_1;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘  采样流量 100.0 L/m
-// 	Configure.PumpType[SP_R24_A] = enumPumpNone;	Configure.SetFlow[SP_R24_A]  =  2u;	//	日均1 采样流量 0.200 L/m
-// 	Configure.PumpType[SP_R24_B] = enumPumpNone;	Configure.SetFlow[SP_R24_B]  =  2u;	//	日均2 采样流量 0.200 L/m
-// 	Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =  5u;	//	时均1 采样流量 0.5 L/m
-// 	Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =  5u;	//	时均2 采样流量 0.5 L/m
-// 	Configure.PumpType[SP_AIR  ] = enumPumpNone;	Configure.SetFlow[SP_AIR  ]  =  5u;	//	大气 流量 0.5 L/m
-
-// 	Configure.HeaterType = enumHeaterOnly;	//	只有恒温箱
-// 	Configure.Heater_SetTemp = 300u;		//	加热器恒温温度 30.0 ℃
-// 	Configure.Heater_SW = TRUE;          // 加热器不工作
-// 	
-// 	Configure.HCBox_SetMode = MD_Shut;		//	恒温箱控制模式 [关闭]
-// 	Configure.HCBox_SetTemp = 240u;			//	恒温箱恒温温度 24.0 ℃
-
-// 	Configure.SetTstd = enum_293K;			//	标况流量的定义温度 
-// 	
-// 	Configure.Mothed_Delay = enumByDelay;	//	采样开始时间方式
-// 	Configure.Mothed_Sample = enumBySet;	//	采样时间控制方式
-
-// 	Configure.Mothed_Ba = enumMeasureBa;	//	大气压力获取方式
-// 	Configure.set_Ba    = 10133u;			//	保存用户输入气压
-
-// 	Configure.DisplayGray  = 1900u;	//	显示灰度设置
-// 	Configure.DisplayLight = 52u;	//	显示亮度设置
-// 	Configure.TimeoutLight = 2u;	//	背光延时时间
-// 		
-// 	Configure.shouldCalcPbv = 0;		//	饱和水汽压是否参与计算。
-// 	
-// 	Configure.Battery_SW = FALSE;    //电池是否存在
-// 	Configure.ExNum = 1501000;			 //出厂编号
-// }
-
-// uint8_t KB2400D( enum enumSamplerSelect SamplerSelect )
-// {
-// 	switch ( SamplerSelect )
-// 	{
-// 	default:
-// 	case SP_TSP  :
-// 	case SP_R24_A:	SamplerSelect = SP_R24_B;	break;
-// 	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
-// 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
-// 	case SP_SHI_D:	SamplerSelect = SP_R24_A;	break;
-// 	}	
-// 	return  SamplerSelect;
-// }
-// uint8_t KB2400( enum enumSamplerSelect SamplerSelect )
-// {
-// 	switch ( SamplerSelect )
-// 	{
-// 	default:
-// 	case SP_TSP  :
-// 	case SP_R24_A:	 
-// 	case SP_R24_B:
-// 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
-// 	case SP_SHI_D:	SamplerSelect = SP_SHI_C;	break;
-// 	}	
-// 	return  SamplerSelect;
-// }
-// // uint8_t KB6120AD2( enum enumSamplerSelect SamplerSelect )
-// // {
-// // 	switch ( SamplerSelect )
-// // 	{
-// // 	default:
-// // 	case SP_TSP  :
-// // 	case SP_R24_A:	 
-// // 	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
-// // 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
-// // 	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
-// // 	}	
-// // 	return  SamplerSelect;
-// // }
-// uint8_t KB6120C( enum enumSamplerSelect SamplerSelect )
-// {
-// 	switch ( SamplerSelect )
-// 	{
-// 	default:
-// 	case SP_TSP  :	SamplerSelect = SP_R24_A;	break;
-// 	case SP_R24_A:	SamplerSelect = SP_R24_B;	break;
-// 	case SP_R24_B:	SamplerSelect = SP_SHI_C;	break;
-// 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
-// 	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
-// 	}	
-// 	return SamplerSelect;
-// }
-// uint8_t KB6120B( enum enumSamplerSelect SamplerSelect )
-// {
-// 	switch ( SamplerSelect )
-// 	{
-// 	default:
-// 	case SP_R24_A:	 
-// 	case SP_R24_B:
-// 	case SP_TSP  :	SamplerSelect = SP_SHI_C;	break;
-// 	case SP_SHI_C:	SamplerSelect = SP_SHI_D;	break;
-// 	case SP_SHI_D:	SamplerSelect = SP_TSP;		break;
-// 	}	
-// 	return SamplerSelect;
-// }
 
 /********************************** 功能说明 ***********************************
 * 				泵安装情况
@@ -401,7 +282,7 @@ static	void	PumpConfigure( void )
 		{	
 			if( Configure.PumpType[(enum enumSamplerSelect) ii ] != enumPumpNone )
 			{		
-				switch (Configure.PumpType[SamplerSelect] )
+				switch (Configure.PumpType[(enum enumSamplerSelect) ii] )
 				{
 				case enumOrifice_1:TypeC[i] = 2;break; 
 				case enumOrifice_2:TypeC[i] = 3;break; 
@@ -471,14 +352,14 @@ static	void	PumpConfigure( void )
 		
 		switch ( getKey() )
 		{
-		case K_UP:		//	向前（时间较早的文件）查找
+		case K_UP:		
 			--option;
 			if ( option < opt_min )
 			{
 				option = opt_m;
 			}
 			break;
-		case K_DOWN:	//	向后（时间较新的文件）查找
+		case K_DOWN:	
 			++option;
 			if ( option > opt_m )
 			{
@@ -574,9 +455,8 @@ void	Configure_Instrument( void )
 {
 	static  struct  uMenu  const  menu[] = 
 	{
-		{ 0x0301u, "配置仪器" },
-		{ 0x0802u, "名称" },	
-		{ 0x0F02u, "型号" },
+		{ 0x0201u, "仪器型号" },
+		{ 0x0C02u, "型号" },
 		{ 0x1602u, "泵型号"	}, 
 	};
 	uint8_t item = 0u;
@@ -589,16 +469,7 @@ void	Configure_Instrument( void )
 		item = Menu_Select( menu, item, NULL );
 		switch ( item )
 		{
-		case 1:
-			cls();
-			++Configure.InstrumentName;
-			if ( Configure.InstrumentName >= (sizeof(szNameIdent) / sizeof(szNameIdent[0] )))
-			{
-				Configure.InstrumentName = 0u;
-			}
-			changed = TRUE;
-			break;
-		case 2:	
+		case 1:	
 			cls();			
 			++Configure.InstrumentType;
 			if ( Configure.InstrumentType >= (sizeof(szTypeIdent) / sizeof(szTypeIdent[0] )))
@@ -608,8 +479,9 @@ void	Configure_Instrument( void )
 			changed = TRUE;
 			
 			break;
-		case 3:		
-			ConfigureLoadDefault();	
+		case 2:
+			if( changed == TRUE )		
+				ConfigureLoadDefault();	
 			PumpConfigure();			
 		break;
 		case enumSelectESC:
@@ -643,6 +515,79 @@ void	Configure_Instrument( void )
 }
 
 
+
+
+void menu_ExName( void )
+{
+	static  struct  uMenu  const  menu[] = 
+	{
+		{ 0x0201u, "名称配置" },
+		{ 0x0602u, "仪器名称" },	
+		{ 0x0E02u, "厂家名称" },
+	};
+	uint8_t item = 0u;
+	BOOL	changed = FALSE;
+	BOOL	need_draw = TRUE;
+	do {
+		if( need_draw )
+		{
+			cls();
+			Menu_Redraw( menu );	
+			need_draw = FALSE;
+		}	
+		Lputs( 0x0602u, "仪器名称:" );	 
+		Lputs( 0x0A02, szNameIdent[Configure.InstrumentName] );
+		Lputs( 0x0E02u, "厂家名称:" );	 
+		Lputs( 0x1202, ExNameIdent1[Configure.ExName] );
+		Lputs( 0x1602, ExNameIdent2[Configure.ExName] );
+		item = Menu_Select( menu, item, NULL );
+		switch ( item )
+		{
+		case 1:
+			++Configure.InstrumentName;
+			if ( Configure.InstrumentName >= (sizeof( szNameIdent ) / sizeof( szNameIdent[0] )))
+			{
+				Configure.InstrumentName = 0u;
+			}
+			changed = TRUE;
+			break;
+		case 2:	
+			need_draw = TRUE;
+			++ Configure.ExName;
+			if ( Configure.ExName >= Name_Max )
+			{
+				Configure.ExName = 0u;
+			}
+			break;
+		case enumSelectESC:
+			if( changed == TRUE )
+				switch( MsgBox( "保存修改结果?", vbYesNoCancel | vbDefaultButton3 ) )
+				{
+				case vbYes :
+					break;
+				case vbNo :
+					changed = FALSE;
+					break;
+				default :
+				case vbCancel :
+					item = 1;
+					break;
+				}
+			break;
+		default:
+			break;
+		}
+	} while ( enumSelectESC != item );
+	
+	if ( changed )
+	{
+		ConfigureLoadDefault( );
+		ConfigureSave();
+	}
+	else
+		ConfigureLoad();
+}
+
 void	ConfigureLoadDefault( void )
 {
 	switch ( Configure.InstrumentType )
@@ -658,27 +603,6 @@ void	ConfigureLoadDefault( void )
 		Configure.DataValidMask = 0x5A8B;
 	}
 }
-// void	ConfigureLoadDefault( void )
-// {	
-// #ifdef				T_KB6120C
-// 	ConfigureLoad_KB6120C();
-
-// #elif	defined	T_KB6120B
-// 	ConfigureLoad_KB6120B();
-// 	
-// #elif	defined	T_KB2400D
-// 	ConfigureLoad_KB2400D();
-// 	
-// #elif	defined	T_KB2400
-// 	ConfigureLoad_KB2400();
-// #endif	
-// 	if ( Configure.DataValidMask != eDataValidMask )
-// 	{
-// 		ConfigureLoadDefault_KB6120E();
-// 		Configure.DataValidMask = eDataValidMask;
-// 	}
-// }
-
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/
 

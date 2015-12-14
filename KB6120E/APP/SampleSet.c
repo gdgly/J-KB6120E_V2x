@@ -38,11 +38,34 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 		case 3:	if ( EditI16U( 0x121Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))	{ changed = TRUE; }	break;
 		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))
 						{
-							if( Configure.SetFlow[SamplerSelect] < 1 )
-								Configure.SetFlow[SamplerSelect] = 1;
-							if( Configure.SetFlow[SamplerSelect] > 10 )
-								 Configure.SetFlow[SamplerSelect] = 10;
-								ConfigureSave();
+							switch( SamplerSelect )
+							{
+							default:break;
+							case SP_R24_A:
+							case SP_R24_B:
+								if( Configure.SetFlow[SamplerSelect] < 1 )
+									Configure.SetFlow[SamplerSelect] = 1;
+								if( Configure.SetFlow[SamplerSelect] > 10 )
+									Configure.SetFlow[SamplerSelect] = 10;
+								break;
+							case SP_SHI_C:
+							case SP_SHI_D:
+								if(  Configure.PumpType[SamplerSelect] == enumOrifice_1 )
+								{
+									if( Configure.SetFlow[SamplerSelect] < 1 )
+										Configure.SetFlow[SamplerSelect] = 1;
+									if( Configure.SetFlow[SamplerSelect] > 10 )
+										Configure.SetFlow[SamplerSelect] = 10;
+								}
+								else
+								{
+									if( Configure.SetFlow[SamplerSelect] < 5 )
+										Configure.SetFlow[SamplerSelect] = 5;
+									if( Configure.SetFlow[SamplerSelect] > 20 )
+										Configure.SetFlow[SamplerSelect] = 20;
+								}
+							}				
+							ConfigureSave();
 						}	
 						break;	
 			

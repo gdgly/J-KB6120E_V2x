@@ -12,16 +12,6 @@
 /********************************** 功能说明 ***********************************
 *	厂家配置 -> 泵类型
 *******************************************************************************/
-
-
-/********************************** 功能说明 ***********************************
-*	扩展配置 -> 采样泵的压力保护
-*******************************************************************************/
-//	static	void	menu_Configure_PrProtect( void )
-//	{
-//		MsgBox( "TODO: PrProtect", vbOKOnly );
-//	}
-
 /********************************** 功能说明 ***********************************
 *	扩展配置 -> 泵累计运行时间
 *******************************************************************************/
@@ -36,8 +26,7 @@ void	menu_Clean_SumTime( void )
 		Lputs( 0x0802u, " B路:" ); 	  ShowFP32( 0x080Cu, PumpSumTimeLoad( SP_R24_B  ) / 60.0f, 0x0601u, "h" );
 		Lputs( 0x0C02u, " C路:" ); 	  ShowFP32( 0x0C0Cu, PumpSumTimeLoad( SP_SHI_C  ) / 60.0f, 0x0601u, "h" );
 		Lputs( 0x1002u, " D路:" ); 	  ShowFP32( 0x100Cu, PumpSumTimeLoad( SP_SHI_D  ) / 60.0f, 0x0601u, "h" );
-// 		Lputs( 0x1402u, "大气:" ); 	ShowFP32( 0x140Cu, PumpSumTimeLoad( SP_AIR    ) / 60.0f, 0x0601u, "h" );
-		Lputs( 0x1802u, "粉尘:" );	ShowFP32( 0x180Cu, PumpSumTimeLoad( SP_TSP    ) / 60.0f, 0x0601u, "h" );
+		Lputs( 0x1402u, " 粉尘:" );		ShowFP32( 0x140Cu, PumpSumTimeLoad( SP_TSP    ) / 60.0f, 0x0601u, "h" );
 		switch ( getKey() )
 		{
 		case	K_OK	:						
@@ -51,7 +40,6 @@ void	menu_Clean_SumTime( void )
 					PumpSumTimeSave( SP_R24_B, 0u );
 					PumpSumTimeSave( SP_SHI_C, 0u );
 					PumpSumTimeSave( SP_SHI_D, 0u );
-// 					PumpSumTimeSave( SP_AIR,   0u );
 				}
 			}
 			break;
@@ -78,7 +66,6 @@ void	menu_Clean_FileNum( void )
 		Lputs( 0x1002u, "日均B:" );	ShowI16U( 0x100Cu, SampleSet[SP_R24_B].FileNum, 0x0300u, NULL );
 		Lputs( 0x1402u, "时均C:" );	ShowI16U( 0x140Cu, SampleSet[SP_SHI_C].FileNum, 0x0300u, NULL );
 		Lputs( 0x1802u, "时均D:" );	ShowI16U( 0x180Cu, SampleSet[SP_SHI_D].FileNum, 0x0300u, NULL );
-// 		Lputs( 0x1802u, "大气:" );	ShowI16U( 0x180Cu, SampleSet[SP_AIR].FileNum, 0x0300u, NULL );
 		
 		switch ( getKey() )
 		{
@@ -95,7 +82,6 @@ void	menu_Clean_FileNum( void )
 					SampleSet[SP_R24_B].FileNum =
 					SampleSet[SP_SHI_C].FileNum =
 					SampleSet[SP_SHI_D].FileNum = 0u;
-// 					SampleSet[SP_AIR].FileNum = 0u;
 					SampleSetSave();
 				}
 			}
@@ -133,46 +119,74 @@ void  menu_Sample_Sum( void )
 }
 
 
-void menu_ExName( void )
-{
-	BOOL changed = FALSE;
-	BOOL Done = FALSE;
-	
-	do{
-		cls();
-		ShowEdition();
-				
-		switch( getKey() )
-		{
-		case	K_OK:	
-			++ Configure.ExName;
-			if ( Configure.ExName >= Name_Max )
-			{
-				Configure.ExName = 0u;
-			}
-			changed = TRUE;	
-			break;
-		case	K_ESC:
-			Done = TRUE;
-			if( changed )
-			{
-				switch( MsgBox("保存修改结果?", vbYesNoCancel|vbDefaultButton3 ) )
-				{
-				case	vbYes		:	ConfigureSave();	break;
-				case	vbNo		:	ConfigureLoad();	break;
-				case	vbCancel:	Done = FALSE;			break;
-				}				
-			}			
-			break;
-		default:
-			break;
-		}
-		
-	}while( !Done );
-}
-
 void	menu_ConfigureDisplay( void )
 {
+// 	static	struct  uMenu  const  menu[] =
+// 	{
+// 		{ 0x0301u, "配置 显示" },
+// 		{ 0x0802u, "灰度" },
+// 		{ 0x1002u, "亮度" },
+// 		{ 0x1802u, "定时" }
+// 	};
+// 	uint8_t item = 1u;
+// 	
+// 	uint16_t gray  = Configure.DisplayGray;
+// 	uint16_t light = Configure.DisplayLight;
+// 	uint8_t  ltime = Configure.TimeoutLight;
+// 	BOOL	changed = FALSE;
+// 	
+// 	cls();
+// 	Menu_Redraw( menu );
+// 	do {
+// 		ShowI16U( 0x080Cu, gray,  0x0502u, " V " );
+// 		ShowI16U( 0x100Cu, light, 0x0300u, " % " );
+// 		switch ( ltime )
+// 		{
+// 		case 0:	Lputs( 0x180Cu, "[关闭] " );	break;
+// 		case 1:	Lputs( 0x180Cu, "[15秒] " );	break;
+// 		case 2:	Lputs( 0x180Cu, "[30秒] " );	break;
+// 		case 3:	Lputs( 0x180Cu, "[60秒] " );	break;
+// 		default:
+// 		case 4:	Lputs( 0x180Cu, "[常亮] " );	break;
+// 		}
+// 		item = Menu_Select( menu, item, NULL );
+
+// 		switch( item )
+// 		{
+// 		case 1:	
+// 			if ( EditI16U( 0x080Cu, &gray, 0x0502u ))
+// 			{
+// 				if ( gray > 2200u ){ gray = 2200u; }
+// 				if ( gray <  200u ){ gray =  200u; }
+// 				DisplaySetGrayVolt( gray * 0.01f );
+// 				changed = TRUE;
+// 			}
+// 			break;
+// 		case 2:
+// 			if ( EditI16U( 0x100Cu, &light, 0x0300u ))
+// 			{
+// 				if ( light > 100u ){ light = 100u; }
+// 				DisplaySetLight( light );
+// 				changed = TRUE;
+// 			}
+// 			break;
+// 		case 3:	
+// 			if ( ++ltime > 4 ){  ltime = 0u; }
+// 			DisplaySetTimeout( ltime );
+// 			changed = TRUE;
+// 			break;
+// 		}
+// 		
+// 	} while ( enumSelectESC != item );
+// 	
+// 	if ( changed )
+// 	{
+// 		Configure.DisplayGray  = gray;
+// 		Configure.DisplayLight = light;
+// 		Configure.TimeoutLight = ltime;
+// 		ConfigureSave();
+// 	}
+
 	static	struct  uMenu  const  menu[] =
 	{
 		{ 0x0301u, "配置 显示" },
@@ -186,11 +200,12 @@ void	menu_ConfigureDisplay( void )
 	uint16_t light = Configure.DisplayLight;
 	uint8_t  ltime = Configure.TimeoutLight;
 	BOOL	changed = FALSE;
-	
+	uint32_t Gray;
 	cls();
 	Menu_Redraw( menu );
-	do {
-		ShowI16U( 0x080Cu, gray,  0x0502u, " V " );
+	Gray = (FP32)(gray * 10) / 22u;
+	do {	
+		ShowI16U( 0x080Du, Gray,  0x0401u, "% " );
 		ShowI16U( 0x100Cu, light, 0x0300u, " % " );
 		switch ( ltime )
 		{
@@ -206,12 +221,12 @@ void	menu_ConfigureDisplay( void )
 		switch( item )
 		{
 		case 1:	
-			if ( EditI16U( 0x080Cu, &gray, 0x0502u ))
+			if ( EditI32U( 0x080Du, &Gray, 0x0401u ))
 			{
-				if ( gray > 2200u ){ gray = 2200u; }
-				if ( gray <  200u ){ gray =  200u; }
-				DisplaySetGrayVolt( gray * 0.01f );
-				changed = TRUE;
+				if ( Gray > 1000u ){ Gray = 1000u; }
+				if ( Gray <  1u ){ Gray =  1u; }
+				DisplaySetGrayVolt( Gray * 0.022f );
+				changed = TRUE; 
 			}
 			break;
 		case 2:
@@ -233,7 +248,7 @@ void	menu_ConfigureDisplay( void )
 	
 	if ( changed )
 	{
-		Configure.DisplayGray  = gray;
+		Configure.DisplayGray  = Gray * 22 /10;
 		Configure.DisplayLight = light;
 		Configure.TimeoutLight = ltime;
 		ConfigureSave();
@@ -264,8 +279,8 @@ void	menu_ConfigureEx( void )
 	{
 		{ 0x0302u, "厂家配置" 	},
 		{ 0x0802u, " 调 试 "	}, 	{ 0x0814u, "采样累计" 	},
-		{ 0x1002u, "仪器配置" 	}, 	{ 0x1014u, " 显 示 " 	},	//	{ 0x0408u, "压力保护" },
-		{ 0x1802u, "厂家名称"	}, 	{ 0x1814u, "程序版本" 	},
+		{ 0x1002u, "型号配置" 	}, 	{ 0x1014u, " 显 示 " 	},	//	{ 0x0408u, "压力保护" },
+		{ 0x1802u, "名称配置"	}, 	{ 0x1814u, "程序版本" 	},
 
 	};
 	uint8_t	item = 1u;
@@ -281,7 +296,7 @@ void	menu_ConfigureEx( void )
 		case 5:	menu_ExName();					break;
 		case 2:	menu_Sample_Sum();			break;
 		case 4:	menu_ConfigureDisplay();break;
-		case 6:	HCBoxPIDParament();			break;	//	ShowEdition_Inner();  getKey();	break;
+		case 6:	ShowEdition_Inner();  getKey();			break;	//	HCBoxPIDParament();	break;
 		default:	break;
 		}
 	} while( enumSelectESC != item );

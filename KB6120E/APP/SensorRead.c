@@ -788,84 +788,84 @@ void	HCBox_Init( void )
 
 }
 
-struct	uPID_Parament HCBoxPID;
+// struct	uPID_Parament HCBoxPID;
 
-void	HCBoxPIDParament( void )
-{
-	BOOL changed = FALSE;
-	uint8_t item = 0;
-	static struct uMenu const menu[] =
-	{
-		{ 0x0601, "恒温箱参数"	},
+// void	HCBoxPIDParament( void )
+// {
+// 	BOOL changed = FALSE;
+// 	uint8_t item = 0;
+// 	static struct uMenu const menu[] =
+// 	{
+// 		{ 0x0601, "恒温箱参数"	},
 
-		{ 0x0606, "加热 Kp:" 	},
-		{ 0x0906, "加热 Ti:" 	},
-		{ 0x0C06, "加热 Td:" 	},		
-		{ 0x1006, "制冷 Kp:" 	},
-		{ 0x1306, "制冷 Ti:" 	},
-		{ 0x1606, "制冷 Td:" 	},
-	};
-		cls();
-		Menu_Redraw( menu );
-		PIDLoad();
-	do
-	{
-		
-		ShowI16U( 0x0618, HCBoxPID.Kp[0], 0x0300, NULL );//EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u )
-		ShowI16U( 0x0918, HCBoxPID.Ti[0], 0x0300, NULL );
-		ShowI16U( 0x0C18, HCBoxPID.Td[0], 0x0300, NULL );
-		ShowI16U( 0x1018, HCBoxPID.Kp[1], 0x0300, NULL );
-		ShowI16U( 0x1318, HCBoxPID.Ti[1], 0x0300, NULL );
-		ShowI16U( 0x1618, HCBoxPID.Td[1], 0x0300, NULL );
-		
-		item = Menu_Select( menu, item + 1, NULL);
-		
-		switch( item )
-		{
-			case 1:	EditI16U( 0x0618, &HCBoxPID.Kp[0], 0x0300 );	changed = TRUE;	break;
-			case 2:	EditI16U( 0x0918, &HCBoxPID.Ti[0], 0x0300 );	changed = TRUE;	break;
-			case 3:	EditI16U( 0x0C18, &HCBoxPID.Td[0], 0x0300 );	changed = TRUE;	break;
-			case 4:	EditI16U( 0x1018, &HCBoxPID.Kp[1], 0x0300 );	changed = TRUE;	break;
-			case 5:	EditI16U( 0x1318, &HCBoxPID.Ti[1], 0x0300 );	changed = TRUE;	break;
-			case 6:	EditI16U( 0x1618, &HCBoxPID.Td[1], 0x0300 );	changed = TRUE;	break;
-		}
-	}while( enumSelectESC != item );
-	
-	if( changed == TRUE )
-	{
-		eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
-		delay(100);                                       
-		eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
-		delay(100);                                       
-		eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
-		delay(100);                                       
-		eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
-		delay(100);
-		eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
-		delay(100);
-		eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
-		delay(100);
-		PIDSave();
-	}
-	
-}
-void	PIDSet( void )
-{
-	PIDLoad();
-	eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
-	delay(100);                                       
-	eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
-	delay(100);                                       
-	eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
-	delay(100);                                       
-	eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
-	delay(100);
-	eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
-	delay(100);
-	eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
-	delay(100);
+// 		{ 0x0606, "加热 Kp:" 	},
+// 		{ 0x0906, "加热 Ti:" 	},
+// 		{ 0x0C06, "加热 Td:" 	},		
+// 		{ 0x1006, "制冷 Kp:" 	},
+// 		{ 0x1306, "制冷 Ti:" 	},
+// 		{ 0x1606, "制冷 Td:" 	},
+// 	};
+// 		cls();
+// 		Menu_Redraw( menu );
+// 		PIDLoad();
+// 	do
+// 	{
+// 		
+// 		ShowI16U( 0x0618, HCBoxPID.Kp[0], 0x0300, NULL );//EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u )
+// 		ShowI16U( 0x0918, HCBoxPID.Ti[0], 0x0300, NULL );
+// 		ShowI16U( 0x0C18, HCBoxPID.Td[0], 0x0300, NULL );
+// 		ShowI16U( 0x1018, HCBoxPID.Kp[1], 0x0300, NULL );
+// 		ShowI16U( 0x1318, HCBoxPID.Ti[1], 0x0300, NULL );
+// 		ShowI16U( 0x1618, HCBoxPID.Td[1], 0x0300, NULL );
+// 		
+// 		item = Menu_Select( menu, item + 1, NULL);
+// 		
+// 		switch( item )
+// 		{
+// 			case 1:	EditI16U( 0x0618, &HCBoxPID.Kp[0], 0x0300 );	changed = TRUE;	break;
+// 			case 2:	EditI16U( 0x0918, &HCBoxPID.Ti[0], 0x0300 );	changed = TRUE;	break;
+// 			case 3:	EditI16U( 0x0C18, &HCBoxPID.Td[0], 0x0300 );	changed = TRUE;	break;
+// 			case 4:	EditI16U( 0x1018, &HCBoxPID.Kp[1], 0x0300 );	changed = TRUE;	break;
+// 			case 5:	EditI16U( 0x1318, &HCBoxPID.Ti[1], 0x0300 );	changed = TRUE;	break;
+// 			case 6:	EditI16U( 0x1618, &HCBoxPID.Td[1], 0x0300 );	changed = TRUE;	break;
+// 		}
+// 	}while( enumSelectESC != item );
+// 	
+// 	if( changed == TRUE )
+// 	{
+// 		eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
+// 		delay(100);                                       
+// 		eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
+// 		delay(100);                                       
+// 		eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
+// 		delay(100);                                       
+// 		eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
+// 		delay(100);
+// 		eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
+// 		delay(100);
+// 		eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
+// 		delay(100);
+// 		PIDSave();
+// 	}
+// 	
+// }
+// void	PIDSet( void )
+// {
+// 	PIDLoad();
+// 	eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
+// 	delay(100);                                       
+// 	eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
+// 	delay(100);                                       
+// 	eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
+// 	delay(100);                                       
+// 	eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
+// 	delay(100);
+// 	eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
+// 	delay(100);
+// 	eMBMWrite( SubSlave, AO_Base + 12, 1u, &HCBoxPID.Td[1] );
+// 	delay(100);
 
-}
+// }
 /********  (C) COPYRIGHT 2015 青岛金仕达电子科技有限公司  **** End Of File ****/
 
 /*
