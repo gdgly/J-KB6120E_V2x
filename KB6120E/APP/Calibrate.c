@@ -1774,15 +1774,17 @@ void	menu_Select_Calc_Pbv( void )
     item = Menu_Select( menu, item, NULL );
 
     switch( item )
-    {
-    case 1:
+	{
+	case 1:
+		Configure.shouldCalcPbv = 0u;
+		 break;
 	case 2:
-		Configure .shouldCalcPbv = ! Configure .shouldCalcPbv ;
-		ConfigureSave();
-        break;
-    default:
-        break;
-    }
+		Configure.shouldCalcPbv = 1u;
+    break;
+	default:
+		break;
+	}
+	ConfigureSave();
 }
 
 static	void	menu_Calibrate_Other( void )
@@ -1827,7 +1829,7 @@ static	void	menu_Calibrate_Other( void )
 				menu_Calibrate_HCBox_Temp();		
 			break;	
 		case 4:
-			menu_Calibrate_Battery( );
+			menu_Calibrate_Battery();
 			break; 
 		default:	
 			break;
@@ -1840,7 +1842,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 	#define	f_len 10u
 	uint16_t	sensor[2][f_len];
 	uint8_t		index;
-	BOOL		cnt_full;
+	BOOL			cnt_full;
 
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL	graychanged = FALSE;

@@ -42,15 +42,23 @@ uint16_t Out;
 void	LCD_Volt_Adjust( void )
 {
 	extern	FP32	LCDSetGrayVolt ;
-	FP32	LCDVolt;	
+	FP32	LCDVolt;
+	static	FP32	Up = 0.0f;	
 	static	FP32	Ui	 = 0.0f;
-	static	FP32	Uout = 0.30f;
 	static	FP32	Ek   = 0.0f;
-	
+	static	FP32	Kp, Ki, Kd;
+	static	FP32	Uout = 0.00f;
 	#ifdef LCDisPlusVoltage
-		static	FP32 Up, Ud = 0.0f;
-		FP32  LCDSet; 
+		static	FP32	Ud = 0.0f;
 		static	FP32	 Ek1 = 0.0f; 
+
+		FP32  LCDSet; 	
+		Kp = ((uint16_t)PID.Kp) * 0.00001f;
+		Ki = Kp / (FP32)(PID.Ti * 0.01f);
+		Kd = Kp * (FP32)(PID.Td * 0.01f);
+// 			Kp = 0.010f;
+// 			Ki = 0.010f;
+// 			Kd = 0.003f;
 // 		LCDSet = 0; 
 // 		LCDSet = LCDSetGrayVolt + ( 38 - _CV_CPU_Temp( SensorLocal.CPU_IntTemp ) ) * 0.01f; //	温补
 		LCDSet = LCDSetGrayVolt;
@@ -59,13 +67,13 @@ void	LCD_Volt_Adjust( void )
 		LCDVolt = _CV_LCD_Volt( SensorLocal.LCD_Voltage );
 		Ek1	 = Ek;
 		Ek	 = ( LCDSet - LCDVolt ) * 1.0f;
-		Up	 = Ek * 0.007f;
-		Ui  += Ek * 0.015f;
-		Ud	 = 0.003f * ( Ek - Ek1 );
-		Uout = Uout * 0.1f + ( Up + Ui + Ud ) * 0.9f;
+		Up	 = Kp * Ek;
+		Ui  += Ki * Ek;
+		Ud	 = Kd * ( Ek - Ek1 );
+		Uout = Uout * 0.3f + ( Up + Ui + Ud ) * 0.7f;
 
-		if ( Uout > 0.667f ){ Uout = 0.667f; }//	最大输出 66.7 %
-		if ( Uout < 0.02f )	{ Uout = 0.02f; }//	最小输出  2 %
+		if ( Uout > 0.667f ){ Uout = 0.667f;}	//	最大输出 66.7 %
+		if ( Uout < 0.02f )	{ Uout = 0.02f; }	//	最小输出  2 %
 
 		PWM2_SetOutput((uint16_t)( Uout * PWM_Output_Max ));
 
@@ -76,8 +84,8 @@ void	LCD_Volt_Adjust( void )
 		Ui += Ek * 0.010f;
 		Uout = Uout * 0.1f + ( Ek * 0.003f + Ui ) * 0.9f;
 
-		if ( Uout > 0.20f ){ Uout = 0.20f; }//	最大输出 20 %
-		if ( Uout < 0.02f ){ Uout = 0.02f; }//	最小输出  2 %
+		if ( Uout > 0.20f ){ Uout = 0.20f; }	//	最大输出 20 %
+		if ( Uout < 0.02f ){ Uout = 0.02f; }	//	最小输出  2 %
 
 		PWM2_SetOutput((uint16_t)(  Uout * PWM_Output_Max );
 	#endif

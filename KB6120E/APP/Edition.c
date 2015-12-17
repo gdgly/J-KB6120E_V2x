@@ -15,13 +15,13 @@
 *******************************************************************************/
 CHAR  const * const ExNameIdent1[] =
 {
-  "/* 无 厂 家 名 称 */",
+  "/* 无厂家名称 */",
   " 青 岛 金 仕 达 ",
 //  ...  
 };
 CHAR  const * const ExNameIdent2[] =
 {
-  "/* 无 厂 家 名 称 */",
+  " ",
   "电 子 科 技 有 限 公 司",
 //  ...  
 };
@@ -30,14 +30,31 @@ CHAR  const * const EditionNum[] =
    "KB6120E V2.07",	//	内部版本
 	__DATE__" V2.00",	//	显示版本
 };
-static	void	ShowEdition_NoName( void )
+static	void	ShowEdition_NoName1( void )
+{
+	cls();
+//   Lputs( 0x0808u, szNameIdent[Configure.InstrumentName] );
+	Lputs( 0x0803u, EditionNum[1] );
+	Lputs( 0x1209u, "编号:" );	ShowFP32( 0x1212u, Configure.ExNum, 0x0700u, NULL );
+}
+static	void	ShowEdition_NoName2( void )
 {
 	cls();
   Lputs( 0x0808u, szNameIdent[Configure.InstrumentName] );
 	Lputs( 0x0F03u, EditionNum[1] );
-	Lputs( 0x1509u, "编号:" );	ShowFP32( 0x1512u, Configure.ExNum, 0x0700u, NULL );
+	Lputs( 0x1609u, "编号:" );	ShowFP32( 0x1612u, Configure.ExNum, 0x0700u, NULL );
 }
-static	void	ShowEdition_HasName( void )
+static	void	ShowEdition_HasName1( void )
+{
+  cls();
+//  	Lputs( 0x0108u, szNameIdent [Configure.InstrumentName] );
+	Lputs( 0x0306u, ExNameIdent1[Configure.ExName] );
+	Lputs( 0x0A01u, ExNameIdent2[Configure.ExName] );
+	Lputs( 0x1003u, EditionNum[1] );
+	Lputs( 0x1609u, "编号:" );ShowFP32( 0x1612u, Configure.ExNum, 0x0700u, NULL );
+}
+
+static	void	ShowEdition_HasName2( void )
 {
   cls();
  	Lputs( 0x0108u, szNameIdent [Configure.InstrumentName] );
@@ -53,10 +70,16 @@ void	ShowEdition( void )
   switch( Configure.ExName )
   {
   case  (enum enumExNameIdent) 0: 
-    ShowEdition_NoName(); 
+		if( Configure.InstrumentName == 0 )
+			ShowEdition_NoName1();
+		else
+			ShowEdition_NoName2();
     break;
   default: 
-    ShowEdition_HasName(); 
+	if( Configure.InstrumentName == 0 )
+    ShowEdition_HasName1(); 
+	else
+		ShowEdition_HasName2(); 
     break;
   }
 }
@@ -103,6 +126,7 @@ CHAR  const * const szTypeIdent[] =
 
 CHAR  const * const szNameIdent[] =
 {
+	" /* 无 名 称 */ ",
 	" 智能综合采样器 ",
 	" 综合大气采样器 ",
 	"智能中流量采样器",
@@ -251,24 +275,23 @@ CHAR  PumpC[SP_Max+1];
 CHAR  TypeC[SP_Max+1];
 static	void	PumpConfigure( void )
 {
-	enum 
-	{
-		opt_exit,
-		opt_tsp_1,   opt_tsp_2,   opt_tsp_3,
-		opt_max, opt_min = opt_tsp_1
-	};
-	uint16_t gray  = Configure.DisplayGray;
-	BOOL	graychanged = FALSE;
-	uint8_t opt_m;
-	uint8_t	option = opt_min;
+// 	enum 
+// 	{
+// 		opt_exit,
+// 		opt_tsp_1,   opt_tsp_2,   opt_tsp_3,
+// 		opt_max, opt_min = opt_tsp_1
+// 	};
+// 	uint16_t gray  = Configure.DisplayGray;
+// 	BOOL	graychanged = FALSE;
+// 	uint8_t opt_m;
+// 	uint8_t	option = opt_min;
 	uint16_t dispchar [6] ={ 0x0602u, 0x0A02u, 0x0E02u, 0x1202u, 0x1602u, 0x1A02u };
 	uint16_t dispchar2[6] ={ 0x060Bu, 0x0A0Bu, 0x0E0Bu, 0x120Bu, 0x160Bu, 0x1A0Bu };
 	uint8_t i,imax,ii;
 		
-	do {
+// 	do {
 		imax = 
 		i    = 0;
-		ConfigureLoad();
 		if( Configure.PumpType[SP_TSP] != enumPumpNone )
 		{	
 			switch ( Configure.PumpType[SP_TSP] )
@@ -304,147 +327,147 @@ static	void	PumpConfigure( void )
 		}
 		imax = i;
 		
-		cls();
-		WBMP( 0x0290,0x0502, STROCK); //显示横线
-		WBMP( 0x0290,0x0514, STROCK); //显示横线
-		switch ( option )
-		{
-		default:
-		case opt_tsp_1:				
+// 		cls();
+// 		WBMP( 0x0290,0x0502, STROCK); //显示横线
+// 		WBMP( 0x0290,0x0514, STROCK); //显示横线
+// 		switch ( option )
+// 		{
+// 		default:
+// 		case opt_tsp_1:				
 			for( i = 0; i < 6; i++)
 			{
 				if( i < imax)
 				{ 
-					if( imax <= 6 )
-						Lputs(0x0102, "泵安装情况  ");
-					else					
-						Lputs(0x0102, "泵安装情况 1"); 
+// 					if( imax <= 6 )
+// 						Lputs(0x0102, "泵安装情况  ");
+// 					else					
+// 						Lputs(0x0102, "泵安装情况 1"); 
 					Lputs( dispchar[i%6],   Pump[PumpC[i]] ); 
 					Lputs( dispchar2[i%6], Type[TypeC[i]]); 
 				}	
 			}	
-			break;
-		case opt_tsp_2:
-			for( i = 6; i < 12; i++)
-			{
-				Lputs(0x0102, "泵安装情况 2");
-				if( i < imax )
-				{
-					Lputs( dispchar[i%6],   Pump[PumpC[i]] ); 
-					Lputs( dispchar2[i%6], Type[TypeC[i]]); 
-				}		
-			}	
-			break;
-		case opt_tsp_3:
-			for( i = 12; i < 18; i++)
-			{
-				Lputs(0x0102, "泵安装情况 3");
-				if( i < imax)
-				{
-					Lputs( dispchar[i%6],   Pump[PumpC[i]] ); 
-					Lputs( dispchar2[i%6], Type[TypeC[i]]); 
-				}					
-			}	
-			break;
-		}
-		
-		opt_m = ( imax + 5 ) / 6 ;
-		
-		switch ( getKey() )
-		{
-		case K_UP:		
-			--option;
-			if ( option < opt_min )
-			{
-				option = opt_m;
-			}
-			break;
-		case K_DOWN:	
-			++option;
-			if ( option > opt_m )
-			{
-				option = opt_min;
-			}
-			break;
-		case K_RIGHT:
-			++option;
-			if ( option > opt_m )
-			{
-				option = opt_min;
-			}
-			break;
-		case K_LEFT:
-			--option;
-			if ( option < opt_min )
-			{
-				option = opt_m;
-			}
-			break;
-		case K_OK:
-			option = opt_exit;
-			break;
-		case K_SHIFT:		
-			break;
-		case K_ESC:
-			option = opt_exit;
-			break;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
-				{
-					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
-				{
-					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+// 			break;
+// 		case opt_tsp_2:
+// 			for( i = 6; i < 12; i++)
+// 			{
+// // 				Lputs(0x0102, "泵安装情况 2");
+// 				if( i < imax )
+// 				{
+// 					Lputs( dispchar[i%6],   Pump[PumpC[i]] ); 
+// 					Lputs( dispchar2[i%6], Type[TypeC[i]]); 
+// 				}		
+// 			}	
+// 			break;
+// 		case opt_tsp_3:
+// 			for( i = 12; i < 18; i++)
+// 			{
+// // 				Lputs(0x0102, "泵安装情况 3");
+// 				if( i < imax)
+// 				{
+// 					Lputs( dispchar[i%6],   Pump[PumpC[i]] ); 
+// 					Lputs( dispchar2[i%6], Type[TypeC[i]]); 
+// 				}					
+// 			}	
+// 			break;
+// 		}
+// 		
+// 		opt_m = ( imax + 5 ) / 6 ;
+// 		
+// 		switch ( getKey() )
+// 		{
+// 		case K_UP:		
+// 			--option;
+// 			if ( option < opt_min )
+// 			{
+// 				option = opt_m;
+// 			}
+// 			break;
+// 		case K_DOWN:	
+// 			++option;
+// 			if ( option > opt_m )
+// 			{
+// 				option = opt_min;
+// 			}
+// 			break;
+// 		case K_RIGHT:
+// 			++option;
+// 			if ( option > opt_m )
+// 			{
+// 				option = opt_min;
+// 			}
+// 			break;
+// 		case K_LEFT:
+// 			--option;
+// 			if ( option < opt_min )
+// 			{
+// 				option = opt_m;
+// 			}
+// 			break;
+// 		case K_OK:
+// 			option = opt_exit;
+// 			break;
+// 		case K_SHIFT:		
+// 			break;
+// 		case K_ESC:
+// 			option = opt_exit;
+// 			break;
+// 		case K_OK_UP:	
+// 			if ( gray < 2200u )
+// 			{
+// 				++gray;
+// 			}
+// 			if( ! releaseKey( K_OK_UP,100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_UP, 1 ))
+// 				{
+// 					++gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}
+// 			}
+// 			graychanged = true;		
+// 			break;
+// 		case K_OK_DOWN:
+// 			if ( gray >  200u )
+// 			{
+// 				--gray;
+// 			}
+// 			if( ! releaseKey( K_OK_DOWN, 100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_DOWN, 1 ))
+// 				{
+// 					--gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}			
+// 			}
+// 			graychanged = true;
+// 			break;
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
-		}
-		if( graychanged == true )
-		{
-			DisplaySetGrayVolt( gray * 0.01f );
-			Configure.DisplayGray = gray;
-			ConfigureSave();
-			graychanged = FALSE;
-		}		
+// 		case K_OK_RIGHT:
+// 			if ( gray < ( 2000u - 50u ))
+// 			{ 
+// 				gray += 100u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		case K_OK_LEFT:	
+// 			if ( gray > ( 200 + 20u ))
+// 			{
+// 				gray -= 20u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		default:
+// 			break;
+// 		}
+// 		if( graychanged == true )
+// 		{
+// 			DisplaySetGrayVolt( gray * 0.01f );
+// 			Configure.DisplayGray = gray;
+// 			ConfigureSave();
+// 			graychanged = FALSE;
+// 		}		
 
-	} while ( opt_exit != option );
+// 	} while ( opt_exit != option );
 }
 
 extern BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt );
@@ -453,24 +476,20 @@ extern BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt );
 *******************************************************************************/
 void	Configure_Instrument( void )
 {
-	static  struct  uMenu  const  menu[] = 
-	{
-		{ 0x0201u, "仪器型号" },
-		{ 0x0C02u, "型号" },
-		{ 0x1602u, "泵型号"	}, 
-	};
-	uint8_t item = 0u;
 	BOOL	changed = FALSE;
+	BOOL	Done = FALSE;
 	do {
 		cls();
-		Menu_Redraw( menu );		
-		Lputs( 0x080Bu, szNameIdent[Configure.InstrumentName] );
-		Lputs( 0x0F0Bu, szTypeIdent[Configure.InstrumentType] );
-		item = Menu_Select( menu, item, NULL );
-		switch ( item )
+		WBMP( 0x0290,0x0502, STROCK); //显示横线
+		WBMP( 0x0290,0x0514, STROCK); //显示横线
+		Lputs( 0x0102, "仪器型号:" );
+		LcmMask( 0x0102, 6 ,CHARsz );
+		Lputs( 0x0112u, szTypeIdent[Configure.InstrumentType] );
+		ConfigureLoadDefault();	
+		PumpConfigure();
+		switch ( getKey() )
 		{
-		case 1:	
-			cls();			
+		case K_OK:				
 			++Configure.InstrumentType;
 			if ( Configure.InstrumentType >= (sizeof(szTypeIdent) / sizeof(szTypeIdent[0] )))
 			{
@@ -479,30 +498,31 @@ void	Configure_Instrument( void )
 			changed = TRUE;
 			
 			break;
-		case 2:
-			if( changed == TRUE )		
-				ConfigureLoadDefault();	
-			PumpConfigure();			
-		break;
-		case enumSelectESC:
+		case K_ESC:
 			if( changed == TRUE )
+			{
 				switch( MsgBox( "保存修改结果?", vbYesNoCancel | vbDefaultButton3 ) )
 				{
 				case vbYes :
+					Done = TRUE;
 					break;
 				case vbNo :
 					changed = FALSE;
+					Done = TRUE;
 					break;
 				default :
 				case vbCancel :
-					item = 1;
 					break;
 				}
+			}
+			else
+				Done = TRUE;
 			break;
 		default:
 			break;
 		}
-	} while ( enumSelectESC != item );
+		
+	} while ( !Done );
 	
 	if ( changed )
 	{
@@ -544,6 +564,7 @@ void menu_ExName( void )
 		switch ( item )
 		{
 		case 1:
+			need_draw = TRUE;
 			++Configure.InstrumentName;
 			if ( Configure.InstrumentName >= (sizeof( szNameIdent ) / sizeof( szNameIdent[0] )))
 			{
@@ -558,6 +579,7 @@ void menu_ExName( void )
 			{
 				Configure.ExName = 0u;
 			}
+			changed = TRUE;
 			break;
 		case enumSelectESC:
 			if( changed == TRUE )
@@ -581,7 +603,6 @@ void menu_ExName( void )
 	
 	if ( changed )
 	{
-		ConfigureLoadDefault( );
 		ConfigureSave();
 	}
 	else

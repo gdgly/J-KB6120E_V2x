@@ -58,7 +58,7 @@ void	menu_Main( void )
 
 		cls();
 		Menu_Redraw( menu );
-		SamplerTypeShow( 0x010Fu );		
+		SamplerTypeShow( 0x010Eu );		
 		WBMP( 0x1818, menu[1].yx-0x04, SAMPLESET );
 		WBMP( 0x1818, menu[2].yx-0x04, SAMPLE );
 		WBMP( 0x1818, menu[3].yx-0x04, QUERY );
@@ -176,7 +176,7 @@ __task	int32_t	main( void )
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行
-	
+	PIDLoad();
 	Display_Init();
 	DisplaySetGrayVolt( Configure.DisplayGray * 0.01f );
 	DisplaySetLight( Configure.DisplayLight );
@@ -187,15 +187,15 @@ __task	int32_t	main( void )
 	SD_Init();				//	SD卡读写初始化，放在开关机存取之前
 	PowerLog_Init();	//	开关机存取，时间初始化之后
 	
-	delay( 1500u );		//配合下位机初始化
+	delay( 300u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>
 	SENSOR_Init();		//	modbus通信初始化
-// 	PIDSet();
-	delay( 500 );
+	
+	delay( 500u );
 	HCBox_Init();
-	delay( 500 );
+	delay( 1000u );
 	
 	Animation();		//	开机动画
- 	delay( 1500 );
+ 	delay( 1500u );
 	
 	ShowEdition();	//	确定型号之后，显示初始化之后	
 	delay( 1000u );

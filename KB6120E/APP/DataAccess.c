@@ -239,14 +239,15 @@ void	CalibrateLoad( void )
 		CalibrateRemote.DataValidMask = 0x5AA4u;
 	}
 }
-// void	PIDSave( void )
-// {
-// 	Esave( x_PID, &HCBoxPID, sizeof(HCBoxPID));
-// }
-// void	PIDLoad( void )
-// {
-// 	Eload( x_PID, &HCBoxPID, sizeof(HCBoxPID));
-// }
+
+void	PIDSave( void )
+{
+	Esave( x_PID, &PID, sizeof( PID ) );
+}
+void	PIDLoad( void )
+{
+	Eload( x_PID, &PID, sizeof( PID ) );
+}
 void	ConfigureSave( void )
 {
 	Esave( x_Configure, &Configure, sizeof(Configure));

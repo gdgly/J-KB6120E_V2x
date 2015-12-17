@@ -927,8 +927,8 @@ static	void	menu_SelectDelayMode( void )
     static	struct  uMenu  const   menu[] =
     {
 			{ 0x0201u, "选择采样开始方式" },
-			{ 0x0C14u, "[定时启动]" },
-			{ 0x1414u, "[延时启动]" },
+			{ 0x0C14u, "[延时启动]" },
+			{ 0x1414u, "[定时启动]" },
     };
 
     uint8_t	item;
@@ -941,11 +941,11 @@ static	void	menu_SelectDelayMode( void )
 			Lputs( 0x0C0Eu, " >>" );
 			item = 1u;
 			break;
-    case enumByAccurate:
+    case enumByDelay:
 			Lputs( 0x0C0Eu, " →" );
 			item = 1u;
 			break;
-    case enumByDelay:
+    case enumByAccurate:
 			Lputs( 0x140Eu, " →" );
 			item = 2u;
 			break;
@@ -956,13 +956,6 @@ static	void	menu_SelectDelayMode( void )
     switch( item )
     {
     case 1:
-			if ( Configure.Mothed_Delay != enumByAccurate )
-			{
-					Configure.Mothed_Delay = enumByAccurate;
-					ConfigureSave();
-			}
-			break;
-    case 2:
 			if ( Configure.Mothed_Delay != enumByDelay )
 			{
 				uint8_t i;
@@ -972,6 +965,13 @@ static	void	menu_SelectDelayMode( void )
 				}	
 				SampleSetSave();
 				Configure.Mothed_Delay = enumByDelay;
+				ConfigureSave();
+			}
+			break;
+    case 2:
+			if ( Configure.Mothed_Delay != enumByAccurate )
+			{
+				Configure.Mothed_Delay = enumByAccurate;
 				ConfigureSave();
 			}
 			break;
@@ -1117,17 +1117,17 @@ static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
 		} while ( enumSelectESC != item );
 	if( changed == TRUE )
 	{
-		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
-		{
-		case vbYes:
+// 		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
+// 		{
+// 		case vbYes:
 			ConfigureSave();
-			break;
-		case vbNo:
-			ConfigureLoad();
-			break;
-		case vbCancel:
-			break;
-		}
+// 			break;
+// 		case vbNo:
+// 			ConfigureLoad();
+// 			break;
+// 		case vbCancel:
+// 			break;
+// 		}
 	}
 }
 
@@ -1149,12 +1149,12 @@ static	void	menu_Configure_Flow_TSP( void )
 			Configure.SetFlow[SP_TSP  ] =  600u;
 		}	
 		
-		if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
+		
+	}
+	if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
 			ConfigureSave();
 		else
 			ConfigureLoad();
-	}
-	
 }
 static	void	SlectOther_Comments( void )
 {
@@ -1213,6 +1213,7 @@ static	void	menu_SelectOther( void )
 				break;
 			case 4:
 				menu_Configure_Flow_TSP();
+				cls();
 				break;
 			default:
 				break;
@@ -1321,12 +1322,56 @@ void	menu_UserMaintenance( void )
 		}
 		while( enumSelectESC != item );
 }
+/***********************************************************************
+*
+***********************************************************************/
 
+
+struct	uPID_Parament PID;
+
+void	HCBoxPIDParament( void )
+{
+	BOOL changed = FALSE;
+	uint8_t item = 0;
+	static struct uMenu const menu[] =
+	{
+		{ 0x0301, "PID参数"	},
+
+		{ 0x0606, "Kp:" },
+		{ 0x0906, "Ti:" },
+		{ 0x0C06, "Td:" },		
+	};
+	cls();
+	Menu_Redraw( menu );
+	PIDLoad();
+	do
+	{
+		ShowI16U( 0x0618, PID.Kp, 0x0400, NULL );
+		ShowI16U( 0x0918, PID.Ti, 0x0400, NULL );
+		ShowI16U( 0x0C18, PID.Td, 0x0400, NULL );
+		
+		item = Menu_Select( menu, item, NULL);
+		
+		switch( item )
+		{
+			case 1:	EditI16U( 0x0618, &PID.Kp, 0x0400 );	changed = TRUE;	break;
+			case 2:	EditI16U( 0x0918, &PID.Ti, 0x0502 );	changed = TRUE;	break;
+			case 3:	EditI16U( 0x0C18, &PID.Td, 0x0502 );	changed = TRUE;	break;
+			
+		}
+	}while( enumSelectESC != item );
+	
+	if( changed == TRUE )
+		PIDSave();
+}
+	
+	
+/************************************************************************/
 void	menu_Maintenance( void )
 {
 
 	static	uint32_t  password = 0;
-	
+	Lputs( 0x0102, "维 护  " );
 	if ( ! Sampler_isRunning( SP_Max ))
 	{	
 		password = InputPassword();
@@ -1347,7 +1392,7 @@ void	menu_Maintenance( void )
 					menu_ConfigureEx();
 					break;
 				case  SysPassword3a:
-					menu_ConfigureEx();
+					HCBoxPIDParament();
 					break;
 			}
 		}	
