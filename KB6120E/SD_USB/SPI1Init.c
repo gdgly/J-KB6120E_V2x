@@ -28,7 +28,7 @@ void SPI3_GPIO_Config(void)
 				| SPI_CR1_CPOL
 				| SPI_CR1_SSM
 				| SPI_CR1_SSI
-				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
+				| SPI_CR1_BR_2 //| SPI_CR1_BR_1 | SPI_CR1_BR_0
 				;
 	SPIx->CR2   = 0;
 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );

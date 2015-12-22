@@ -8,7 +8,7 @@
 * 修订人: 董峰 2014年4月18日
 * 说  明: 自动检测确定显示屏的类型。
 *******************************************************************************/
-#include "BSP.H"
+#include "AppDEF.H"
 #include "BIOS.H"
 
 /********************************** 功能说明 ***********************************
@@ -42,8 +42,8 @@ void	Backlight_OFF( void )
 void	DisplaySetLight( uint8_t ValueOfBrightness )
 {	//	背光亮度
 	savLight = ValueOfBrightness;
-
-	Backlight_ON();
+	if( Configure.TimeoutLight )
+		Backlight_ON();
 }
 
 void	DisplaySetGrayVolt( FP32 SetGrayVolt )

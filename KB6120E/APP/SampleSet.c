@@ -19,11 +19,25 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 {
 	uint8_t	item = 0u;
 	BOOL	changed = FALSE;
+	static	struct uMenu  const  menuL[] =
+	{
+		{ 0x0401u, "设 置  " },
+		{ 0x0606u, "设置" },	//	设置默认采样参数，原则上不需要每次都修改
+		{ 0x0C06u, "采样" },	//	调整每次采样都需要确认的参数，并启动采样
+		{ 0x1206u, "查询" },	//	查看对应采样器的采样记录文件，及打印功能
+		{ 0x1806u, "维护" }
+	};
+	cls();
+	Menu_Redraw( menuL );
+	WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
+	WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
+	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
+	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
 	do {
 	
 		Part_cls();
 		Menu_Redraw( menu );
-	
+		SamplerTypeShow( 0x010Eu );
 		ShowTIME( 0x061Cu, SampleSet[SamplerSelect].sample_time );
 		ShowTIME( 0x0C1Cu, SampleSet[SamplerSelect].suspend_time );
 		ShowI16U( 0x121Cu, SampleSet[SamplerSelect].set_loops, 0x0200u, NULL );
@@ -86,10 +100,24 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 	uint8_t	item = 0u;
 	BOOL	changed = FALSE;
 // 	BOOL	need_redraw = TRUE;
-
+	static	struct uMenu  const  menuL[] =
+	{
+		{ 0x0401u, "设 置  " },
+		{ 0x0606u, "设置" },	//	设置默认采样参数，原则上不需要每次都修改
+		{ 0x0C06u, "采样" },	//	调整每次采样都需要确认的参数，并启动采样
+		{ 0x1206u, "查询" },	//	查看对应采样器的采样记录文件，及打印功能
+		{ 0x1806u, "维护" }
+	};
+	cls();
+	Menu_Redraw( menuL );
+	WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
+	WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
+	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
+	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
 	do {
 // 		if ( need_redraw )
 // 		{
+			SamplerTypeShow( 0x010Eu );
 			Part_cls();
 			Menu_Redraw( menu );
 			
@@ -146,7 +174,6 @@ void	menu_SampleSetup( void )
 
 	do {
 		monitor();
-		SamplerTypeShow( 0x010Eu );
 		switch ( SamplerSelect )
 		{		
 		case SP_TSP:		done = setup_TSP( SamplerSelect, menu_TSP );	break;
@@ -196,8 +223,14 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 	BOOL	changed_Delay = FALSE;
 	BOOL	changed = FALSE;
 
-	
-		
+	cls();			
+	Menu_Redraw( menuL );
+	SamplerTypeShow( 0x010Eu );
+	WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
+	WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
+	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
+	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
+
 	do {
 		switch( Configure.Mothed_Delay )
 		{
@@ -208,14 +241,8 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 		}
 		if ( need_redraw )
 		{
-			cls();			
-			Menu_Redraw( menuL );
+			Part_cls();			
 			SamplerTypeShow( 0x010Eu );
-			WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
-			WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
-			WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
-			WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
-			WBMP( 0xB001, 0x050D, STROCK1 );
 			Menu_Redraw( menu );
 			need_redraw = FALSE;
 		}
@@ -247,6 +274,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 			{
 				changed_Delay = TRUE;
 				changed = TRUE;
+				SampleSetSave();
 			}		
 			++item;
 			break;

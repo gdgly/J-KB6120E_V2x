@@ -19,8 +19,8 @@ static	void	menu_SetupClock( void )
     static  struct  uMenu  const  menu[] =
     {
         { 0x0102u, "时间设置" },
-        { 0x080Eu, "设置日期" },
-        { 0x120Eu, "设置时间" },
+        { 0x0810u, "设置日期" },
+        { 0x1210u, "设置时间" },
     };
     enum
     {
@@ -41,8 +41,8 @@ static	void	menu_SetupClock( void )
         do
         {
             RTC_Load( &standard );
-            ShowClockDate(0x0C0Fu, &standard );
-            ShowClockTime(0x160Fu, &standard );
+            ShowClockDate(0x0C11u, &standard );
+            ShowClockTime(0x1611u, &standard );
         }
         while ( ! hitKey( 25u ));
         Menu_Item_Mask( menu, option );
@@ -79,13 +79,13 @@ static	void	menu_SetupClock( void )
             switch( option )
             {
             case opt_date:
-                if ( EditClockDate(0x0C0Fu, &standard ))
+                if ( EditClockDate(0x0C11u, &standard ))
                 {
                     RTC_Save( &standard );
                 }
                 break;
             case opt_time:
-                if ( EditClockTime(0x160Fu, &standard ))
+                if ( EditClockTime(0x1611u, &standard ))
                 {
                     RTC_Save( &standard );
                 }
@@ -176,9 +176,9 @@ void	menu_SetDisplay( void )
 	static	struct  uMenu  const  menu[] =
 	{
 		{ 0x0301u, "显示配置" },
-		{ 0x080Eu, "灰度" },
-		{ 0x100Eu, "亮度" },
-		{ 0x180Eu, "定时" },
+		{ 0x0810u, "灰度" },
+		{ 0x1010u, "亮度" },
+		{ 0x1810u, "定时" },
 	};
 	uint8_t item = 1u;
 	
@@ -191,23 +191,23 @@ void	menu_SetDisplay( void )
 	Menu_Redraw( menu );
 	Gray = (FP32)(gray * 10) / 22u;
 	do {
-		ShowI16U( 0x0816u, Gray,  0x0401u, "% " );
-		ShowI16U( 0x1015u, light, 0x0300u, " % " );
+		ShowI16U( 0x0818u, Gray,  0x0401u, "% " );
+		ShowI16U( 0x1018u, light, 0x0300u, "% " );
 		switch ( ltime )
 		{
-		case 0:	Lputs( 0x1815u, "[关闭] " );	break;
-		case 1:	Lputs( 0x1815u, "[15秒] " );	break;
-		case 2:	Lputs( 0x1815u, "[30秒] " );	break;
-		case 3:	Lputs( 0x1815u, "[60秒] " );	break;
+		case 0:	Lputs( 0x1817u, "[关闭] " );	break;
+		case 1:	Lputs( 0x1817u, "[15秒] " );	break;
+		case 2:	Lputs( 0x1817u, "[30秒] " );	break;
+		case 3:	Lputs( 0x1817u, "[60秒] " );	break;
 		default:
-		case 4:	Lputs( 0x1815u, "[常亮] " );	break;
+		case 4:	Lputs( 0x1817u, "[常亮] " );	break;
 		}
 		item = Menu_Select( menu, item, NULL );
 
 		switch( item )
 		{
 		case 1:	
-			if ( EditI32U( 0x0816u, &Gray, 0x0401u ))
+			if ( EditI32U( 0x0818u, &Gray, 0x0401u ))
 			{
 				if ( Gray > 1000u ){ Gray = 1000u; }
 				if ( Gray <  1u ){ Gray =  1u; }
@@ -216,7 +216,7 @@ void	menu_SetDisplay( void )
 			}
 			break;
 		case 2:
-			if ( EditI16U( 0x1016u, &light, 0x0300u ))
+			if ( EditI16U( 0x1018u, &light, 0x0300u ))
 			{
 				if ( light > 100u ){ light = 100u; }
 				DisplaySetLight( light );
@@ -1276,8 +1276,8 @@ void	menu_UserMaintenance( void )
 	static	struct uMenu  const  menu[] =
 		{
 				{ 0x0302u, "仪器维护" },
-				{ 0x0802u, "仪器设置" }, { 0x0814u, "仪器标定" },
-				{ 0x1002u, "采样累计" }, { 0x1014u, "采样设定" },
+				{ 0x0802u, "仪器设置" }, { 0x0814u, "采样设定" },
+				{ 0x1002u, "采样累计" }, { 0x1014u, "仪器标定" },
 				{ 0x1802u, "运行记录" }, { 0x1814u, "型号版本" }
 		};
 		uint8_t	item = 1u;
@@ -1294,13 +1294,13 @@ void	menu_UserMaintenance( void )
 				Instrument_Set();
 				break;
 			case 2:
-				menu_Calibrate();
-					break;
+				menu_SampleConfigure();
+				break;
 			case 3:
 				menu_SamplerSum();
 				break;
 			case 4:
-				menu_SampleConfigure();
+				menu_Calibrate();
 				 break;
 			case 5:
 				PowerLog_Query();

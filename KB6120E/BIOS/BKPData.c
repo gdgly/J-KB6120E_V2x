@@ -6,6 +6,7 @@
 *********************************** ÐÞ¶©¼ÇÂ¼ ***********************************/
 #include "stm32f10x.h"
 #include "bkpdata.h"
+#include "BSP.H"
 #include "BIOS.H"
 
 void BKP_Write ( uint16_t BKP_DR, uint16_t Data )
