@@ -176,7 +176,7 @@ __task	int32_t	main( void )
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行
-	PIDLoad();
+	
 	Display_Init();
 	DisplaySetGrayVolt( Configure.DisplayGray * 0.01f );
 	DisplaySetLight( Configure.DisplayLight );

@@ -53,9 +53,9 @@ void	LCD_Volt_Adjust( void )
 		static	FP32	 Ek1 = 0.0f; 
 
 		FP32  LCDSet; 	
-		Kp = ((uint16_t)PID.Kp) * 0.00001f;
-		Ki = Kp / (FP32)(PID.Ti * 0.01f);
-		Kd = Kp * (FP32)(PID.Td * 0.01f);
+		Kp = ((uint16_t)1200) * 0.00001f;
+		Ki = Kp / (FP32)(90 * 0.01f);
+		Kd = Kp * (FP32)(40 * 0.01f);
 // 			Kp = 0.010f;
 // 			Ki = 0.010f;
 // 			Kd = 0.003f;

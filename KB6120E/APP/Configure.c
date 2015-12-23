@@ -1391,9 +1391,9 @@ void	menu_Maintenance( void )
 				case  SysPassword2a:
 					menu_ConfigureEx();
 					break;
-				case  SysPassword3a:
-					HCBoxPIDParament();
-					break;
+// 				case  SysPassword3a:
+// 					HCBoxPIDParament();
+// 					break;
 			}
 		}	
 	
