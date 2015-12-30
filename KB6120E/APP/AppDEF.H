@@ -66,6 +66,8 @@ extern	void	Sampler_BootResume( void );	//	开机（上电）恢复采样任务
 extern	void	Sampler_Start    ( enum	enumSamplerSelect SamplerSelect );
 extern	void	Sampler_PauseKey ( enum	enumSamplerSelect SamplerSelect );
 extern	void	Sample_Terminate ( enum enumSamplerSelect SamplerSelect );
+extern	void	Sample_Fatal( enum enumSamplerSelect SamplerSelect );
+extern	void	Sample_Error( enum enumSamplerSelect SamplerSelect );
 extern	BOOL	Sampler_isRunning( enum	enumSamplerSelect SamplerSelect );
 extern  BOOL StateRead( enum	enumSamplerSelect SamplerSelect );
 /********************************** 功能说明 ***********************************

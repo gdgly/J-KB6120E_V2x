@@ -210,6 +210,10 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 	uint16_t	RegValue   = OutValue;
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 }
+/**************************************************/
+uint16_t E_Resert;
+uint32_t E_Count = 0;
+void Sensor_Resert( void );
 
 static	uint16_t	err_count = 0u;
 #define	BITN(_b_buf, _n)	(_b_buf[(_n)/8] & ( 1 << (( _n ) % 8 )))
@@ -249,7 +253,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.Ba = AI_Buf[1];	//	大气压力
 			SensorRemote.Te = AI_Buf[2];	//	环境温度
 			SensorRemote.Tm = AI_Buf[3];	//	电机温度
-
+			E_Resert = AI_Buf[4];
 			SensorRemote.HCBoxRunTemp  = AI_Buf[5];
 			SensorRemote.HCBoxOutValue = AI_Buf[6];
 			SensorRemote.HCBoxFanSpeed = AI_Buf[7];
@@ -281,6 +285,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		{
 			err_count ++;
 		}
+		Sensor_Resert();
 		delay( 200u );
 
 //		{
@@ -366,7 +371,9 @@ void	menu_FactoryDebug( void )
 			{
 			case opt_COMM:
 				sprintf( sbuffer, "Errors: %5u", err_count );						Lputs( 0x0600u, sbuffer );
+				sprintf( sbuffer, "E_Resert: %5u", E_Count );						Lputs( 0x0B00u, sbuffer );
 				sprintf( sbuffer, " AI[0]: %5u", SensorRemote.iCounter );	 Lputs( 0x1000u, sbuffer );
+				
 				break;
 
 			default:
@@ -795,6 +802,35 @@ void	HCBox_Init( void )
 	}
 
 }
+void Sensor_Resert( void )
+{
+	static	BOOL Flag = FALSE;
+	if( E_Resert == 0xFFFF )
+	{	//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
+		eMBMWrite( SubSlave, 40010u, 1u, &E_Resert);
+		Flag = TRUE;
+		E_Count ++;
+		delay( 500 );
+	}
+	else	if( Flag && (E_Count > 1))
+	{
+// 		uint8_t	i;
+		uint16_t	Value = 0x0000u;
+		eMBMWrite( SubSlave, 40010u, 1u, &Value );
+		HCBox_Init();	
+// 		for( i = 0; i < SP_Max; i ++ )
+// 		{
+// 			if( Sampler_isRunning( ( enum enumSamplerSelect ) i ) )
+// 			{
+// 	// 			Sample_Fatal( SamplerSelect );		
+// 				Sample_Error( SamplerSelect );
+// 			}
+// 		}
+		Flag = FALSE;
+	}
+
+}
+
 
 // struct	uPID_Parament HCBoxPID;
 
@@ -875,141 +911,3 @@ void	HCBox_Init( void )
 
 // }
 /********  (C) COPYRIGHT 2015 青岛金仕达电子科技有限公司  **** End Of File ****/
-
-/*
-Lputs( 0x0606, "加热 Kp:" );
-Lputs( 0x0606, "加热 Ti:" );
-Lputs( 0x0606, "加热 Td:" );
-Lputs( 0x0606, "制冷 Kp:" );
-Lputs( 0x0606, "制冷 Ti:" );
-Lputs( 0x0606, "制冷 Td:" );
-**/
-// void	CalibrateZeromain_R24( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "日均   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_R24_A, SP_R24_B );
-// }
-
-// void	CalibrateZeromain_SHI( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "时均   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_SHI_C, SP_SHI_D );
-// }
-
-// void	CalibrateZeromain_TSP( void )
-// {
-// 	cls();
-// 	Lputs( 0x0402u, "粉尘   自动调零" );
-// 	KB6102Main_CalibrateZero( SP_TSP, SP_TSP );
-// }
-
-
-
-
-// static	void	KB6102Main_CalibrateZero( enum enumSamplerSelect SamplerSelect )
-// {
-// 	#define	f_len 10u
-// 	uint16_t	sensor[2][f_len];
-// 	uint8_t		index;
-// 	BOOL		cnt_full;
-// 	uint16_t gray  = Configure.DisplayGray;
-// 	BOOL	graychanged = FALSE;
-
-// 	index = 0u;
-// 	cnt_full = FALSE;
-
-// 	for(;;)
-// 	{
-// 		do {
-// 			sensor[0][index] = SensorRemote.pf[SamplerSelect];
-// // 			sensor[1][index] = SensorRemote.pf[SamplerSelect];
-// // 			sensor[2][index] = SensorRemote.pr[SamplerSelect];
-// 			sensor[1][index] = SensorRemote.pr[SamplerSelect];
-// 			if ( ++index == f_len )
-// 			{
-// 				index = 0u;
-// 				cnt_full = TRUE;
-// 			}
-// 	
-// 			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
-// 			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
-
-// 			
-// 			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
-// 			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
-
-// 			Lputs( 0x0C04u, "流量:" );
-// 			ShowFP32( 0x1503u, get_pf( SamplerSelect ), 0x0602u, NULL );
-
-// 			Lputs( 0x0C18u, "计压:" );
-// 			ShowFP32( 0x1517u, get_Pr( SamplerSelect ), 0x0602u, NULL );
-
-// 			} while( ! hitKey( 40u ));
-
-// 		switch( getKey())
-// 		{
-// 		case K_OK:	
-// 		case K_ESC:		CalibrateSave( );		return;
-// 		case K_OK_UP:	
-// 			if ( gray < 2200u )
-// 			{
-// 				++gray;
-// 			}
-// 			if( ! releaseKey( K_OK_UP,100 ))
-// 			{
-// 				while( ! releaseKey( K_OK_UP, 1 ))
-// 				{
-// 					++gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
-// 				}
-// 			}
-// 			graychanged = true;		
-// 			break;
-// 		case K_OK_DOWN:
-// 			if ( gray >  200u )
-// 			{
-// 				--gray;
-// 			}
-// 			if( ! releaseKey( K_OK_DOWN, 100 ))
-// 			{
-// 				while( ! releaseKey( K_OK_DOWN, 1 ))
-// 				{
-// 					--gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
-// 				}			
-// 			}
-// 			graychanged = true;
-// 			break;
-
-// 		case K_OK_RIGHT:
-// 			if ( gray < ( 2000u - 50u ))
-// 			{ 
-// 				gray += 100u;
-// 			}
-// 			graychanged = true;
-// 			break;
-// 		case K_OK_LEFT:	
-// 			if ( gray > ( 200 + 20u ))
-// 			{
-// 				gray -= 20u;
-// 			}
-// 			graychanged = true;
-// 			break;
-// 		default:
-// 			break;
-// 		}
-// 		if( graychanged == true )
-// 		{
-// 			DisplaySetGrayVolt( gray * 0.01f );
-// 			Configure.DisplayGray = gray;
-// 			ConfigureSave();
-// 			graychanged = FALSE;
-// 		}		
-
-// 	}
-// }
-
-
-

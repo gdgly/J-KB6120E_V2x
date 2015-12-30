@@ -207,13 +207,14 @@ void	Sample_Terminate( enum enumSamplerSelect SamplerSelect )
 //	故障处理：通知任务任务有致命故障发生，采样任务应提前中止，不应继续执行。
 void	Sample_Fatal( enum enumSamplerSelect SamplerSelect )
 {
-	//	关泵
+	SampleSwitch[SamplerSelect].Fatal = TRUE; 
+	SampleSwitch[SamplerSelect].Clean = TRUE;
 }
 
 //	故障处理：通知任务任务有致命故障发生，采样任务应暂停，用户可选择恢复。
 void	Sample_Error( enum enumSamplerSelect SamplerSelect )
 {
-	//	关泵
+	SampleSwitch[SamplerSelect].Fatal = TRUE; 
 }
 
 

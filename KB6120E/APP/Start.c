@@ -187,10 +187,10 @@ __task	int32_t	main( void )
 	SD_Init();				//	SD卡读写初始化，放在开关机存取之前
 	PowerLog_Init();	//	开关机存取，时间初始化之后
 	
-	delay( 500u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
+	delay( 800u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
 	SENSOR_Init();		//	modbus通信初始化
 	
-	delay( 500u );
+	delay( 200u );
 	HCBox_Init();
 	delay( 1000u );
 	
