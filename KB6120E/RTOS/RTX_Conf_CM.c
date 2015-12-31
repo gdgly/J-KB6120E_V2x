@@ -48,42 +48,42 @@
 //   <i> Defines max. number of threads that will run at the same time.
 //   <i> Default: 6
 #ifndef OS_TASKCNT
- #define OS_TASKCNT     30
+ #define OS_TASKCNT     25
 #endif
 
 //   <o>Default Thread stack size [bytes] <64-4096:8><#/4>
 //   <i> Defines default stack size for threads with osThreadDef stacksz = 0
 //   <i> Default: 200
 #ifndef OS_STKSIZE
- #define OS_STKSIZE     200
+ #define OS_STKSIZE     150
 #endif
 
 //   <o>Main Thread stack size [bytes] <64-4096:8><#/4>
 //   <i> Defines stack size for main thread.
 //   <i> Default: 200
 #ifndef OS_MAINSTKSIZE
- #define OS_MAINSTKSIZE 375
+ #define OS_MAINSTKSIZE 250
 #endif
 
 //   <o>Number of threads with user-provided stack size <0-250>
 //   <i> Defines the number of threads with user-provided stack size.
 //   <i> Default: 0
 #ifndef OS_PRIVCNT
- #define OS_PRIVCNT     12
+ #define OS_PRIVCNT     0
 #endif
 
 //   <o>Total stack size [bytes] for threads with user-provided stack size <0-4096:8><#/4>
 //   <i> Defines the combined stack size for threads with user-provided stack size.
 //   <i> Default: 0
 #ifndef OS_PRIVSTKSIZE
- #define OS_PRIVSTKSIZE 1024
+ #define OS_PRIVSTKSIZE 0
 #endif
 
 // <q>Check for stack overflow
 // <i> Includes the stack checking code for stack overflow.
 // <i> Note that additional code reduces the Kernel performance.
 #ifndef OS_STKCHECK
- #define OS_STKCHECK    1
+ #define OS_STKCHECK    0
 #endif
 
 // <o>Processor mode for thread execution 

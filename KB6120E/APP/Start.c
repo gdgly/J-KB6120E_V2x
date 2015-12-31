@@ -99,7 +99,7 @@ __task	void	_task_PowerLog( void const * p_arg )
 
 void	PowerLog_Init( void )
 {
-	static	osThreadDef( _task_PowerLog, osPriorityLow, 1, 200 );
+	static	osThreadDef( _task_PowerLog, osPriorityLow, 1, 0 );
 
 	osThreadCreate( osThread( _task_PowerLog ), NULL );
 }

@@ -172,7 +172,7 @@ __task	void	_task_Keyboard( void const * p_arg )
 /********************************** 功能说明 ***********************************
 *	按键扫描系列初始化
 *******************************************************************************/
-osThreadDef( _task_Keyboard, osPriorityAboveNormal, 1u, 100u );
+osThreadDef( _task_Keyboard, osPriorityAboveNormal, 1u, 0 );
 osSemaphoreDef( semiKeyChanged );
 osSemaphoreDef( semiKeyHited );
 
