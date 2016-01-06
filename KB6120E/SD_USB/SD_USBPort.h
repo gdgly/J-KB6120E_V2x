@@ -1,5 +1,5 @@
-#ifndef __SDCARD_PORT_H
-#define __SDCARD_PORT_H
+#ifndef __SD_USB_PORT_H
+#define __SD_USB_PORT_H
 
 
 #include "BSP.H"
@@ -7,6 +7,7 @@
 #include "file_sys.h"
 #include "CH376INC.h"
 
+#define	FilePageSize_TSP_SHI_R24  40u
 //¸ùÄ¿Â¼²Ù×÷
 void	Byte_CREAT_CON_DIR ( const char * BUF_Name );
 void	Byte_CREAT_WRITE_DIR ( const char * BUF_Name, uint8_t * Content, uint32_t offset );

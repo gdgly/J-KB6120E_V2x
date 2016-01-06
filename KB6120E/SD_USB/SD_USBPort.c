@@ -8,8 +8,8 @@
 * 修订人: 
 *******************************************************************************/
 #include "string.h"
-#include "SD_USBPort.h"
 #include "AppDEF.H"
+#include "SD_USBPort.h"
 #define SD_Card       	0x03
 #define USB_Flash_disk	0x06
 UINT8			buf[100];	
@@ -379,7 +379,7 @@ void SD_Init(void)
 	SD_File_Creat();
 }
 
-#define	FilePageSize_TSP_SHI_R24  40u
+// #define	FilePageSize_TSP_SHI_R24  40u
 
 uint8_t  sdinit[16]={"SDInitSuccessful"};
 void	SD_File_Creat( void )
@@ -413,13 +413,19 @@ void	SD_File_Creat( void )
 	{
 		Byte_CREAT_WRITE_PATH( "\\SAMPLER\\POWER", sdinit,16 );//非零 不正常 重新创建
 		ByteFill( "\\SAMPLER\\POWER", 16, (100 + 4 - sizeof ( sdinit ) ));
-	}	
+	}
+	
 	if(SetFlag == TRUE )
 	{
 		SampleSetSave();
 		SetFlag = FALSE;
 	}	
-
+	Byte_CREAT_CON_DIR("\\SD_ERR");	//创建工作目录	( 如果已经存在，直接打开 )
+	if( ! ByteLoad( "\\SD_ERR\\ERR.TXT"	, 0, (uint8_t *) bufread, 15 ) )
+	{  
+		Byte_CREAT_WRITE_PATH("\\SD_ERR\\ERR.TXT"	, sdinit, 1 );// 不正常 重新创建
+	}
+	
 }
 /**/  
 

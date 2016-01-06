@@ -237,14 +237,17 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		}
 		else
 		{
-			err_count ++;
+			uint8_t * Status = 0;
+			*Status = eStatus;
+			File_Save_Err( Status, err_count++ );
 		}
 	}
 
 	for(;;)
 	{
 		static	uint16_t	AI_Buf[40];
-		eMBErrorCode eStatus = eMBMRead( SubSlave, AI_Base, 40u, AI_Buf );
+		static	eMBErrorCode eStatus; 
+		eStatus= eMBMRead( SubSlave, AI_Base, 40u, AI_Buf );
 	
 		if ( MB_ENOERR == eStatus )
 		{
@@ -282,8 +285,10 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.tr[SP_SHI_D] = AI_Buf[37];
 		}
 		else
-		{
-			err_count ++;
+		{	
+			uint8_t * Status = 0;
+			*Status = eStatus;
+			File_Save_Err( Status, err_count++ );
 		}
 		Sensor_Resert();
 		delay( 200u );
@@ -323,7 +328,7 @@ void	menu_FactoryDebug( void )
 		opt_exit,
 		opt_COMM, opt_TSP, opt_R24_A, opt_R24_B, opt_SHI_C, opt_SHI_D, //opt_AIR,
 		opt_CPU,
-		opt_HCBox, opt_BAT,
+		opt_HCBox, opt_BAT, opt_Err,
 		opt_max, opt_min = 1
 	};
 	uint8_t	option = opt_min;
@@ -332,13 +337,13 @@ void	menu_FactoryDebug( void )
 
 	BOOL		OutState[SP_Max];
 	uint16_t	OutValue[SP_Max];
-
+	static	uint8_t	err_Code[40] = {0};
 	enum enumSamplerSelect	PumpSelect = SP_TSP;
 	
 	CHAR	sbuffer[36];
 
 	uint8_t	i;
-
+	uint16_t	c = 0;
 	for ( i = 0u; i < SP_Max; ++i )
 	{
 		OutState[i] = FALSE;
@@ -435,6 +440,18 @@ void	menu_FactoryDebug( void )
 				sprintf( sbuffer, "    Ba :%6.3f ", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));		Lputs( 0x1400u, sbuffer );
 				sprintf( sbuffer, "   Temp:%6.4f ", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x1800u, sbuffer );
 				break;
+			case opt_Err:
+			{
+				File_Load_Err( err_Code, 40 );
+				for( i = 0; i < err_count; i++ )
+				{
+					c = (( i * 3 )%30) * 256 + (i / 10) * 6;
+					sprintf( sbuffer, "%d",err_Code[i] );
+					Lputs( c ,sbuffer);
+				}	
+			}
+			break;
+				
 			}
 		} while( ! hitKey( 25u ));
 		

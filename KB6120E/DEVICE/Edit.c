@@ -229,9 +229,9 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 						Lputs( yx, sbuffer );
 					}
 				else
-				if ( ++month > 12u )
+				if ( ++day_m > dayOfmonth( year, month ) )
 				{
-					month = 1u;
+					day_m = 1u;
 				}
 				break;
 			default:

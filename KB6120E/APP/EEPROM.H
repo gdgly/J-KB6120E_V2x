@@ -155,6 +155,8 @@ struct	uFile_AIR
 //		void	Load( uint16_t FileNum );
 };
 
+extern	void	File_Load_Err( uint8_t	* Err, uint16_t count );
+extern	void	File_Save_Err( uint8_t	* Err, uint16_t count );
 
 extern	void	File_Save_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile );
 extern	void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24       * pFile );

@@ -8,9 +8,8 @@
 * 修订人: 
 *******************************************************************************/
 #include "AppDEF.H"
-#include "SD_USBPort.h" 
 #include "bkpdata.h"  
-
+#include "SD_USBPort.h" 
 #define	_EE_Page_Len	128u
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ BOOL	SDEsave( const char * BUF_Name, uint32_t address,   uint8_t * buffer, uint3
 *	文件存取
 *******************************************************************************/
 
-#define	FilePageSize_TSP_SHI_R24  40u
+
 
 const	char	* const Save_NameChar[SP_Max] =
 {
@@ -97,6 +96,10 @@ void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileN
 	}	
 }
 
+void	File_Load_Err( uint8_t	* Err, uint16_t count )
+{
+	SDEload( "\\SD_ERR\\ERR.TXT", 0, Err, (uint32_t)count );
+}
 // void	File_Load_AIR( uint16_t FileNum, struct uFile_AIR * pFile )
 // {
 
@@ -119,7 +122,15 @@ void	File_Save_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileN
 	assert(( FileNum >= 1 ) && ( FileNum <= FileNum_Max ));
 	SDEsave( Save_NameChar[SamplerSelect], ( FilePageSize_TSP_SHI_R24 * FileNum ), ss, FilePageSize_TSP_SHI_R24 );
 }
-  
+
+void	File_Save_Err( uint8_t	* Err, uint16_t count )
+{
+// 	uint8_t c[2] = { 0 };
+// 	c[0] = Err >> 8;
+// 	c[1] = Err;
+	SDEsave("\\SD_ERR\\ERR.TXT", count , Err, 1 );
+}
+	
 // void	File_Save_AIR( uint16_t FileNum, struct uFile_AIR const * pFile )
 // {
 // 	
