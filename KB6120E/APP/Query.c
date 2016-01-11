@@ -1,9 +1,9 @@
 /**************** (C) COPYRIGHT 2013 青岛金仕达电子科技有限公司 ****************
 * 文 件 名: Query.C
 * 创 建 者: Dean
+*********************************** 修订记录 ***********************************
 * 描  述  : KB6120C 采样数据 记录/查询/打印
 * 最后修改: 2013年6月5日
-*********************************** 修订记录 ***********************************
 * 版  本: 
 * 修订人: 
 *******************************************************************************/
@@ -16,7 +16,7 @@ static	BOOL	PromptTest( void ){	return	FALSE; }
 
 extern	char	* const	TableSampler[];
 
-static	void	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
+static	BOOL	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
 {
 	CHAR	sbuffer[40];
 	struct	tm	t_tm;
@@ -26,7 +26,7 @@ static	void	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * p
 	{
 		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
 		{
-			return;
+			return	FALSE;
 		}
 	}
   sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
@@ -58,9 +58,10 @@ static	void	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * p
 	PrinterPutString( sbuffer );
 
 	PrinterPutString( " " );	PrinterPutString( " " );
+	return	TRUE;
 }
 
-static	void	Print_File_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
+static	BOOL	Print_File_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t FileNum, struct uFile_TSP_SHI_R24 const * pFile )
 {
 	CHAR	sbuffer[40];
 	struct	tm	t_tm;
@@ -70,7 +71,7 @@ static	void	Print_File_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t F
 	{
 		if( vbCancel == MsgBox( "打印机未联机 !", vbRetryCancel ))
 		{
-			return;
+			return	FALSE;
 		}
 	}
 
@@ -100,6 +101,7 @@ static	void	Print_File_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t F
 	PrinterPutString( sbuffer );
 
 	PrinterPutString( " " );	PrinterPutString( " " );
+	return	TRUE;
 }
 
 
@@ -147,7 +149,7 @@ static void FPrintf_TSP(uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFil
 	{
 		{ 0x0201u, "文件输出" },
 		{ 0x0C06u, "打印机" },	
-		{ 0x1806u, " U盘 " },
+		{ 0x1808u,  "U盘" },
 	};
 
 	uint8_t	item = 1u;
@@ -164,8 +166,8 @@ static void FPrintf_TSP(uint16_t FileNum, struct uFile_TSP_SHI_R24  const * pFil
 		{
 		//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
 		case 1:
-			Print_File_TSP( FileNum, pFile );
-			state = TRUE;	
+			if( Print_File_TSP( FileNum, pFile ) )
+				state = TRUE;	
 			break;
 		case 2:		
 			if( USB_PrintInit() )
@@ -190,7 +192,7 @@ static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t File
 	{
 		{ 0x0201u, "文件输出" },
 		{ 0x0C06u, "打印机" },	
-		{ 0x1806u, " U盘 " },
+		{ 0x1808u,  "U盘" },
 	};
 
 	uint8_t	item = 1u;
@@ -207,8 +209,8 @@ static void FPrintf_R24_SHI( enum enumSamplerSelect SamplerSelect, uint16_t File
 		{
 		//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
 		case 1:
-			Print_File_R24_SHI( SamplerSelect, FileNum, pFile );
-			state = TRUE;	
+			if( Print_File_R24_SHI( SamplerSelect, FileNum, pFile ) )
+				state = TRUE;	
 			break;
 		case 2:		
 			if( USB_PrintInit() )
@@ -288,7 +290,7 @@ void	Query_File_TSP( void )
 				Lputs( 0x1202u, "工况体积:" );		ShowFP32( 0x1213u, File.vd,                    0x0600u, "L" );
 				Lputs( 0x1602u, "标况体积:" );		ShowFP32( 0x1613u, File.vnd,                   0x0600u, "L" );
 				Lputs( 0x1A02u, "采样时间:" );		ShowTIME( 0x1A16u, File.sum_min  );
-			//	Lputs( 0x1800u, "设置时间:" );	ShowTIME( 0x1816u, File.set_time );
+				//Lputs( 0x1800u, "设置时间:" );		ShowTIME( 0x1816u, File.set_time );
 				break;
 			}
 		}		

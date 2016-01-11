@@ -231,10 +231,10 @@ void	ConfigureLoad_KB2400( void )
 		Configure.InstrumentType = type_KB2400;//2400
 		
 		Configure.PumpType[SP_TSP  ] = enumPumpNone;	Configure.SetFlow[SP_TSP  ]  = 1000u;	//	粉尘 采样流量 100.0 L/m
-		Configure.PumpType[SP_R24_A] = enumPumpNone;	Configure.SetFlow[SP_R24_A]  =  2u;	//	日均1采样流量 0.200 L/m
-		Configure.PumpType[SP_R24_B] = enumPumpNone;	Configure.SetFlow[SP_R24_B]  =  2u;	//	日均2采样流量 0.200 L/m
-		Configure.PumpType[SP_SHI_C] = enumOrifice_1;	Configure.SetFlow[SP_SHI_C]  =  5u;	//	时均1采样流量 0.5 L/m
-		Configure.PumpType[SP_SHI_D] = enumOrifice_1;	Configure.SetFlow[SP_SHI_D]  =  5u;	//	时均2采样流量 0.5 L/m
+		Configure.PumpType[SP_R24_A] = enumOrifice_1;	Configure.SetFlow[SP_R24_A]  =  2u;	//	日均1采样流量 0.200 L/m
+		Configure.PumpType[SP_R24_B] = enumOrifice_1;	Configure.SetFlow[SP_R24_B]  =  2u;	//	日均2采样流量 0.200 L/m
+		Configure.PumpType[SP_SHI_C] = enumPumpNone;	Configure.SetFlow[SP_SHI_C]  =  5u;	//	时均1采样流量 0.5 L/m
+		Configure.PumpType[SP_SHI_D] = enumPumpNone;	Configure.SetFlow[SP_SHI_D]  =  5u;	//	时均2采样流量 0.5 L/m
 
 		
 

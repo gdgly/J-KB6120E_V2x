@@ -772,41 +772,41 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 
 // #else
 
-// uint8_t bus_SPIxShift( uint8_t IOByte )
-// {
-// 	SPI_TypeDef * SPIx = SPI1;
+uint8_t bus_SPIxShift( uint8_t IOByte )
+{
+	SPI_TypeDef * SPIx = SPI1;
 
-// 	while ( ! READ_BIT( SPIx->SR, SPI_SR_TXE ));	// Wait if TXE cleared, Tx FIFO is empty.
-// 	SPIx->DR = IOByte;
-// 	while ( ! READ_BIT( SPIx->SR, SPI_SR_RXNE ));	// Wait if RXNE cleared, Rx FIFO is empty.
-// 	IOByte = SPIx->DR;
+	while ( ! READ_BIT( SPIx->SR, SPI_SR_TXE ));	// Wait if TXE cleared, Tx FIFO is empty.
+	SPIx->DR = IOByte;
+	while ( ! READ_BIT( SPIx->SR, SPI_SR_RXNE ));	// Wait if RXNE cleared, Rx FIFO is empty.
+	IOByte = SPIx->DR;
 
-// 	return	IOByte;
-// }
+	return	IOByte;
+}
 
-// void	bus_SPIxPortInit( void )
-// {
-// 	SPI_TypeDef * SPIx = SPI1;
+void	bus_SPIxPortInit( void )
+{
+	SPI_TypeDef * SPIx = SPI1;
 
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
 
-// 	SPIx->CR1	= SPI_CR1_MSTR
-// 				| SPI_CR1_CPHA
-// 				| SPI_CR1_CPOL
-// 				| SPI_CR1_SSM
-// 				| SPI_CR1_SSI
-// 				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
-// 				;
-// 	SPIx->CR2   = 0;
-// 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
-// 	
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-// 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
-// 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
-// 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
-//  	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
-// }
+	SPIx->CR1	= SPI_CR1_MSTR
+				| SPI_CR1_CPHA
+				| SPI_CR1_CPOL
+				| SPI_CR1_SSM
+				| SPI_CR1_SSI
+				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
+				;
+	SPIx->CR2   = 0;
+	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
+	
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
+	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+ 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
+}
 
 // #endif
 

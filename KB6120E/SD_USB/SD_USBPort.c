@@ -423,7 +423,7 @@ void	SD_File_Creat( void )
 	Byte_CREAT_CON_DIR("\\SD_ERR");	//创建工作目录	( 如果已经存在，直接打开 )
 	if( ! ByteLoad( "\\SD_ERR\\ERR.TXT"	, 0, (uint8_t *) bufread, 15 ) )
 	{  
-		Byte_CREAT_WRITE_PATH("\\SD_ERR\\ERR.TXT"	, sdinit, 1 );// 不正常 重新创建
+		Byte_CREAT_WRITE_PATH("\\SD_ERR\\ERR.TXT"	, sdinit, 15 );// 不正常 重新创建
 	}
 	
 }

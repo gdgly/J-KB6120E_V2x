@@ -41,7 +41,8 @@ extern	BOOL	PumpAIR_GetOutState( void );
 extern	void	TIM2_Init( void );
 extern	void	TIM2_OutCmd( BOOL NewState );
 extern	void	TIM2_SetOutput( uint16_t OutValue );
-
+extern	void	bus_SPIxPortInit( void );
+extern	uint8_t bus_SPIxShift( uint8_t IOByte );
 enum	enumADC12_Channel
 {
 	ADC_Cx_IntTemp,

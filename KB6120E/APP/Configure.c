@@ -361,74 +361,7 @@ void menu_SamplerSum( void )
 /********************************** 功能说明 ***********************************
 *  配置标况流量的定义温度
 *******************************************************************************/
-static	void	menu_SelectTstd( void )
-{
-    static  struct  uMenu  const  menu[] =
-    {
-        { 0x0301u, "选择标况温度" },
-        { 0x080Au, " 0℃(273K)" },
-        { 0x100Au, "20℃(293K)" },
-        { 0x180Au, "25℃(298K)" }
-    };
-    uint8_t	item;
 
-    uint8_t	SetTstd = Configure.SetTstd;
-    BOOL	changed = FALSE;
-
-    cls();
-    Menu_Redraw( menu );
-
-    do
-    {
-        switch ( SetTstd )
-        {
-        default:
-        case enum_273K:
-            Lputs( 0x0802u,"→"	);
-            Lputs( 0x1002u,"  "	);
-            Lputs( 0x1802u,"  "	);
-            item = 1;
-            break;
-        case enum_293K:
-            Lputs( 0x0802u,"  "	);
-            Lputs( 0x1002u,"→"	);
-            Lputs( 0x1802u,"  "	);
-            item = 2;
-            break;
-        case enum_298K:
-            Lputs( 0x0802u,"  "	);
-            Lputs( 0x1002u,"  "	);
-            Lputs( 0x1802u,"→"	);
-            item = 3;
-            break;
-        }
-        item = Menu_Select( menu, item, NULL );
-        switch ( item )
-        {
-        case 1:
-            SetTstd = enum_273K;
-            changed = TRUE;
-            break;
-        case 2:
-            SetTstd = enum_293K;
-            changed = TRUE;
-            break;
-        case 3:
-            SetTstd = enum_298K;
-            changed = TRUE;
-            break;
-        default:
-            break;
-        }
-    }
-    while( enumSelectESC != item );
-
-    if ( changed )
-    {
-        Configure.SetTstd = SetTstd;
-        ConfigureSave();
-    }
-}
 /********************************** 功能说明 ***********************************
 *  系统配置 -> 恒温箱
 *******************************************************************************/
@@ -797,20 +730,20 @@ static	void 	menu_Pr_Portect( void )
 	0x13, 
 	0x16, };
 
-	static	struct	uMenu  menu2[] =
+	static	struct	uMenu  menu2[] =	//	2400
 	{
 		{ 0x0201u, "限压保护"},
-		{ 0x0D05u, "时均C"	},
-		{ 0x1305u, "时均D"	} ,
+		{ 0x0D05u, "日均A"	},
+		{ 0x1305u, "日均B"	} ,
 	};	
-	static	struct	uMenu  menu3[] =
+	static	struct	uMenu  menu3[] =	//	6120B
 	{
 		{ 0x0301u, "限压保护"},
 		{ 0x0C05u, "粉 尘"	},
 		{ 0x1005u, "时均C"	},
 		{ 0x1405u, "时均D"	} ,
 	};	
-	static	struct	uMenu  menu4[] =
+	static	struct	uMenu  menu4[] =	//	2400D
 	{
 		{ 0x0401u, "限压保护"},
 		{ 0x0B05u, "日均A"	},
@@ -818,7 +751,7 @@ static	void 	menu_Pr_Portect( void )
 		{ 0x1105u, "时均C"	},
 		{ 0x1405u, "时均D"	} ,
 	};
-	static	struct	uMenu  menu5[] =
+	static	struct	uMenu  menu5[] =	//	6120C
 	{
 		{ 0x0501u, "限压保护"},
 		{ 0x0A05u, "粉 尘"	},
@@ -904,7 +837,7 @@ static	void 	menu_Pr_Portect( void )
 	
 	if( Changed == TRUE )
 	{
-		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
+		switch( MsgBox( "保存修改结果?",vbYesNoCancel | vbDefaultButton3 ) )
 		{
 		case vbYes:
 			ConfigureSave();
@@ -1072,154 +1005,293 @@ static	void	menu_ConfigureTime( void )
 }
 
 
-static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
-{
-	 static	struct  uMenu  const   menu[] =
-    {
-        { 0x0201u, "非常用采样配置" },
-        { 0x0C12u, "[0.2 - 1.0]" },
-        { 0x1612u, "[0.5 - 2.0]" },
-    };
-		BOOL changed = FALSE;
-    uint8_t	item;
-
-    
-		do
-		{
-			Part_cls();
-			Menu_Redraw( menu );
-			if ( Configure.PumpType[SamplerSelect] == enumOrifice_1 )
-			{
-				Lputs( 0x0C0Eu, "→" );
-				item = 1u;
-			}
-			else	
-			{
-				Lputs( 0x160Eu, "→" );
-				item = 2u;
-			}
-
-			item = Menu_Select( menu, item, NULL );
-
-			switch( item )
-			{
-			case 1:
-				Configure.PumpType[SamplerSelect] = enumOrifice_1;
-				changed = TRUE;
-				break;
-			case 2:
-				Configure.PumpType[SamplerSelect] = enumOrifice_2;	
-				changed = TRUE;
-				break;
-			default:
-				break;
-			}
-		} while ( enumSelectESC != item );
-	if( changed == TRUE )
-	{
-// 		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
+// static	void	menu_SelectRange( enum enumSamplerSelect SamplerSelect )
+// {
+// 	 static	struct  uMenu  const   menu[] =
+//     {
+//         { 0x0201u, "量程配置" },
+//         { 0x0C12u, "[0.2 - 1.0]" },
+//         { 0x1612u, "[0.5 - 2.0]" },
+//     };
+// 		CHAR	const	* MENU[] = 
 // 		{
-// 		case vbYes:
-			ConfigureSave();
-// 			break;
-// 		case vbNo:
-// 			ConfigureLoad();
-// 			break;
-// 		case vbCancel:
-// 			break;
-// 		}
-	}
-}
+// 		"[0.2 - 1.0]",
+// 		"[0.5 - 2.0]",
+// 		};
+// 		BOOL changed = FALSE;
+//     uint8_t	item;
 
+//     
+// 		do
+// 		{
+// 			Part_cls();
+// 			Menu_Redraw( menu );
+// 			if ( Configure.PumpType[SamplerSelect] == enumOrifice_1 )
+// 			{
+// 				Lputs( 0x0C0Eu, "→" );
+// 				item = 1u;
+// 			}
+// 			else	
+// 			{
+// 				Lputs( 0x160Eu, "→" );
+// 				item = 2u;
+// 			}
 
+// 			item = Menu_Select( menu, item, NULL );
 
-static	void	menu_Configure_Flow_TSP( void )
-{
-	Part_cls();
-	Lputs( 0x0C10, "粉尘流量设置");
-	ShowI16U( 0x1210u, Configure.SetFlow[SP_TSP], 0x0501u, "L/m" );
-	if( EditI16U( 0x1210u, & Configure.SetFlow[SP_TSP  ], 0x0501u ))
-	{
-		if ( Configure.SetFlow[SP_TSP  ] > 1400u )
-		{
-			Configure.SetFlow[SP_TSP  ] = 1400u;
-		}
-		if ( Configure.SetFlow[SP_TSP  ] <  600u )
-		{
-			Configure.SetFlow[SP_TSP  ] =  600u;
-		}	
-		
-		
-	}
-	if( vbYes == MsgBox( "是否保存更改?", vbYesNo|vbDefaultButton2 ) )
-			ConfigureSave();
-		else
-			ConfigureLoad();
-}
-static	void	SlectOther_Comments( void )
-{
-	if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
-	{
-		Lputs(0x0A0F, "包括水汽压设置");
-		Lputs(0x0E0F, "以及两路时均泵的");
-		Lputs(0x120F, "流量量程配置和");
-		Lputs(0x160F, "粉尘泵流量设置");
-	}
-	else
-	{
-		Lputs(0x0B0F, "包括水汽压设置");
-		Lputs(0x100F, "以及两路时均泵的");
-		Lputs(0x150F, "量流量程配置");
-	}
-}
+// 			switch( item )
+// 			{
+// 			case 1:
+// 						
+// 				break;
+// 			case 2:
+// 				Configure.PumpType[SamplerSelect] = enumOrifice_2;	
+// 				changed = TRUE;
+// 				break;
+// 			default:
+// 				break;
+// 			}
+// 		} while ( enumSelectESC != item );
+// 	if( changed == TRUE )
+// 	{
+// // 		switch( MsgBox( "保存修改结果？",vbYesNoCancel | vbDefaultButton3 ) )
+// // 		{
+// // 		case vbYes:
+// 			ConfigureSave();
+// // 			break;
+// // 		case vbNo:
+// // 			ConfigureLoad();
+// // 			break;
+// // 		case vbCancel:
+// // 			break;
+// // 		}
+// 	}
+// }
+
 static	void	menu_SelectOther( void )
 {
-	static  struct  uMenu  menu1[] =
+	BOOL	Changed = FALSE;
+	static  struct  uMenu  menu1[] =	//	6120b、c
 	{
-		{ 0x0401u, 	"非常用采样配置" 	},
-		{ 0x0602u,  "水汽压"	},
-		{ 0x0C01u,  "C路量程"},
-		{ 0x1201u,  "D路量程"},
-		{ 0x1802u, 	"粉尘泵"	},
+		{ 0x0301u, 	"其他配置" 	},
+		{ 0x0A02u,  "水汽压"	},
+		{ 0x0F02u,  "标况温度"},
+		{ 0x1402u, 	"粉尘流量"	},
 	};
-	static  struct  uMenu  menu2[] =
+	static  struct  uMenu  menu2[] =	//	others
 	{
-		{ 0x0301u, 	"非常用采样配置" 	},
-		{ 0x0802u,  "水汽压"	},
-		{ 0x1001u,  "C路量程"},
-		{ 0x1801u,  "D路量程"},
+		{ 0x0201u, 	"其他配置" 	},
+		{ 0x0A02u,  "水汽压"	},
+		{ 0x1402u,  "标况温度"},
 	};
+	CHAR	const	* PbvSelect[2] = 
+	{
+		"[不 计 算]",
+		"[参与计算]",
+	};
+	CHAR	const	* TstdSelect[3] = 
+	{
+		" 0℃(273K)",
+		"20℃(293K)",
+		"25℃(298K)",
+	};
+
 	static  struct  uMenu  * menu;
-		uint8_t	item = 1;
+	uint8_t	item = 1;
+	do{
 		cls();
-		do{
-			Part_cls();
-			if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
-				menu = menu1;
-			else
-				menu = menu2;
-			Menu_Redraw( menu );
-			item = Menu_Select( menu, item, SlectOther_Comments );
-			switch ( item )
+		
+		if( (enum enumSamplerSelect)SamplerTypeHas[0] == SP_TSP )
+		{
+			menu = menu1;
+			ShowI16U( menu[3].yx+16, Configure.SetFlow[SP_TSP], 0x0501u, "L/m" );	
+		}
+		else
+			menu = menu2;
+		Lputs( menu[1].yx+15, PbvSelect[Configure .shouldCalcPbv] );       
+		Lputs( menu[2].yx+16, TstdSelect[Configure.SetTstd] );
+		
+		
+		Menu_Redraw( menu );
+		item = Menu_Select( menu, item, NULL );
+		
+		switch ( item )
+		{
+		case 1:
+			Configure.shouldCalcPbv = !Configure.shouldCalcPbv;
+			Changed = TRUE;
+			break;
+		case 2:	
+			if( ++Configure.SetTstd >= sizeof(TstdSelect) / sizeof(TstdSelect[0]))
+				Configure.SetTstd = 0;
+			Changed = TRUE;
+			break;
+		case 3:
+			if( EditI16U( menu[3].yx+16, & Configure.SetFlow[SP_TSP], 0x0501u ))
 			{
-			case 1:
-				menu_Select_Calc_Pbv( );
-				break;
-			case 2:	
-				menu_SelectRange( SP_SHI_C );
-				break;
-			case 3:
-				menu_SelectRange( SP_SHI_D );
-				break;
-			case 4:
-				menu_Configure_Flow_TSP();
-				cls();
-				break;
-			default:
-				break;
+				if ( Configure.SetFlow[SP_TSP  ] > 1400u )
+				{
+					Configure.SetFlow[SP_TSP  ] = 1400u;
+				}
+				if ( Configure.SetFlow[SP_TSP  ] <  600u )
+				{
+					Configure.SetFlow[SP_TSP  ] =  600u;
+				}	
+				Changed = TRUE;
 			}
-		}while( enumSelectESC != item );
+			break;
+		case enumSelectESC:
+			if( Changed == TRUE )
+			{
+				switch( MsgBox( "保存修改结果?",vbYesNoCancel | vbDefaultButton3 ) )
+				{
+				case vbYes:
+					ConfigureSave();
+					break;
+				case vbNo:
+					ConfigureLoad();
+					break;
+				case vbCancel:
+					item = 1;
+					break;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	
+	}while( enumSelectESC != item );
+	
 }
+
+
+
+static	void 	menu_RangeConfig( void )
+{
+	uint8_t	item = 1u;
+	BOOL Changed = FALSE;
+
+	static	struct	uMenu  menu2[] =	//	2400
+	{
+		{ 0x0201u, "量程设置"},
+		{ 0x0A02u, "日均A"	},
+		{ 0x1402u, "日均B"	},
+	};	
+	static	struct	uMenu  menu3[] =	//	6120B
+	{
+		{ 0x0201u, "量程设置"},
+		{ 0x0A02u, "时均C"	},
+		{ 0x1402u, "时均D"	},
+	};	
+	static	struct	uMenu  menu4[] =	//	2400D、6120C
+	{
+		{ 0x0401u, "量程设置"},
+		{ 0x0802u, "日均A"	},
+		{ 0x0D02u, "日均B"	},
+		{ 0x1202u, "时均C"	},
+		{ 0x1702u, "时均D"	},
+	};
+	CHAR	const	* MENU[] = 
+	{
+		"[x.x - x.x]",
+		"[0.2 - 1.0]",
+		"[0.5 - 2.0]",
+	};
+				
+	static	struct	uMenu * menu;
+
+	
+	do
+	{
+		cls();	
+		Lputs( 0x0114, "单位:L/min");
+		switch( SamplerHasMax  )
+		{
+		case 2: 
+			menu = menu2;	
+			Lputs( menu[1].yx+10, MENU[Configure.PumpType[SP_R24_A]] );
+			Lputs( menu[2].yx+10, MENU[Configure.PumpType[SP_R24_B]] );
+			break;
+		case 3:	
+			menu = menu3;	
+			Lputs( menu[1].yx+10, MENU[Configure.PumpType[SP_SHI_C]] );
+			Lputs( menu[2].yx+10, MENU[Configure.PumpType[SP_SHI_D]] );
+			break;
+		case 4:	
+		case 5:	
+			menu = menu4;	
+			Lputs( menu[1].yx+10, MENU[Configure.PumpType[SP_R24_A]] );
+			Lputs( menu[2].yx+10, MENU[Configure.PumpType[SP_R24_B]] );
+			Lputs( menu[3].yx+10, MENU[Configure.PumpType[SP_SHI_C]] );
+			Lputs( menu[4].yx+10, MENU[Configure.PumpType[SP_SHI_D]] );
+			break;
+		default:
+			break;
+		}		
+		
+		Menu_Redraw( menu );
+
+		item = Menu_Select( menu, item, NULL );
+		switch( item )
+		{
+		case 1:
+			if( SamplerHasMax == 3 )
+			{
+				if( ++ Configure.PumpType[SP_SHI_C] > 2 )
+					Configure.PumpType[SP_SHI_C] = enumOrifice_1;			
+			}
+			else
+				if( ++ Configure.PumpType[SP_R24_A] > 2 )
+					Configure.PumpType[SP_R24_A] = enumOrifice_1;
+			Changed = TRUE;
+			break;
+		case 2:
+			if( SamplerHasMax == 3 )
+			{
+				if( ++ Configure.PumpType[SP_SHI_D] > 2 )
+					Configure.PumpType[SP_SHI_D] = enumOrifice_1;			
+			}
+			else
+				if( ++ Configure.PumpType[SP_R24_B] > 2 )
+					Configure.PumpType[SP_R24_B] = enumOrifice_1;
+			Changed = TRUE;
+			break;
+		case 3:
+			if( ++ Configure.PumpType[SP_SHI_C] > 2 )
+				Configure.PumpType[SP_SHI_C] = enumOrifice_1;
+			Changed = TRUE;	
+			break;
+		case 4:
+			if( ++ Configure.PumpType[SP_SHI_D] > 2 )
+				Configure.PumpType[SP_SHI_D] = enumOrifice_1;
+			Changed = TRUE;
+			break;
+		case enumSelectESC:
+			if( Changed == TRUE )
+			{
+				switch( MsgBox( "保存修改结果?",vbYesNoCancel | vbDefaultButton3 ) )
+				{
+				case vbYes:
+					ConfigureSave();
+					break;
+				case vbNo:
+					ConfigureLoad();
+					break;
+				case vbCancel:
+					item = 1;
+					break;
+				}
+			}
+			break;
+		default:
+			break;
+		}		
+	}while( enumSelectESC != item );
+	
+	
+}
+
 /********************************** 功能说明 ***********************************
 *  采样配置（允许用户操作的部分）
 *******************************************************************************/
@@ -1228,7 +1300,7 @@ static	void	menu_SampleConfigure( void )
 		static	struct	uMenu  const menu[] =
     {
         { 0x0302u, "采样设定"  },
-        { 0x0802u, "标况温度"},	{ 0x0814u, "限压保护" },
+        { 0x0802u, "采样量程"},	{ 0x0814u, "限压保护" },
         { 0x1002u, "恒温装置"},	{ 0x1014u, "计时方式" },
         { 0x1802u, "大气压"  },	{ 0x1814u, "其他设置" } 
     };
@@ -1243,7 +1315,7 @@ static	void	menu_SampleConfigure( void )
 			switch( item )
 			{
 			case 1:
-				menu_SelectTstd();
+				menu_RangeConfig();
 				break;
 			case 3:
 				menu_ConfigureHCBox();

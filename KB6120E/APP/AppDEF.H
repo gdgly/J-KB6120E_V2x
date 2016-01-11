@@ -140,7 +140,7 @@ struct	uConfigure
 	
 	uint16_t	SetFlow[SP_Max];		//	采样流量
 	uint16_t	Pr_Portect[SP_Max];			//	电机保护：计前压力设置	
-	uint8_t		PumpType[SP_Max];		//	时均采样的流量计、泵的型号，影响采样流量的设置范围，标定点的选择。
+	uint8_t		PumpType[SP_Max];		//	日均时均采样的流量计、泵的型号---->影响采样流量的设置范围，标定点的选择。
 
 	
 	uint8_t		HeaterType;				//	恒温箱/加热器的选配情况	

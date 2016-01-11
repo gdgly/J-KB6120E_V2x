@@ -81,8 +81,8 @@ static	void	menu_Calibrate_Ba( void )
 	struct	uMenu const menu[] = 
 	{
 		{ 0x0201u, "标定大气压" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -102,7 +102,7 @@ static	void	menu_Calibrate_Ba( void )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "大气压:" );
+			Lputs( 0x0802u, "大气压:" );
 			ShowFP32( 0x0811u, _sys_get_Ba(), 0x0602u, "kPa" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -238,8 +238,8 @@ void	menu_Calibrate_Te( void )
 	struct	uMenu const menu[] = 
 	{
 		{ 0x0201u, "标定环境温度" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -259,7 +259,7 @@ void	menu_Calibrate_Te( void )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "温度:" );
+			Lputs( 0x0802u, "温度:" );
 			ShowFP32( 0x080Cu, _sys_get_Te(), 0x0602u, "℃" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -395,8 +395,8 @@ void	menu_Calibrate_HCBox_Temp( void )
 	struct	uMenu const menu[] = 
 	{
 		{ 0x0201u, "标定恒温箱温度" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -416,7 +416,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "温度:" );
+			Lputs( 0x0802u, "温度:" );
 			ShowFP32( 0x080Cu, get_HCBoxTemp(), 0x0602u, "℃" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -552,8 +552,8 @@ void	menu_Calibrate_Heater_Temp( void )
 	struct	uMenu const menu[] = 
 	{
 		{ 0x0201u, "标定加热器温度" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -573,7 +573,7 @@ void	menu_Calibrate_Heater_Temp( void )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "温度:" );
+			Lputs( 0x0802u, "温度:" );
 			ShowFP32( 0x080C, get_HeaterTemp(), 0x0602u, "℃" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -709,8 +709,8 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 	static	struct  uMenu  const  menu[] = 
 	{
 		{ 0x0201u, "标定计前温度" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -742,7 +742,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "温度:" );
+			Lputs( 0x0802u, "温度:" );
 			ShowFP32( 0x080Cu, get_Tr( SamplerSelect ), 0x0602u, "℃" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -877,8 +877,8 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 	struct	uMenu const menu[] = 
 	{
 		{ 0x0201u, "标定计前压力" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" }
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" }
 	};
 	enum {
 		opt_exit,
@@ -909,7 +909,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "计压:" );
+			Lputs( 0x0802u, "计压:" );
 			ShowFP32( 0x080C, get_Pr( SamplerSelect ), 0x0602, "kPa" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -1041,8 +1041,8 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 {
 	struct	uMenu const	menu[] = {
 		{ 0x0201u, "标定差压" },
-		{ 0x1000u, "零点" },
-		{ 0x1800u, "倍率" },
+		{ 0x1002u, "零点" },
+		{ 0x1802u, "倍率" },
 	};
 	enum {
 		opt_exit,
@@ -1074,7 +1074,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 
 		Menu_Item_Mask( menu, option );
 		do{
-			Lputs( 0x0800u, "差压:" );
+			Lputs( 0x0802u, "差压:" );
 			ShowFP32( 0x080C, get_pf( SamplerSelect ), 0x0603, "kPa" );
 		} while( ! hitKey( 25u ));
 		Menu_Item_Mask( menu, option );
@@ -1377,9 +1377,9 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 	switch ( SamplerSelect )
 	{
 	case SP_TSP  :	fmt = 0x0501u;	szUnit = "L/m";	break;
-	case SP_R24_A:	fmt = 0x0503u;	szUnit = "L/m";	break;
-	case SP_R24_B:	fmt = 0x0503u;	szUnit = "L/m";	break;
-	default:	break;
+// 	case SP_R24_A:	fmt = 0x0503u;	szUnit = "L/m";	break;
+// 	case SP_R24_B:	fmt = 0x0503u;	szUnit = "L/m";	break;
+	default:	return	FALSE;
 	}
 
 	cls();	
@@ -1391,7 +1391,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 		
 		do {	//	实时显示流量
 			FP32	fstd = get_fstd( SamplerSelect );
-			if( SamplerSelect == SP_TSP )
+// 			if( SamplerSelect == SP_TSP )
 			{	
 				FP32	Ba = get_Ba();
 				FP32	Te = get_Te();// SamplerSelect );
@@ -1402,14 +1402,14 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 				Lputs ( 0x1000u, "标况:" );	ShowFP32( 0x100Cu, fstd, fmt, szUnit );
 				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
 			}
-			else
-			{
-				Flow = fstd;
-				Lputs( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, * p_FlowK, 0x0503u, NULL );
-// 				Lputs ( 0x0800u, "工况:" );	ShowFP32( 0x080Cu, flow, fmt, szUnit );
-				Lputs ( 0x0C00u, "标况:" );	ShowFP32( 0x0C0Cu, fstd, fmt, szUnit );
-				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
-			}
+// 			else
+// 			{
+// 				Flow = fstd;
+// 				Lputs( 0x0000u, "流量倍率:" );	ShowI16U( 0x0019u, * p_FlowK, 0x0503u, NULL );
+// // 				Lputs ( 0x0800u, "工况:" );	ShowFP32( 0x080Cu, flow, fmt, szUnit );
+// 				Lputs ( 0x0C00u, "标况:" );	ShowFP32( 0x0C0Cu, fstd, fmt, szUnit );
+// 				Lputs ( 0x1800u, "输出:" );	ShowPercent( 0x180Cu, Pump_GetOutput( SamplerSelect ));
+// 			}
 		} while ( ! hitKey( 100u ));
 
 		switch ( getKey())
@@ -1430,7 +1430,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 			break;
 		case K_OK:
 		
-			if( SamplerSelect == SP_TSP )
+// 			if( SamplerSelect == SP_TSP )
 			{
 				Flow32 = Configure.SetFlow[SamplerSelect];
 				LcmMask( 0x0800u, 3u, CHARsz );
@@ -1448,24 +1448,24 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 						* p_FlowK = 1000;
 				}
 			}
-			else
-			{
-				Flow32 = Configure.SetFlow[SamplerSelect] * 100u;
-				LcmMask( 0x0C00u, 3u, CHARsz );
+// 			else
+// 			{
+// 				Flow32 = Configure.SetFlow[SamplerSelect] * 100u;
+// 				LcmMask( 0x0C00u, 3u, CHARsz );
 
-				if ( EditI32U( 0x0C0Cu, &Flow32, fmt ) )
-				{
-					changed = TRUE;
-					Flown = ( FP32 ) Flow32;
-					if( * p_FlowK >= 100 )
-					{
-						if( Flow != 0)
-							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
-					}	
-					else
-						* p_FlowK = 1000;
-				}
-			}
+// 				if ( EditI32U( 0x0C0Cu, &Flow32, fmt ) )
+// 				{
+// 					changed = TRUE;
+// 					Flown = ( FP32 ) Flow32;
+// 					if( * p_FlowK >= 100 )
+// 					{
+// 						if( Flow != 0)
+// 							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[SamplerSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+// 					}	
+// 					else
+// 						* p_FlowK = 1000;
+// 				}
+// 			}
 			break;
 		case K_ESC:
 			done = TRUE;
@@ -1559,8 +1559,8 @@ static	void	CalibrateFlow_1_Point( enum enumSamplerSelect SamplerSelect )
 	{
 	default:
 	case SP_TSP:		fmt = 0x0501u;ConfigureSetFlow = Configure.SetFlow[SamplerSelect]; 	break;
-	case SP_R24_A:
-	case SP_R24_B:	fmt = 0x0503u;ConfigureSetFlow = Configure.SetFlow[SamplerSelect] * 100u;	break;
+// 	case SP_R24_A:
+// 	case SP_R24_B:	fmt = 0x0503u;ConfigureSetFlow = Configure.SetFlow[SamplerSelect] * 100u;	break;
 	}
 	
 	do {
@@ -1634,16 +1634,17 @@ static	BOOL	CalibrateFLOW_4_Point_1_Point( enum enumSamplerSelect SamplerSelect,
 	struct	uMenu  const  menu[] = 
 	{
 		{ 0x0201u, "标定流量" },
-		{ 0x0C0Au, "启动" },
+		{ 0x100Eu, "启动" },
 		{ 0x1802u, "倍率" },
 	};
 	BOOL	changed = FALSE;
 	uint8_t	option  = 1u;
-	
+
 	do {
 		cls();	Menu_Redraw( menu );
-
-		ShowFP32( 0x0119u, PointSet[PointSelect], 0x0301u, "L/m" );
+		ShowSamplerSelect( 0x0115u, SamplerSelect );
+// 		ShowFP32( 0x0119u, PointSet[PointSelect], 0x0301u, "L/m" );
+		Lputs( 0x0802, "流量:" );	ShowFP32( 0x080Cu, PointSet[PointSelect], 0x0301u, "L/m" );
 		ShowI16U( 0x180Cu, FlowKSet[PointSelect], 0x0503u, NULL );
 
 		option  = Menu_Select( menu, option, NULL );
@@ -1748,43 +1749,24 @@ static	void	CalibrateFlow_4_Point( enum enumSamplerSelect SamplerSelect )
 
 void	menu_Select_Calc_Pbv( void )
 {
-    static	struct  uMenu  const   menu[] =
-    {
-        { 0x0201u, "其他配置" },//饱和水汽压
-        { 0x0C12u, "[不 计 算]" },
-        { 0x1612u, "[参与计算]" },
-    };
+// 	CHAR	const	* PbvSelect[2] = 
+// 	{
+// 		"[不 计 算]",
+// 		"[参与计算]",
+// 	};
 
-    uint8_t	item;
-
-    Part_cls();
-    Menu_Redraw( menu );
-
-    if ( Configure .shouldCalcPbv == 0 )
-    {
-        Lputs( 0x0C0Eu, "→" );
-        item = 1u;
-	}
-	else
-	{
-        Lputs( 0x160Eu, "→" );
-        item = 2u;
-	}
-
-    item = Menu_Select( menu, item, NULL );
-
-    switch( item )
-	{
-	case 1:
-		Configure.shouldCalcPbv = 0u;
-		 break;
-	case 2:
-		Configure.shouldCalcPbv = 1u;
-    break;
-	default:
-		break;
-	}
-	ConfigureSave();
+//     if ( Configure .shouldCalcPbv == 0 )
+//     {
+// 			Lputs( 0x0C0Eu, PbvSelect[0] );       
+// 		}
+// 		else
+// 		{
+// 			Lputs( 0x0C0Eu, PbvSelect[1] );
+// 		}
+// 		Configure.shouldCalcPbv = 0u;
+// 		Configure.shouldCalcPbv = 1u;
+		
+// 		ConfigureSave();
 }
 
 static	void	menu_Calibrate_Other( void )
@@ -1983,9 +1965,9 @@ static	void	menu_CalibrateAll( void )
 			switch ( SamplerSelect )
 			{
 			default:
-			case SP_TSP  :
+			case SP_TSP  :	CalibrateFlow_1_Point( SamplerSelect );  	break;
 			case SP_R24_A:
-			case SP_R24_B:	CalibrateFlow_1_Point( SamplerSelect );  	break;
+			case SP_R24_B:	
 			case SP_SHI_C:
 			case SP_SHI_D:	CalibrateFlow_4_Point( SamplerSelect ); 	break;
 			}sitem = 4;

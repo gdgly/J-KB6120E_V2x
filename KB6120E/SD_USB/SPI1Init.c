@@ -15,26 +15,27 @@ uint8_t  CH376_Flag=0;
 void SPI3_GPIO_Config(void)
 {
 
-	SPI_TypeDef * SPIx = SPI1;
+// 	SPI_TypeDef * SPIx = SPI1;
 
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
 
-	SPIx->CR1	= SPI_CR1_MSTR
-				| SPI_CR1_CPHA
-				| SPI_CR1_CPOL
-				| SPI_CR1_SSM
-				| SPI_CR1_SSI
-				| SPI_CR1_BR_2 //| SPI_CR1_BR_1 | SPI_CR1_BR_0
-				;
-	SPIx->CR2   = 0;
-	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
-	
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN );
-	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
-	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
-	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
- 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
+// 	SPIx->CR1	= SPI_CR1_MSTR
+// 				| SPI_CR1_CPHA
+// 				| SPI_CR1_CPOL
+// 				| SPI_CR1_SSM
+// 				| SPI_CR1_SSI
+// 				| SPI_CR1_BR_0 //| SPI_CR1_BR_1 | SPI_CR1_BR_0
+// 				;
+// 	SPIx->CR2   = 0;
+// 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
+// 	
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN );
+// 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
+// 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
+// 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+//  	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
+	bus_SPIxPortInit();
  	GPIOA->BSRR = ( 1 << 15 );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x30000000u );	//	for CS, output
 }
@@ -45,14 +46,14 @@ void SPI3_GPIO_Config(void)
 * 输      入      : 要写的字节
 * 返      回      : 无
 *******************************************************************************/
-uint8_t bus_SPIxShift( uint8_t OutByte )
-{
-	SPI_TypeDef * SPIx = SPI1;
-	SPIx->DR = OutByte;	 
-	while ( ! ( SPIx->SR & SPI_SR_RXNE ));
-	OutByte = SPIx->DR;
-	return	OutByte;
-}
+// uint8_t bus_SPIxShift( uint8_t OutByte )
+// {
+// 	SPI_TypeDef * SPIx = SPI1;
+// 	SPIx->DR = OutByte;	 
+// 	while ( ! ( SPIx->SR & SPI_SR_RXNE ));
+// 	OutByte = SPIx->DR;
+// 	return	OutByte;
+// }
 /******************************************************************************
 * 函  数  名      : bus_SPIxNSS
 * 描      述      : SPI3的片选线

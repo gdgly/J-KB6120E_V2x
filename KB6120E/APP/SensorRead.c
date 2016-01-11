@@ -189,6 +189,19 @@ const uint16_t BaseList[SP_Max] =
 
 #define	AO_Base	40001u
 
+// struct	AD7705REG
+// {
+// 	uint8_t		RS0;
+// 	uint8_t		RS1;
+// 	uint8_t		RS2;
+// 	uint8_t		RS3;
+// 	uint8_t		RS4;
+// 	uint8_t		RS5;
+// 	uint32_t	RS6;
+// 	uint32_t	RS7;
+// };
+// struct	AD7705REG	REGx0;
+// struct	AD7705REG	REGx1;
 
 /********************************** 功能说明 ***********************************
 *  电机任务的启停控制
@@ -211,13 +224,14 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 }
 /**************************************************/
-uint16_t E_Resert;
+// uint16_t E_Resert;
 uint32_t E_Count = 0;
-void Sensor_Resert( void );
+// uint8_t  Statu[20] = {0};
+// void Sensor_Resert( void );
 
 static	uint16_t	err_count = 0u;
 #define	BITN(_b_buf, _n)	(_b_buf[(_n)/8] & ( 1 << (( _n ) % 8 )))
-
+static	uint16_t	AI_Buf[40];
 __task	void	_task_ModbusRead( void const * p_arg )
 {
 	(void)p_arg;
@@ -239,13 +253,13 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		{
 			uint8_t * Status = 0;
 			*Status = eStatus;
-			File_Save_Err( Status, err_count++ );
+			File_Save_Err( err_count++, Status );
 		}
 	}
 
 	for(;;)
 	{
-		static	uint16_t	AI_Buf[40];
+		
 		static	eMBErrorCode eStatus; 
 		eStatus= eMBMRead( SubSlave, AI_Base, 40u, AI_Buf );
 	
@@ -256,7 +270,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.Ba = AI_Buf[1];	//	大气压力
 			SensorRemote.Te = AI_Buf[2];	//	环境温度
 			SensorRemote.Tm = AI_Buf[3];	//	电机温度
-			E_Resert = AI_Buf[4];
+// 			E_Resert = AI_Buf[4];
 			SensorRemote.HCBoxRunTemp  = AI_Buf[5];
 			SensorRemote.HCBoxOutValue = AI_Buf[6];
 			SensorRemote.HCBoxFanSpeed = AI_Buf[7];
@@ -283,14 +297,34 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.pf[SP_SHI_D] = AI_Buf[35];
 			SensorRemote.pr[SP_SHI_D] = AI_Buf[36];
 			SensorRemote.tr[SP_SHI_D] = AI_Buf[37];
+			/*TODEL*/	
+// 			REGx0.RS0 =	AI_Buf[45];
+// 			REGx0.RS1 =	AI_Buf[46];
+// 			REGx0.RS2 =	AI_Buf[47];
+// 			REGx0.RS3 =	AI_Buf[48];
+// 			REGx0.RS4 =	AI_Buf[49];
+// 			REGx0.RS5	=	AI_Buf[50];
+// 			REGx0.RS6 =	AI_Buf[51] <<16 | AI_Buf[52] <<8 | AI_Buf[53];
+// 			REGx0.RS7 =	AI_Buf[56] <<16 | AI_Buf[57] <<8 | AI_Buf[58];
+// 			
+// 			REGx1.RS0 =	AI_Buf[60];
+// 			REGx1.RS1 =	AI_Buf[61];
+// 			REGx1.RS2 =	AI_Buf[62];
+// 			REGx1.RS3 =	AI_Buf[63];
+// 			REGx1.RS4 =	AI_Buf[64];
+// 			REGx1.RS5	=	AI_Buf[65];
+// 			REGx1.RS6 =	AI_Buf[66] <<16 | AI_Buf[67] <<8 | AI_Buf[68];
+// 			REGx1.RS7 =	AI_Buf[71] <<16 | AI_Buf[72] <<8 | AI_Buf[73];
 		}
 		else
-		{	
-			uint8_t * Status = 0;
-			*Status = eStatus;
-			File_Save_Err( Status, err_count++ );
+		{	/*TODEL*/	
+// 			uint8_t * Status = 0;
+// 			*Status = eStatus;
+// 			Statu[err_count] = eStatus;
+// 			File_Save_Err( err_count++, Status );
+			err_count++;
 		}
-		Sensor_Resert();
+// 		Sensor_Resert();
 		delay( 200u );
 
 //		{
@@ -326,9 +360,9 @@ void	menu_FactoryDebug( void )
 	enum
 	{
 		opt_exit,
-		opt_COMM, opt_TSP, opt_R24_A, opt_R24_B, opt_SHI_C, opt_SHI_D, //opt_AIR,
+		opt_COMM, opt_TSP, opt_R24_A, opt_R24_B, opt_SHI_C, opt_SHI_D,//opt_TSPe, opt_R24_Ae, opt_R24_Be, opt_SHI_Ce, opt_SHI_De, opt_AIR,
 		opt_CPU,
-		opt_HCBox, opt_BAT, opt_Err,
+		opt_HCBox, opt_BAT, //opt_Err,
 		opt_max, opt_min = 1
 	};
 	uint8_t	option = opt_min;
@@ -337,13 +371,14 @@ void	menu_FactoryDebug( void )
 
 	BOOL		OutState[SP_Max];
 	uint16_t	OutValue[SP_Max];
-	static	uint8_t	err_Code[40] = {0};
+// 	static	uint8_t	err_Code[40] = {0};
 	enum enumSamplerSelect	PumpSelect = SP_TSP;
 	
 	CHAR	sbuffer[36];
 
 	uint8_t	i;
-	uint16_t	c = 0;
+// 	uint16_t	c = 0;
+// 	uint16_t	valueCon = 0x0000;
 	for ( i = 0u; i < SP_Max; ++i )
 	{
 		OutState[i] = FALSE;
@@ -363,7 +398,11 @@ void	menu_FactoryDebug( void )
 		case opt_SHI_C:		Lputs( 0x0102u, "时均(C)" );	PumpSelect = SP_SHI_C;	break;
 		case opt_SHI_D:		Lputs( 0x0102u, "时均(D)" );	PumpSelect = SP_SHI_D;	break;
 // 		case opt_AIR:		  Lputs( 0x0102u, "大气" );	    PumpSelect = SP_AIR;	break;
-
+// 		case opt_TSPe:		valueCon = 0x0001;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
+// 		case opt_R24_Ae:	valueCon = 0x0002;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
+// 		case opt_R24_Be:	valueCon = 0x0003;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
+// 		case opt_SHI_Ce:	valueCon = 0x0004;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
+// 		case opt_SHI_De:	valueCon = 0x0005;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
 		case opt_HCBox: Lputs( 0x0102u, "恒温箱" );Lputs( 0x1002u, "加热器" );	break;
 		
 		case opt_BAT:		Lputs( 0x0102u, "温度" );  Lputs( 0x1002u, "电池" );	 break;
@@ -381,7 +420,11 @@ void	menu_FactoryDebug( void )
 				
 				break;
 
-			default:
+			case opt_TSP:
+			case opt_R24_A:
+			case opt_R24_B:
+			case opt_SHI_C:
+			case opt_SHI_D:
 				sprintf( sbuffer, "Tr: %.4f", _CV_DS18B20_Temp( SensorRemote.tr[PumpSelect] ));	Lputs( 0x0600u, sbuffer );
 				sprintf( sbuffer, "Pr: %04X", SensorRemote.pr[PumpSelect] );					Lputs( 0x0C00u, sbuffer );
 				sprintf( sbuffer, "Pf: %04X", SensorRemote.pf[PumpSelect] );					Lputs( 0x1200u, sbuffer );
@@ -440,19 +483,71 @@ void	menu_FactoryDebug( void )
 				sprintf( sbuffer, "    Ba :%6.3f ", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));		Lputs( 0x1400u, sbuffer );
 				sprintf( sbuffer, "   Temp:%6.4f ", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x1800u, sbuffer );
 				break;
-			case opt_Err:
-			{
-				File_Load_Err( err_Code, 40 );
-				for( i = 0; i < err_count; i++ )
-				{
-					c = (( i * 3 )%30) * 256 + (i / 10) * 6;
-					sprintf( sbuffer, "%d",err_Code[i] );
-					Lputs( c ,sbuffer);
-				}	
+// 			case opt_Err:/*TODEL*/	
+// 				{
+// // 				File_Load_Err( err_count-1, err_Code );
+// 				
+// 				for( i = 0; i < err_count; i++ )
+// 				{
+// 					c = (( i * 3 )%30) * 256 + (i / 10) * 6;
+// 					sprintf( sbuffer, "%X",Statu[i] );
+// 					Lputs( c ,sbuffer);
+// 				}	
+// 				}
+// 				break;
+// 			case opt_TSPe:/*TODEL*/	
+// 			case opt_R24_Ae:
+// 			case opt_R24_Be:
+// 			case opt_SHI_Ce:
+// 			case opt_SHI_De:
+// 			{
+// 				uint16_t	Cx[16];
+// 				for( i = 0; i < 8; i++ )
+// 				{
+// 					Cx[i] = (( i * 3 )%30) * 256 + (i / 10) * 10;
+// 				}
+// 				for( i = 20; i < 28; i++ )
+// 				{
+// 					Cx[i-20+8] = (( i * 3 )%30) * 256 + (i / 10) * 10;
+// 				}
+// 			
+// 						sprintf( sbuffer, "RS0:%X",REGx0.RS0 );
+// 				Lputs( Cx[0] ,sbuffer);
+// 						sprintf( sbuffer, "RS1:%X",REGx0.RS1 );
+// 				Lputs( Cx[1] ,sbuffer);
+// 						sprintf( sbuffer, "RS2:%X",REGx0.RS2 );
+// 				Lputs( Cx[2] ,sbuffer);
+// 						sprintf( sbuffer, "RS3:%X",REGx0.RS3 );
+// 				Lputs( Cx[3] ,sbuffer);
+// 						sprintf( sbuffer, "RS4:%X",REGx0.RS4 );
+// 				Lputs( Cx[4] ,sbuffer);
+// 						sprintf( sbuffer, "RS5:%X",REGx0.RS5 );
+// 				Lputs( Cx[5] ,sbuffer);
+// 						sprintf( sbuffer, "RS6:%X",REGx0.RS6 );
+// 				Lputs( Cx[6] ,sbuffer);
+// 						sprintf( sbuffer, "RS7:%X",REGx0.RS7 );
+// 				Lputs( Cx[7] ,sbuffer);
+// 				
+// 							sprintf( sbuffer, "RS0:%X",REGx1.RS0 );
+// 				Lputs( Cx[0+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS1:%X",REGx1.RS1 );
+// 				Lputs( Cx[1+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS2:%X",REGx1.RS2 );
+// 				Lputs( Cx[2+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS3:%X",REGx1.RS3 );
+// 				Lputs( Cx[3+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS4:%X",REGx1.RS4 );
+// 				Lputs( Cx[4+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS5:%X",REGx1.RS5 );
+// 				Lputs( Cx[5+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS6:%X",REGx1.RS6 );
+// 				Lputs( Cx[6+8] ,sbuffer);
+// 							sprintf( sbuffer, "RS7:%X",REGx1.RS7 );
+// 				Lputs( Cx[7+8] ,sbuffer);
+// 			}	
+// 				break;			
 			}
-			break;
-				
-			}
+			
 		} while( ! hitKey( 25u ));
 		
 		switch( getKey())
@@ -484,6 +579,16 @@ void	menu_FactoryDebug( void )
 				Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
 				break;
+// 			case opt_TSPe:/*TODEL*/	
+// 			case opt_R24_Ae:
+// 			case opt_R24_Be:
+// 			case opt_SHI_Ce:
+// 			case opt_SHI_De:
+// 				{
+// 				uint16_t	value = 0x56AB;
+// 				eMBMWrite( SubSlave, 40014u, 1u, &value );
+// 				}
+// 				break;
 //       case opt_AIR:		
 // 				OutState[PumpSelect] = TRUE;
 // 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
@@ -494,16 +599,26 @@ void	menu_FactoryDebug( void )
 			switch ( option )
 			{
 			case opt_TSP:
-            case opt_R24_A:
-            case opt_R24_B:
-            case opt_SHI_C:
-            case opt_SHI_D:
+			case opt_R24_A:
+			case opt_R24_B:
+			case opt_SHI_C:
+			case opt_SHI_D:
 				OutState[PumpSelect] = FALSE;
 				Motor_SetOutput( PumpSelect, 0 );
 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
 				break;
-//             case opt_AIR:		
+//      case opt_AIR:		
 // 				OutState[PumpSelect] = FALSE;
+// 				break;
+// 			case opt_TSPe:/*TODEL*/	
+// 			case opt_R24_Ae:
+// 			case opt_R24_Be:
+// 			case opt_SHI_Ce:
+// 			case opt_SHI_De:
+// 				{
+// 				uint16_t	value = 0x0000;
+// 				eMBMWrite( SubSlave, 40014u, 1u, &value );
+// 				}
 // 				break;
 			}
 			break;
@@ -527,7 +642,7 @@ void	menu_FactoryDebug( void )
 						Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
 					}
 				}
-				break;
+			
 			}
 			break;
 		case K_OK_UP:	
@@ -819,34 +934,34 @@ void	HCBox_Init( void )
 	}
 
 }
-void Sensor_Resert( void )
-{
-	static	BOOL Flag = FALSE;
-	if( E_Resert == 0xFFFF )
-	{	//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
-		eMBMWrite( SubSlave, 40010u, 1u, &E_Resert);
-		Flag = TRUE;
-		E_Count ++;
-		delay( 500 );
-	}
-	else	if( Flag && (E_Count > 1))
-	{
-// 		uint8_t	i;
-		uint16_t	Value = 0x0000u;
-		eMBMWrite( SubSlave, 40010u, 1u, &Value );
-		HCBox_Init();	
-// 		for( i = 0; i < SP_Max; i ++ )
-// 		{
-// 			if( Sampler_isRunning( ( enum enumSamplerSelect ) i ) )
-// 			{
-// 	// 			Sample_Fatal( SamplerSelect );		
-// 				Sample_Error( SamplerSelect );
-// 			}
-// 		}
-		Flag = FALSE;
-	}
+// void Sensor_Resert( void )/*TODEL*/	
+// {
+// 	static	BOOL Flag = FALSE;
+// 	if( E_Resert == 0xFFFF )
+// 	{	//	eMBMWriteSingleRegister( SubSlave, RegAddress, RegValue );
+// 		eMBMWrite( SubSlave, 40010u, 1u, &E_Resert);
+// 		Flag = TRUE;
+// 		E_Count ++;
+// 		delay( 500 );
+// 	}
+// 	else	if( Flag && (E_Count > 1))
+// 	{
+// // 		uint8_t	i;
+// 		uint16_t	Value = 0x0000u;
+// 		eMBMWrite( SubSlave, 40010u, 1u, &Value );
+// 		HCBox_Init();	
+// // 		for( i = 0; i < SP_Max; i ++ )
+// // 		{
+// // 			if( Sampler_isRunning( ( enum enumSamplerSelect ) i ) )
+// // 			{
+// // 	// 			Sample_Fatal( SamplerSelect );		
+// // 				Sample_Error( SamplerSelect );
+// // 			}
+// // 		}
+// 		Flag = FALSE;
+// 	}
 
-}
+// }
 
 
 // struct	uPID_Parament HCBoxPID;

@@ -96,7 +96,12 @@ void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileN
 	}	
 }
 
-void	File_Load_Err( uint8_t	* Err, uint16_t count )
+void	File_Save_Err( uint16_t count, uint8_t	* Err )
+{
+	SDEsave("\\SD_ERR\\ERR.TXT", count , Err, 5 );
+}
+
+void	File_Load_Err( uint16_t count, uint8_t	* Err )
 {
 	SDEload( "\\SD_ERR\\ERR.TXT", 0, Err, (uint32_t)count );
 }
@@ -123,14 +128,7 @@ void	File_Save_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileN
 	SDEsave( Save_NameChar[SamplerSelect], ( FilePageSize_TSP_SHI_R24 * FileNum ), ss, FilePageSize_TSP_SHI_R24 );
 }
 
-void	File_Save_Err( uint8_t	* Err, uint16_t count )
-{
-// 	uint8_t c[2] = { 0 };
-// 	c[0] = Err >> 8;
-// 	c[1] = Err;
-	SDEsave("\\SD_ERR\\ERR.TXT", count , Err, 1 );
-}
-	
+
 // void	File_Save_AIR( uint16_t FileNum, struct uFile_AIR const * pFile )
 // {
 // 	
