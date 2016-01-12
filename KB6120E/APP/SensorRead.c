@@ -202,7 +202,7 @@ const uint16_t BaseList[SP_Max] =
 // };
 // struct	AD7705REG	REGx0;
 // struct	AD7705REG	REGx1;
-
+BOOL	ReadCopy( void );
 /********************************** 功能说明 ***********************************
 *  电机任务的启停控制
 *******************************************************************************/
@@ -215,23 +215,62 @@ void	Motor_OutCmd( enum enumSamplerSelect PumpSelect, BOOL NewState )
 // 	if( PumpSelect == SP_AIR)
 // 		AIRLightOutCmd( NewState );
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+	if( ReadCopy() )
+	{
+		switch( PumpSelect )
+		{
+		default:
+		case SP_R24_A :
+			RegAddress = DO_Base + BaseList[SP_SHI_D];
+			break;
+		case SP_R24_B :
+			RegAddress = DO_Base + BaseList[SP_SHI_C];
+			break;
+		}		
+	}
+	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 }
 
 void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 {
 	uint16_t	RegAddress = AO_Base + BaseList[PumpSelect];
 	uint16_t	RegValue   = OutValue;
+
+	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+		if( ReadCopy() )
+	{
+		switch( PumpSelect )
+		{
+		default:
+		case SP_R24_A :
+			RegAddress = AO_Base + BaseList[SP_SHI_D];
+			break;
+		case SP_R24_B :
+			RegAddress = AO_Base + BaseList[SP_SHI_C];
+			break;
+		}		
+	}
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 }
 /**************************************************/
 // uint16_t E_Resert;
-uint32_t E_Count = 0;
+// uint32_t E_Count = 0;
 // uint8_t  Statu[20] = {0};
 // void Sensor_Resert( void );
 
 static	uint16_t	err_count = 0u;
 #define	BITN(_b_buf, _n)	(_b_buf[(_n)/8] & ( 1 << (( _n ) % 8 )))
 static	uint16_t	AI_Buf[40];
+
+BOOL	ReadCopy( void )
+{
+	if(( AI_Buf[20] == 0 ) && ( AI_Buf[21] == 0 ) && ( AI_Buf[25] == 0 ) && ( AI_Buf[26] == 0 ) 
+	&& ( AI_Buf[30] != 0 ) && ( AI_Buf[31] != 0 ) && ( AI_Buf[35] != 0 ) && ( AI_Buf[36] != 0 ))
+		return TRUE;
+	else
+		return FALSE;
+}
+
 __task	void	_task_ModbusRead( void const * p_arg )
 {
 	(void)p_arg;
@@ -297,6 +336,17 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.pf[SP_SHI_D] = AI_Buf[35];
 			SensorRemote.pr[SP_SHI_D] = AI_Buf[36];
 			SensorRemote.tr[SP_SHI_D] = AI_Buf[37];
+			
+			if( ReadCopy() )
+			{
+				SensorRemote.pf[SP_R24_A] = SensorRemote.pf[SP_SHI_D];
+			  SensorRemote.pr[SP_R24_A] = SensorRemote.pr[SP_SHI_D];
+			  SensorRemote.tr[SP_R24_A] = SensorRemote.tr[SP_SHI_D];
+				
+				SensorRemote.pf[SP_R24_B] = SensorRemote.pf[SP_SHI_C];
+				SensorRemote.pr[SP_R24_B] = SensorRemote.pr[SP_SHI_C];
+				SensorRemote.tr[SP_R24_B] = SensorRemote.tr[SP_SHI_C];
+			}
 			/*TODEL*/	
 // 			REGx0.RS0 =	AI_Buf[45];
 // 			REGx0.RS1 =	AI_Buf[46];
@@ -415,7 +465,7 @@ void	menu_FactoryDebug( void )
 			{
 			case opt_COMM:
 				sprintf( sbuffer, "Errors: %5u", err_count );						Lputs( 0x0600u, sbuffer );
-				sprintf( sbuffer, "E_Resert: %5u", E_Count );						Lputs( 0x0B00u, sbuffer );
+// 				sprintf( sbuffer, "E_Resert: %5u", E_Count );						Lputs( 0x0B00u, sbuffer );
 				sprintf( sbuffer, " AI[0]: %5u", SensorRemote.iCounter );	 Lputs( 0x1000u, sbuffer );
 				
 				break;
