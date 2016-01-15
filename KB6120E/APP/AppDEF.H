@@ -220,7 +220,8 @@ extern	struct	uPID_Parament PID;
 *	菜单项处理
 *******************************************************************************/
 extern	void	HCBox_Init( void );
-extern	void	SENSOR_Init( void );
+extern	void	SENSOR_Local_Init( void );
+extern	void	SENSOR_Remote_Init( void );
 
 extern	void	ShowEdition( void );
 extern	void	ShowEdition_Inner( void );

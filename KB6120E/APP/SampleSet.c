@@ -83,15 +83,15 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 						}	
 						break;	
 			
-		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+		case enumSelectXCH:				SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+		}
+		if ( changed )
+		{
+			SampleSetSave();
 		}
 		
 	} while( enumSelectESC != item );
 
-	if ( changed )
-	{
-		SampleSetSave();
-	}
 	return	TRUE;
 }
 
@@ -138,13 +138,16 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 		
 		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
 		}
-		
+		if ( changed )
+		{
+			SampleSetSave();
+		}
 	} while ( enumSelectESC != item );
 
-	if ( changed )
-	{
-		SampleSetSave();
-	}
+// 	if ( changed )
+// 	{
+// 		SampleSetSave();
+// 	}
 	return	TRUE;
 }
 

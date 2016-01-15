@@ -439,7 +439,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 				pHook();
 			}    
 			secnow = get_Now() - starsec;
-			sprintf( sbuffer, "(%2us)", timeout - secnow );	Lputs( 0x0F09u, sbuffer );
+			sprintf( sbuffer, "(%us) ", timeout - secnow );	Lputs( 0x0F09u, sbuffer );
 			if( secnow >= timeout )		
 				return 1;
 		}

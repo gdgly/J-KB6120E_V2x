@@ -31,7 +31,10 @@ extern	FP32	get_fstd( enum enumSamplerSelect SamplerSelect );	//	标况流量
 #define	__PURE	__pure
 
 extern	__PURE	FP32	_CV_CPS120_Ba( uint16_t InValue );
+extern	__PURE	FP32	_CV_CPS121_Ba( uint32_t InValue );
 extern	__PURE	FP32	_CV_CPS120_Temp( uint16_t InValue );
+extern	__PURE	FP32	_CV_CPS121_Temp( uint16_t InValue );
+
 extern	__PURE	FP32	_CV_DS18B20_Temp( int16_t InValue );
 extern	__PURE	FP32	_CV_10WD( int32_t InValue );
 extern	__PURE	FP32	_CV_005D( int32_t InValue );
@@ -60,6 +63,8 @@ extern  __PURE  FP32  Calc_Pbv( FP32 T );
 struct	uSensorLocal
 {	//	本地传感器原始读数
 	uint16_t	CPS120_Ba, CPS120_Temp;
+	uint32_t	CPS121_Ba;
+	uint16_t	CPS121_Temp;
 
 	uint16_t	CPU_IntTemp;
 	uint16_t	CPU_IntVolt;

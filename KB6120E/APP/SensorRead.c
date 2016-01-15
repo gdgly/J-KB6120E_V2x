@@ -105,6 +105,7 @@ struct	uSensorRemote		SensorRemote;	//	远程传感器
 *******************************************************************************/
 __task  void	_task_SensorRead( void const * p_arg )
 {
+	BOOL CPS12[2] = {0};
 	( void )p_arg;
 
 	ADC12_Init();
@@ -113,7 +114,10 @@ __task  void	_task_SensorRead( void const * p_arg )
 	SensorLocal.LCD_Voltage = ADC12_Readout( ADC_Cx_LCDVolt );
 	SensorLocal.Bat_Current = ADC12_Readout( ADC_Cx_BatCurr );
 	SensorLocal.Bat_Voltage = ADC12_Readout( ADC_Cx_BatVolt );
-	CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp );
+	if(	CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
+		CPS12[1] = TRUE;
+	if( CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
+		CPS12[0] = TRUE;
 
 	for(;;)
 	{
@@ -151,7 +155,12 @@ __task  void	_task_SensorRead( void const * p_arg )
 		SensorLocal.Bat_Current = sum[3] / 8u;		
 		SensorLocal.Bat_Voltage = sum[4] / 8u;
 
-		CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp );
+		if( CPS12[1] )
+			if( !CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
+				SensorLocal.CPS121_Ba = SensorLocal.CPS121_Temp = 0;
+		if( CPS12[0] )
+			if( !CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
+				SensorLocal.CPS120_Ba = SensorLocal.CPS120_Temp = 0;
 	}
 }
 
@@ -391,13 +400,17 @@ __task	void	_task_ModbusRead( void const * p_arg )
 //		}
 	}
 }
-
-void	SENSOR_Init( void )
+void	SENSOR_Local_Init( void )
 {
 	static	osThreadDef( _task_SensorRead, osPriorityAboveNormal, 1, 0 );
-	static	osThreadDef( _task_ModbusRead, osPriorityAboveNormal, 1, 0 );
 
 	osThreadCreate( osThread( _task_SensorRead ), NULL );	//	传感器读取任务(本地)
+
+}
+void	SENSOR_Remote_Init( void )
+{
+	static	osThreadDef( _task_ModbusRead, osPriorityAboveNormal, 1, 0 );
+
 	osThreadCreate( osThread( _task_ModbusRead ), NULL );	//	传感器读取任务(远程)
 }
 
