@@ -4,8 +4,8 @@
 * 描  述  : KB-6120E 启动程序
 * 最后修改: 2015年6月2日
 *********************************** 修订记录 **********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "AppDEF.H"
 #include <cmsis_os.h>
@@ -52,13 +52,14 @@ void	menu_Main( void )
 	};
 
 	static 	uint8_t	item = 1u;
+
 	for(;;)
-	{ 
+	{
 		monitor();
 
 		cls();
 		Menu_Redraw( menu );
-		SamplerTypeShow( 0x010Eu );		
+		SamplerTypeShow( 0x010Eu );
 		WBMP( 0x1818, menu[1].yx-0x04, SAMPLESET );
 		WBMP( 0x1818, menu[2].yx-0x04, SAMPLE );
 		WBMP( 0x1818, menu[3].yx-0x04, QUERY );
@@ -68,14 +69,26 @@ void	menu_Main( void )
 
 		switch( item )
 		{
-		//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
-		case 1:	menu_SampleSetup();	break;
-		case 2:	menu_SampleStart();	break;
-		case 3:	menu_SampleQuery();	break;
-		case 4:	menu_Maintenance();	break;
-		case enumSelectESC:	item = 1u;	break;
-		case enumSelectXCH:	SamplerTypeSwitch();	break;
-		}		
+				//	在主菜单下按取消键，显示大气压、恒温箱温度等环境参数
+			case 1:
+				menu_SampleSetup();
+				break;
+			case 2:
+				menu_SampleStart();
+				break;
+			case 3:
+				menu_SampleQuery();
+				break;
+			case 4:
+				menu_Maintenance();
+				break;
+			case enumSelectESC:
+				item = 1u;
+				break;
+			case enumSelectXCH:
+				SamplerTypeSwitch();
+				break;
+		}
 	}
 }
 
@@ -87,7 +100,7 @@ extern	void	PowerLogSave_PowerShut( void );
 
 __task	void	_task_PowerLog( void const * p_arg )
 {
-	
+
 	PowerLogSave_PowerBoot();
 
 	for(;;)
@@ -169,21 +182,21 @@ CPU 内部、底层硬件
 uint8_t	bufer[10] = {0,1,2,3,4,5,6,7,8,9};
 __task	int32_t	main( void )
 {
-	
+
 	BIOS_Init();
-  beep();
+	beep();
 	RTOS_Init();		//	尽早执行
-  
+
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行
-	
+
 	Display_Init();
 	DisplaySetGrayVolt( Configure.DisplayGray * 0.01f );
 	DisplaySetLight( Configure.DisplayLight );
 	DisplaySetTimeout( Configure.TimeoutLight );
 	Keyboard_Init();	//	配置完背光超时时间后再初始化
-		
+
 	RTC_Init();			//	为避免启动过程中时钟失败造成的假死现象，放在显示初始化之后
 	SD_Init();				//	SD卡读写初始化，放在开关机存取之前
 	PowerLog_Init();	//	开关机存取，时间初始化之后
@@ -191,23 +204,24 @@ __task	int32_t	main( void )
 	SENSOR_Local_Init();
 	delay( 800u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
 	SENSOR_Remote_Init();		//	modbus通信初始化
-	
+
 	delay( 200u );
 	HCBox_Init();
 	delay( 1000u );
-	
+
 	Animation();		//	开机动画
- 	delay( 1500u );
-	
-	ShowEdition();	//	确定型号之后，显示初始化之后	
+	delay( 1500u );
+
+	ShowEdition();	//	确定型号之后，显示初始化之后
 	delay( 1000u );
-	
+
 	Sampler_BootResume();	//	时间配置完成之后，设置参数读入之后。
- 	delay( 100u );
-	
+	delay( 100u );
+
 	SamplerTypeSelect();
 
 	delay( 100u );
+
 	for(;;)
 	{
 		menu_Main();	//	转主菜单

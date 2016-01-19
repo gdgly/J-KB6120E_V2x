@@ -4,8 +4,8 @@
 * 描  述  : KB-6120E 采样设置程序
 * 最后修改: 2013年12月18日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "AppDEF.H"
 #include "BMP.H"
@@ -33,8 +33,10 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 	WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
 	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
 	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
-	do {
-	
+
+	do
+	{
+
 		Part_cls();
 		Menu_Redraw( menu );
 		SamplerTypeShow( 0x010Eu );
@@ -42,55 +44,91 @@ static	BOOL	setup_x( enum	enumSamplerSelect SamplerSelect, struct uMenu const me
 		ShowTIME( 0x0C1Cu, SampleSet[SamplerSelect].suspend_time );
 		ShowI16U( 0x121Cu, SampleSet[SamplerSelect].set_loops, 0x0200u, NULL );
 		ShowI16U( 0x181Cu, Configure.SetFlow[SamplerSelect], 0x0301u, "L/m" );
-		
+
 		item = Menu_Select2( menu, item + 1u, FALSE, Show_std_clock );
 
 		switch( item )
-		{	
-		case 1:	if ( EditTIME( 0x061Cu, &( SampleSet[SamplerSelect].sample_time )))					{ changed = TRUE; }	break;
-		case 2:	if ( EditTIME( 0x0C1Cu, &( SampleSet[SamplerSelect].suspend_time )))				{ changed = TRUE; }	break;
-		case 3:	if ( EditI16U( 0x121Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))	{ changed = TRUE; }	break;
-		case 4:	if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))
-						{
-							switch( SamplerSelect )
+		{
+			case 1:
+
+				if ( EditTIME( 0x061Cu, &( SampleSet[SamplerSelect].sample_time )))
+				{
+					changed = TRUE;
+				}
+
+				break;
+			case 2:
+
+				if ( EditTIME( 0x0C1Cu, &( SampleSet[SamplerSelect].suspend_time )))
+				{
+					changed = TRUE;
+				}
+
+				break;
+			case 3:
+
+				if ( EditI16U( 0x121Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))
+				{
+					changed = TRUE;
+				}
+
+				break;
+			case 4:
+
+				if ( EditI16U( 0x181Cu, &( Configure.SetFlow[SamplerSelect] ), 0x0301u ))
+				{
+					switch( SamplerSelect )
+					{
+						default:
+							break;
+						case SP_R24_A:
+						case SP_R24_B:
+
+							if( Configure.SetFlow[SamplerSelect] < 1 )
+								Configure.SetFlow[SamplerSelect] = 1;
+
+							if( Configure.SetFlow[SamplerSelect] > 10 )
+								Configure.SetFlow[SamplerSelect] = 10;
+
+							break;
+						case SP_SHI_C:
+						case SP_SHI_D:
+
+							if(  Configure.PumpType[SamplerSelect] == enumOrifice_1 )
 							{
-							default:break;
-							case SP_R24_A:
-							case SP_R24_B:
 								if( Configure.SetFlow[SamplerSelect] < 1 )
 									Configure.SetFlow[SamplerSelect] = 1;
+
 								if( Configure.SetFlow[SamplerSelect] > 10 )
 									Configure.SetFlow[SamplerSelect] = 10;
-								break;
-							case SP_SHI_C:
-							case SP_SHI_D:
-								if(  Configure.PumpType[SamplerSelect] == enumOrifice_1 )
-								{
-									if( Configure.SetFlow[SamplerSelect] < 1 )
-										Configure.SetFlow[SamplerSelect] = 1;
-									if( Configure.SetFlow[SamplerSelect] > 10 )
-										Configure.SetFlow[SamplerSelect] = 10;
-								}
-								else
-								{
-									if( Configure.SetFlow[SamplerSelect] < 5 )
-										Configure.SetFlow[SamplerSelect] = 5;
-									if( Configure.SetFlow[SamplerSelect] > 20 )
-										Configure.SetFlow[SamplerSelect] = 20;
-								}
-							}				
-							ConfigureSave();
-						}	
-						break;	
-			
-		case enumSelectXCH:				SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+							}
+							else
+							{
+								if( Configure.SetFlow[SamplerSelect] < 5 )
+									Configure.SetFlow[SamplerSelect] = 5;
+
+								if( Configure.SetFlow[SamplerSelect] > 20 )
+									Configure.SetFlow[SamplerSelect] = 20;
+							}
+					}
+
+					ConfigureSave();
+				}
+
+				break;
+
+			case enumSelectXCH:
+				SamplerTypeSwitch();
+				return	FALSE;	//	返回到上级菜单，切换到其他采样器
 		}
+
 		if ( changed )
 		{
 			SampleSetSave();
 		}
-		
-	} while( enumSelectESC != item );
+
+	}
+	while( enumSelectESC != item );
 
 	return	TRUE;
 }
@@ -114,16 +152,18 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 	WBMP( 0x1818, menuL[2].yx-0x04, SAMPLE );
 	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
 	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
-	do {
+
+	do
+	{
 // 		if ( need_redraw )
 // 		{
-			SamplerTypeShow( 0x010Eu );
-			Part_cls();
-			Menu_Redraw( menu );
-			
+		SamplerTypeShow( 0x010Eu );
+		Part_cls();
+		Menu_Redraw( menu );
+
 // 			need_redraw = FALSE;
 // 		}
-		
+
 		ShowTIME( 0x081Cu, SampleSet[SamplerSelect].sample_time );
 		ShowTIME( 0x101Cu, SampleSet[SamplerSelect].suspend_time );
 		ShowI16U( 0x181Cu, SampleSet[SamplerSelect].set_loops, 0x0200u, NULL );
@@ -132,17 +172,42 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 
 		switch( item )
 		{
-		case 1:	if ( EditTIME( 0x081Cu, &( SampleSet[SamplerSelect].sample_time )))					{ changed = TRUE; }	break;
-		case 2:	if ( EditTIME( 0x101Cu, &( SampleSet[SamplerSelect].suspend_time )))				{ changed = TRUE; }	break;
-		case 3:	if ( EditI16U( 0x181Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))	{ changed = TRUE; }	break;	
-		
-		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+			case 1:
+
+				if ( EditTIME( 0x081Cu, &( SampleSet[SamplerSelect].sample_time )))
+				{
+					changed = TRUE;
+				}
+
+				break;
+			case 2:
+
+				if ( EditTIME( 0x101Cu, &( SampleSet[SamplerSelect].suspend_time )))
+				{
+					changed = TRUE;
+				}
+
+				break;
+			case 3:
+
+				if ( EditI16U( 0x181Cu, &( SampleSet[SamplerSelect].set_loops ), 0x0200u ))
+				{
+					changed = TRUE;
+				}
+
+				break;
+
+			case enumSelectXCH:
+				SamplerTypeSwitch();
+				return	FALSE;	//	返回到上级菜单，切换到其他采样器
 		}
+
 		if ( changed )
 		{
 			SampleSetSave();
 		}
-	} while ( enumSelectESC != item );
+	}
+	while ( enumSelectESC != item );
 
 // 	if ( changed )
 // 	{
@@ -164,7 +229,7 @@ void	menu_SampleSetup( void )
 		{ 0x120Eu, "采样次数" },
 		{ 0x180Eu, "采样流量" },
 	};
-	
+
 	static	struct uMenu  const  menu_TSP[] =
 	{
 		{	0x0301u, "设 置  " },
@@ -175,20 +240,27 @@ void	menu_SampleSetup( void )
 
 	BOOL	done = FALSE;
 
-	do {
+	do
+	{
 		monitor();
+
 		switch ( SamplerSelect )
-		{		
-		case SP_TSP:		done = setup_TSP( SamplerSelect, menu_TSP );	break;
-		case SP_R24_A:	
-		case SP_R24_B:	
-		case SP_SHI_C:	
-		case SP_SHI_D:	done = setup_x( SamplerSelect, menu_x );	break;
-		default:
-			break;
+		{
+			case SP_TSP:
+				done = setup_TSP( SamplerSelect, menu_TSP );
+				break;
+			case SP_R24_A:
+			case SP_R24_B:
+			case SP_SHI_C:
+			case SP_SHI_D:
+				done = setup_x( SamplerSelect, menu_x );
+				break;
+			default:
+				break;
 		}
-	} while( ! done );
-}			
+	}
+	while( ! done );
+}
 
 /********************************** 功能说明 ***********************************
 *  设置启动采样的控制参数，原则上每次采样前需要重新设置的参数，并启动采样
@@ -199,7 +271,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 	{
 		{ 0x0301u, "采 样  " },
 		{ 0x100Eu, "开始时间" },
-		{ 0x1814u, "调零" }, 
+		{ 0x1814u, "调零" },
 		{ 0x181Cu, "启动" },
 	};
 
@@ -207,7 +279,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 	{
 		{ 0x0301u, "采 样  " },
 		{ 0x100Eu, "延时时间" },
-		{ 0x1814u, "调零" }, 
+		{ 0x1814u, "调零" },
 		{ 0x181Cu, "启动" },
 	};
 	static	struct uMenu  const  menuL[] =
@@ -222,11 +294,11 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 	static	struct uMenu const * menu;
 	uint8_t	item = 1u;
 	BOOL	need_redraw = TRUE;
-	
+
 	BOOL	changed_Delay = FALSE;
 	BOOL	changed = FALSE;
 
-	cls();			
+	cls();
 	Menu_Redraw( menuL );
 	SamplerTypeShow( 0x010Eu );
 	WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
@@ -234,29 +306,38 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 	WBMP( 0x1818, menuL[3].yx-0x04, QUERY );
 	WBMP( 0x1818, menuL[4].yx-0x04, MAINTAIN );
 
-	do {
+	do
+	{
 		switch( Configure.Mothed_Delay )
 		{
-		case enumByAccurate:	menu = menu_Accurate;	break;
-		case enumByDelay:			menu = menu_Delay;		break;
-		default:
-			break;
+			case enumByAccurate:
+				menu = menu_Accurate;
+				break;
+			case enumByDelay:
+				menu = menu_Delay;
+				break;
+			default:
+				break;
 		}
+
 		if ( need_redraw )
 		{
-			Part_cls();			
+			Part_cls();
 			SamplerTypeShow( 0x010Eu );
 			Menu_Redraw( menu );
 			need_redraw = FALSE;
 		}
 
 		Menu_Item_Mask( menu, item );
-		do {
+
+		do
+		{
 			uint16_t	now_hour_min = (( get_Now() / 60 ) % 1440 );
-		
+
 			Show_std_clock();
 			Lputs( 0x080Eu, "当前时间=" );
 			ShowTIME( 0x081Cu, now_hour_min );	//	显示当前时间
+
 			if ( enumByAccurate == Configure.Mothed_Delay )
 			{
 				if ( ! changed_Delay )
@@ -264,46 +345,54 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 					SampleSet[SamplerSelect].delayt = now_hour_min + 1u;
 				}
 			}
+
 			ShowTIME( 0x101Cu, SampleSet[SamplerSelect].delayt );
-		} while ( ! hitKey( 100u ));
+		}
+		while ( ! hitKey( 100u ));
+
 		Menu_Item_Mask( menu, item );
 
 		item = Menu_Select2( menu, item, FALSE, Show_std_clock );
 
 		switch( item )
 		{
-		case 1:
-			if ( EditTIME( 0x101Cu, &( SampleSet[SamplerSelect].delayt )))
-			{
-				changed_Delay = TRUE;
-				changed = TRUE;
-				SampleSetSave();
-			}		
-			++item;
-			break;
-		case 2:
-			need_redraw = TRUE;
-			CalibrateZero_x( SamplerSelect );
-			++item;
-			//lint -fallthrough
-			break;
-		case 3:	//	启动采样
-			if ( changed )
-			{
-				SampleSetSave();
-			}
-			Sampler_Start ( SamplerSelect );
-			
-			return	FALSE;	//	返回显示采样状态
+			case 1:
 
-		case enumSelectXCH:
-			SamplerTypeSwitch();
-			return	FALSE;
-		case	enumSelectESC:
-			break;
+				if ( EditTIME( 0x101Cu, &( SampleSet[SamplerSelect].delayt )))
+				{
+					changed_Delay = TRUE;
+					changed = TRUE;
+					SampleSetSave();
+				}
+
+				++item;
+				break;
+			case 2:
+				need_redraw = TRUE;
+				CalibrateZero_x( SamplerSelect );
+				++item;
+				//lint -fallthrough
+				break;
+			case 3:	//	启动采样
+
+				if ( changed )
+				{
+					SampleSetSave();
+				}
+
+				Sampler_Start ( SamplerSelect );
+
+				return	FALSE;	//	返回显示采样状态
+
+			case enumSelectXCH:
+				SamplerTypeSwitch();
+				return	FALSE;
+			case	enumSelectESC:
+				break;
 		}
-	} while ( enumSelectESC != item );
-	
+	}
+	while ( enumSelectESC != item );
+
 	return	TRUE;	//	返回，显示上级菜单
 }
 
@@ -345,12 +434,14 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 void	menu_SampleStart( void )
 {
 	BOOL	done = FALSE;
-	
-	do {
+
+	do
+	{
 		monitor();
 // 		State_Finish(	SamplerSelect );
 		done = SampleStart( SamplerSelect );
-	} while ( ! done );
+	}
+	while ( ! done );
 }
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/
@@ -371,16 +462,16 @@ void	menu_SampleStart( void )
 // 		{ 0x1806u, "维护" }
 // 	};
 // 	uint8_t item = 0u;
-// 	
+//
 // 	uint16_t	cflow = Configure.SetFlow[SP_SHI_C];
 // 	uint16_t	dflow = Configure.SetFlow[SP_SHI_D];
 // 	BOOL	changed = FALSE;
 // 	BOOL	need_redraw = TRUE;
-// 	
+//
 // 	do {
 // 		if ( need_redraw )
 // 		{
-// 			cls();			
+// 			cls();
 // 			Menu_Redraw( menuL );
 // 			SamplerTypeShow( 0x010Eu );
 // 			WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
@@ -409,7 +500,7 @@ void	menu_SampleStart( void )
 // 				case enumOrifice_2:
 // 					if ( cflow <  5u ) { cflow =  5u; }
 // 					if ( cflow > 20u ) { cflow = 20u; }
-// 					
+//
 // 					break;
 // 				default:
 // 					break;
@@ -441,7 +532,7 @@ void	menu_SampleStart( void )
 // 			if ( changed )
 // 			{
 // 				Configure.SetFlow[SP_SHI_C] = cflow;
-// 				Configure.SetFlow[SP_SHI_D] = dflow;               
+// 				Configure.SetFlow[SP_SHI_D] = dflow;
 // 				switch( MsgBox( "保存流量设置?", vbYesNoCancel + vbDefaultButton3 ))
 // 				{
 // 				case vbYes:
@@ -463,7 +554,7 @@ void	menu_SampleStart( void )
 // 			break;
 // 		}
 // 	} while ( enumSelectESC != item );
-// 	
+//
 // }
 
 #define	LOBYTE(__w)		((uint8_t)((__w)&0x0FF))
@@ -486,7 +577,7 @@ void	menu_SampleStart( void )
 // 	do {
 // 		if ( need_redraw )
 // 		{
-// 			cls();			
+// 			cls();
 // 			Menu_Redraw( menuL );
 // 			SamplerTypeShow( 0x010Eu );
 // 			WBMP( 0x1818, menuL[1].yx-0x04, SAMPLESET );
@@ -497,12 +588,12 @@ void	menu_SampleStart( void )
 // 			Menu_Redraw( menu );
 // 			need_redraw = FALSE;
 // 		}
-// 		
+//
 // 		ShowTIME( 0x061Cu, SampleSet[SamplerSelect].sample_time );
 
 // 		ShowTIME( 0x0F1Cu, SampleSet[SamplerSelect].suspend_time );
 // 		Lputs(0x140Eu, szPrompt );
-// 	
+//
 // 		ShowI16U( 0x1816u, SampleSet[SamplerSelect].set_loops, 0x0200u, NULL );
 
 // 		item = Menu_Select2( menu, item + 1u, FALSE, Show_std_clock );
@@ -550,14 +641,14 @@ void	menu_SampleStart( void )
 // 				changed = TRUE;
 // 			}
 // 			break;
-// 			
+//
 // 		case 5:
 // 		//	对于 4路小流量采样器：设置C/D 时均 采样流量（A/B采样流量是相对固定的）
 // 		//	对于 2路小流量采样器：设置A/B 采样流量
 // 			SetupFlow_SHI();
 // 			need_redraw = TRUE;
 // 			break;
-// 		
+//
 // 		case enumSelectXCH:
 // 			SamplerTypeSwitch();
 // 			return	FALSE;

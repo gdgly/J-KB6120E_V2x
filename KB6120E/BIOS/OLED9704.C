@@ -2,11 +2,11 @@
 * 文 件 名: OLED9704.C
 * 创 建 者: Dean
 * 描  述  : 錸寶OLED9704模块访问程序
-*         : 
+*         :
 * 最后修改: 2012年4月5日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "BIOS.H"
@@ -33,36 +33,44 @@ extern	void	OLED9704_DisplayDisable( void );
 ///////////////////////////////////////////////////////////////////
 static  void  moveto( uint8_t yy, uint16_t xx )
 {
-    xx += 0x02U;					
-    OLED9704_WriteReg( 0xB0U + ( yy % 0x08U ));			// Set page
-    OLED9704_WriteReg( 0x10U + ((uint8_t)xx / 0x10U ));	// Higher col address
-    OLED9704_WriteReg( 0x00U + ((uint8_t)xx % 0x10U ));	// Lower col address
+	xx += 0x02U;
+	OLED9704_WriteReg( 0xB0U + ( yy % 0x08U ));			// Set page
+	OLED9704_WriteReg( 0x10U + ((uint8_t)xx / 0x10U ));	// Higher col address
+	OLED9704_WriteReg( 0x00U + ((uint8_t)xx % 0x10U ));	// Lower col address
 }
 
 ///////////////////////////////////////////////////////////////////
 //	清屏
 ///////////////////////////////////////////////////////////////////
 void  OLED9704_cls( void  )
-{	// 清屏
+{
+	// 清屏
 	uint8_t	row, col;
 
-    OLED9704_WriteReg(0xAEU);   		// Display off
-    OLED9704_WriteReg(0xADU);  OLED9704_WriteReg(0x8AU);    // Internal DC-DC off: Second byte
-    OLED9704_WriteReg(0xA8U);  OLED9704_WriteReg(0x3FU);    // MUX Ratio: 64 duty
-    OLED9704_WriteReg(0xD3U);  OLED9704_WriteReg(0x00U);    // Display offset: Second byte
-    OLED9704_WriteReg(0x40U);   		// Start line
-    OLED9704_WriteReg(0xA0U);   		// Set Segment remap (0xA0:normal, 0xA1:remapped)
-    OLED9704_WriteReg(0xC8U);   		// Set COM remap (0xC0:normal, 0xC8: enable )
-    OLED9704_WriteReg(0xA6U);   		// Set normal/inverse display (0xA6:Normal display)
-    OLED9704_WriteReg(0xA4U);   		// Set entire display on/off (0xA4:Normal display)
+	OLED9704_WriteReg(0xAEU);   		// Display off
+	OLED9704_WriteReg(0xADU);
+	OLED9704_WriteReg(0x8AU);    // Internal DC-DC off: Second byte
+	OLED9704_WriteReg(0xA8U);
+	OLED9704_WriteReg(0x3FU);    // MUX Ratio: 64 duty
+	OLED9704_WriteReg(0xD3U);
+	OLED9704_WriteReg(0x00U);    // Display offset: Second byte
+	OLED9704_WriteReg(0x40U);   		// Start line
+	OLED9704_WriteReg(0xA0U);   		// Set Segment remap (0xA0:normal, 0xA1:remapped)
+	OLED9704_WriteReg(0xC8U);   		// Set COM remap (0xC0:normal, 0xC8: enable )
+	OLED9704_WriteReg(0xA6U);   		// Set normal/inverse display (0xA6:Normal display)
+	OLED9704_WriteReg(0xA4U);   		// Set entire display on/off (0xA4:Normal display)
 //    OLED9704_WriteReg(0x81U);  OLED9704_WriteReg(0x5CU);    // Contrast setting: Second byte
-    OLED9704_WriteReg(0xD5U);  OLED9704_WriteReg(0x60U);    // Frame rate: 85 Hz
-    OLED9704_WriteReg(0xD8U);  OLED9704_WriteReg(0x00U);    // Mode setting: Mono mode
-    OLED9704_WriteReg(0xD9U);  OLED9704_WriteReg(0x84U);    // Set Pre-char_tge period: Second byte
+	OLED9704_WriteReg(0xD5U);
+	OLED9704_WriteReg(0x60U);    // Frame rate: 85 Hz
+	OLED9704_WriteReg(0xD8U);
+	OLED9704_WriteReg(0x00U);    // Mode setting: Mono mode
+	OLED9704_WriteReg(0xD9U);
+	OLED9704_WriteReg(0x84U);    // Set Pre-char_tge period: Second byte
 
 	for( row = 0U; row < 8u; ++row )
 	{
 		moveto( row, 0U  );
+
 		for( col = 128U; col != 0U; --col )
 		{
 			OLED9704_WriteData( 0x00u );
@@ -70,7 +78,7 @@ void  OLED9704_cls( void  )
 	}
 
 	OLED9704_WriteReg(0xAFU);   		// Display on
-	
+
 //  OLED9704_WriteReg(0x81U);  OLED9704_WriteReg(0x80U);    // Contrast setting: Second byte
 }
 
@@ -78,7 +86,8 @@ void  OLED9704_cls( void  )
 //	反白
 ///////////////////////////////////////////////////////////////////
 void	OLED9704_mask( uint16_t yx, uint8_t xlen )
-{	//	反白
+{
+	//	反白
 	uint8_t		i, row, col, col_end;
 	uint8_t		InData;
 
@@ -90,20 +99,27 @@ void	OLED9704_mask( uint16_t yx, uint8_t xlen )
 	assert( col < max_txt_col );
 
 	col_end = col + xlen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
 	}
 
-	do {   
+	do
+	{
 		for( i = 0u; i < 8u; ++i )
 		{
-			moveto( row,      (uint8_t)( col * text_width ) + i );	InData = OLED9704_ReadData();
-			moveto( row,      (uint8_t)( col * text_width ) + i );	OLED9704_WriteData((uint8_t)(~InData));
-			moveto( row + 1U, (uint8_t)( col * text_width ) + i );	InData = OLED9704_ReadData();
-			moveto( row + 1U, (uint8_t)( col * text_width ) + i );	OLED9704_WriteData((uint8_t)(~InData));
+			moveto( row,      (uint8_t)( col * text_width ) + i );
+			InData = OLED9704_ReadData();
+			moveto( row,      (uint8_t)( col * text_width ) + i );
+			OLED9704_WriteData((uint8_t)(~InData));
+			moveto( row + 1U, (uint8_t)( col * text_width ) + i );
+			InData = OLED9704_ReadData();
+			moveto( row + 1U, (uint8_t)( col * text_width ) + i );
+			OLED9704_WriteData((uint8_t)(~InData));
 		}
-	} while ( ++col < col_end );
+	}
+	while ( ++col < col_end );
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -118,7 +134,8 @@ void	OLED9704_mask( uint16_t yx, uint8_t xlen )
 // 	}
 
 void	OLED9704_puts( uint16_t yx, const CHAR * sz )
-{	//	输出字符串
+{
+	//	输出字符串
 	CGROM		pDot;
 	CHAR		sDat;
 	size_t		slen;
@@ -126,6 +143,7 @@ void	OLED9704_puts( uint16_t yx, const CHAR * sz )
 
 	assert( sz != NULL );
 	slen = strlen( sz );
+
 	if ( slen > max_txt_col )
 	{
 		slen = max_txt_col;
@@ -137,33 +155,58 @@ void	OLED9704_puts( uint16_t yx, const CHAR * sz )
 	assert( col < max_txt_col );
 
 	col_end = col + (uint8_t)slen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
 	}
 
-	do {
+	do
+	{
 		sDat = *sz++;
 
 		if ( 0U == ((uint8_t)sDat & 0x80U ))
-		{	// DBC 半角字
+		{
+			// DBC 半角字
 			pDot = DotSeekDBC( sDat );
 			moveto( row, (uint8_t)( col * text_width ) );
-			for( i = 8U; i != 0U; --i )	{	OLED9704_WriteData(*pDot++);	}
+
+			for( i = 8U; i != 0U; --i )
+			{
+				OLED9704_WriteData(*pDot++);
+			}
+
 			moveto( row + 1U, (uint8_t)( col * text_width ) );
-			for( i = 8U; i != 0U; --i )	{	OLED9704_WriteData(*pDot++);	}
+
+			for( i = 8U; i != 0U; --i )
+			{
+				OLED9704_WriteData(*pDot++);
+			}
+
 			col += 1U;
 		}
 		else
-		{	// SBC 全角字
+		{
+			// SBC 全角字
 			pDot = DotSeekSBC( sDat, *sz++ );
 			moveto( row, (uint8_t)( col * text_width ) );
-			for( i = 16U; i != 0U; --i ) {	OLED9704_WriteData(*pDot++);	}
+
+			for( i = 16U; i != 0U; --i )
+			{
+				OLED9704_WriteData(*pDot++);
+			}
+
 			moveto( row + 1U, (uint8_t)( col * text_width ) );
-			for( i = 16U; i != 0U; --i ) {	OLED9704_WriteData(*pDot++);	}
+
+			for( i = 16U; i != 0U; --i )
+			{
+				OLED9704_WriteData(*pDot++);
+			}
+
 			col += 2U;
 		}
-	}	while ( col < col_end  );
+	}
+	while ( col < col_end  );
 }
 
 
@@ -173,7 +216,7 @@ void	OLED9704_puts( uint16_t yx, const CHAR * sz )
 void	OLED9704_SetLight( uint8_t SetLight )
 {
 	uint8_t OutValue = (uint16_t)SetLight * 255u / 100u;
-    OLED9704_WriteReg(0x81u);
+	OLED9704_WriteReg(0x81u);
 	OLED9704_WriteReg( OutValue );    // Contrast setting: contrast
 }
 

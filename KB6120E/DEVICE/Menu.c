@@ -4,8 +4,8 @@
 * 描  述  : 菜单显示/选择
 * 最后修改: 2013年8月17日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "AppDEF.H"
 #include <stdio.h>
@@ -22,33 +22,34 @@ void	Menu_Item_Mask ( const struct uMenu * menu, uint8_t item )
 
 void	Menu_Redraw ( const struct uMenu * menu )
 {
-    uint8_t	mlen, mlen_row, mlen_col;
-    uint8_t	i;
+	uint8_t	mlen, mlen_row, mlen_col;
+	uint8_t	i;
 
-    mlen_row = HIBYTE ( menu[0].yx );
-    mlen_col = LOBYTE ( menu[0].yx );
+	mlen_row = HIBYTE ( menu[0].yx );
+	mlen_col = LOBYTE ( menu[0].yx );
 
-    if ( 0u == mlen_row )
-    {
-        mlen = mlen_col;
-    }
-    else
-    {
-        mlen = mlen_row * mlen_col;
-    }
+	if ( 0u == mlen_row )
+	{
+		mlen = mlen_col;
+	}
+	else
+	{
+		mlen = mlen_row * mlen_col;
+	}
 
-    if ( menu[0].sz != NULL )
-    {
-        Lputs ( 0x0102u, menu[0].sz );	// 显示菜单标题
-    }
-		WBMP( 0x0290,0x0502, STROCK); //显示横线
-		WBMP( 0x0290,0x0514, STROCK); //显示横线
-		
-    for ( i = 1u; i <= mlen; ++i )
-    {
-        Lputs ( menu[i].yx, menu[i].sz );
-    }
-		
+	if ( menu[0].sz != NULL )
+	{
+		Lputs ( 0x0102u, menu[0].sz );	// 显示菜单标题
+	}
+
+	WBMP( 0x0290,0x0502, STROCK); //显示横线
+	WBMP( 0x0290,0x0514, STROCK); //显示横线
+
+	for ( i = 1u; i <= mlen; ++i )
+	{
+		Lputs ( menu[i].yx, menu[i].sz );
+	}
+
 }
 
 uint8_t	Menu_Select ( const struct uMenu * menu, uint8_t item , void ( *pHook ) ( void ) )  //普通菜单选择
@@ -56,7 +57,8 @@ uint8_t	Menu_Select ( const struct uMenu * menu, uint8_t item , void ( *pHook ) 
 	return	Menu_Select_Ex( menu, item, pHook );
 }
 uint8_t	Menu_Select2 ( const struct uMenu * menu, uint8_t item, BOOL Direction , void ( *pHook ) ( void ))  //可换向使按键通用
-{																															//TRUE 改纵向  FALSE 改横向 
+{
+	//TRUE 改纵向  FALSE 改横向
 	return	Menu_Select_Ex2( menu, item, pHook, Direction );
 }
 uint8_t	Menu_Select3 ( const struct uMenu * menu, uint8_t item, uint8_t timeout , void ( *pHook ) ( void ) )         //可超时退出选择 单位：S
@@ -67,20 +69,20 @@ uint8_t	Menu_SelectOnly  ( const struct uMenu * menu, uint8_t item, BOOL Directi
 {
 	return	Menu_SelectOnlyEx( menu, item, pHook, Direction );
 }
-	/*		
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
+/*
+		if( ! releaseKey( K_OK_DOWN, 100 ))
+		{
 // 				cls();
-				while( ! releaseKey( K_OK_DOWN, 1 ))
-				{
-					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
+			while( ! releaseKey( K_OK_DOWN, 1 ))
+			{
+				--gray;
+				DisplaySetGrayVolt( gray * 0.01f );
 // 					ShowPercent( 0x080B, (FP32) gray / 2200 );
-				}
-// 				while ( ! hitKey ( 50u ));
-// 				cls();				
 			}
-			graychanged = true;*/
+// 				while ( ! hitKey ( 50u ));
+// 				cls();
+		}
+		graychanged = true;*/
 uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ) )
 {
 	uint8_t	mlen, mlen_row, mlen_col;
@@ -106,6 +108,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 	for ( ; ; )
 	{
 		LcmMask ( menu[item].yx, strlen ( menu[item].sz ), menu[item].sz );
+
 		do
 		{
 			if ( NULL != pHook )
@@ -119,110 +122,130 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 
 		switch ( getKey() )
 		{
-		case K_RIGHT:
-			if ( 0 == ( item % mlen_col ) )
-			{
-				item -= mlen_col;
-			}
-			++item;
-			break;
+			case K_RIGHT:
 
-		case K_LEFT:
-			--item;
-			if ( 0 == ( item % mlen_col ) )
-			{
+				if ( 0 == ( item % mlen_col ) )
+				{
+					item -= mlen_col;
+				}
+
+				++item;
+				break;
+
+			case K_LEFT:
+				--item;
+
+				if ( 0 == ( item % mlen_col ) )
+				{
+					item += mlen_col;
+				}
+
+				break;
+
+			case K_DOWN:
 				item += mlen_col;
-			}
-			break;
 
-		case K_DOWN:
-			item += mlen_col;
-			if ( item > mlen )
-			{
-				item -= mlen;
-			}
-			break;
+				if ( item > mlen )
+				{
+					item -= mlen;
+				}
 
-		case K_UP:
-			if ( item <= mlen_col )
-			{
-				item += mlen;
-			}
-			item -= mlen_col;
-			break;
+				break;
 
-		case K_OK:
-			return	item;
+			case K_UP:
 
-		case K_ESC:
-			return	enumSelectESC;
+				if ( item <= mlen_col )
+				{
+					item += mlen;
+				}
 
-		case K_SHIFT:		
-			return	enumSelectXCH;
-			
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+				item -= mlen_col;
+				break;
+
+			case K_OK:
+				return	item;
+
+			case K_ESC:
+				return	enumSelectESC;
+
+			case K_SHIFT:
+				return	enumSelectXCH;
+
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT: 
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			default:
+				break;
 		}
-	if( graychanged == true )
-	{
-		DisplaySetGrayVolt( gray * 0.01f );
-		Configure.DisplayGray = gray;
-		ConfigureSave();
-		graychanged = FALSE;
-	}
-		
+
+		if( graychanged == true )
+		{
+			DisplaySetGrayVolt( gray * 0.01f );
+			Configure.DisplayGray = gray;
+			ConfigureSave();
+			graychanged = FALSE;
+		}
+
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////
 
-uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction ) 
-{                                                                                           //TRUE 改纵向  FALSE 改横向 
+uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction )
+{
+	//TRUE 改纵向  FALSE 改横向
 	uint8_t	mlen, mlen_row, mlen_col;
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL graychanged = FALSE;
@@ -247,6 +270,7 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 	for ( ; ; )
 	{
 		LcmMask ( menu[item].yx, strlen ( menu[item].sz ), menu[item].sz );
+
 		do
 		{
 			if ( NULL != pHook )
@@ -260,141 +284,167 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 		switch ( getKey() )
 		{
-				
-		case K_RIGHT:
-		  if((!Direction) && (!Flag))	
-			{
-        item += mlen_col;
-				if ( item > mlen )
-				{
-					item -= mlen;
-				}
-			}
-			else
-			{
-        if ( 0 == ( item % mlen_col ) )
-				{
-					item -= mlen_col;
-				}
-				++item;
-			}
-			
-			break;
 
-		case K_LEFT:
-			if((!Direction) && (!Flag))
-			{
-        if ( item <= mlen_col )
-				{
-					item += mlen;
-				}
-				item -= mlen_col;
-			}
-			else
-			{
-        --item;
-				if ( 0 == ( item % mlen_col ) )
+			case K_RIGHT:
+
+				if((!Direction) && (!Flag))
 				{
 					item += mlen_col;
+
+					if ( item > mlen )
+					{
+						item -= mlen;
+					}
 				}
-			}		
-			break;
-			
-		case K_DOWN:
-			if( Direction && (!Flag) )
-			{
-				 if ( 0 == ( item % mlen_col ) )
+				else
 				{
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item -= mlen_col;
+					}
+
+					++item;
+				}
+
+				break;
+
+			case K_LEFT:
+
+				if((!Direction) && (!Flag))
+				{
+					if ( item <= mlen_col )
+					{
+						item += mlen;
+					}
+
 					item -= mlen_col;
 				}
-				++item;
-			}		
-			else
-			{
-				item += mlen_col;
-				if ( item > mlen )
+				else
 				{
-					item -= mlen;
+					--item;
+
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item += mlen_col;
+					}
 				}
-			}
-      break;
-		case K_UP:
-			if( Direction && (!Flag) )
-			{
-				--item;
-				if ( 0 == ( item % mlen_col ) )
+
+				break;
+
+			case K_DOWN:
+
+				if( Direction && (!Flag) )
+				{
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item -= mlen_col;
+					}
+
+					++item;
+				}
+				else
 				{
 					item += mlen_col;
+
+					if ( item > mlen )
+					{
+						item -= mlen;
+					}
 				}
-			}		
-			else
-			{
-				if ( item <= mlen_col )
+
+				break;
+			case K_UP:
+
+				if( Direction && (!Flag) )
 				{
-					item += mlen;
+					--item;
+
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item += mlen_col;
+					}
 				}
-				item -= mlen_col;
-			}
-			break;
+				else
+				{
+					if ( item <= mlen_col )
+					{
+						item += mlen;
+					}
 
-		case K_OK:
-			Flag = TRUE;
-			return	item;
+					item -= mlen_col;
+				}
 
-		case K_ESC:
-			Flag = FALSE;
-			return	enumSelectESC;
+				break;
 
-		case K_SHIFT:		
-			return	enumSelectXCH;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+			case K_OK:
+				Flag = TRUE;
+				return	item;
+
+			case K_ESC:
+				Flag = FALSE;
+				return	enumSelectESC;
+
+			case K_SHIFT:
+				return	enumSelectXCH;
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			default:
+				break;
 		}
+
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );
@@ -406,14 +456,15 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 }
 
 uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),uint8_t timeout )
-{  
+{
 	uint8_t	mlen, mlen_row, mlen_col;
-  uint8_t secnow;
-	uint32_t starsec;	
+	uint8_t secnow;
+	uint32_t starsec;
 	uint16_t gray  = Configure.DisplayGray;
-	BOOL graychanged = FALSE;	
+	BOOL graychanged = FALSE;
 	mlen_row = HIBYTE ( menu[0].yx );
 	mlen_col = LOBYTE ( menu[0].yx );
+
 	if ( 0u == mlen_row )
 	{
 		mlen = mlen_col;
@@ -421,135 +472,163 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 	else
 	{
 		mlen = mlen_row * mlen_col;
-	} 
+	}
 
 	if ( ( item < 1u ) || ( item > mlen ) )
 	{
 		item = 1u;
-	} 
-  starsec = get_Now();
+	}
+
+	starsec = get_Now();
+
 	for ( ; ; )
-	{ 
-		LcmMask ( menu[item].yx, strlen ( menu[item].sz ), menu[item].sz );   
+	{
+		LcmMask ( menu[item].yx, strlen ( menu[item].sz ), menu[item].sz );
+
 		do
 		{
 			CHAR	sbuffer[6];
+
 			if ( NULL != pHook )
 			{
 				pHook();
-			}    
+			}
+
 			secnow = get_Now() - starsec;
-			sprintf( sbuffer, "(%us) ", timeout - secnow );	Lputs( 0x0F09u, sbuffer );
-			if( secnow >= timeout )		
+			sprintf( sbuffer, "(%us) ", timeout - secnow );
+			Lputs( 0x0F09u, sbuffer );
+
+			if( secnow >= timeout )
 				return 1;
 		}
 		while ( ! hitKey ( 50u ) );
+
 		Lputs ( menu[item].yx, menu[item].sz );
-  
+
 		switch ( getKey() )
 		{
-		case K_RIGHT:
-			if ( 0 == ( item % mlen_col ) )
-			{
-				item -= mlen_col;
-			}
-			++item;
-			break;
+			case K_RIGHT:
 
-		case K_LEFT:
-			--item;
-			if ( 0 == ( item % mlen_col ) )
-			{
+				if ( 0 == ( item % mlen_col ) )
+				{
+					item -= mlen_col;
+				}
+
+				++item;
+				break;
+
+			case K_LEFT:
+				--item;
+
+				if ( 0 == ( item % mlen_col ) )
+				{
+					item += mlen_col;
+				}
+
+				break;
+
+			case K_DOWN:
 				item += mlen_col;
-			}
-			break;
 
-		case K_DOWN:
-			item += mlen_col;
-			if ( item > mlen )
-			{
-				item -= mlen;
-			}
-			break;
+				if ( item > mlen )
+				{
+					item -= mlen;
+				}
 
-		case K_UP:
-			if ( item <= mlen_col )
-			{
-				item += mlen;
-			}
-			item -= mlen_col;
-			break;
+				break;
 
-		case K_OK:
-			return	item;
+			case K_UP:
 
-		case K_ESC:
-			return	enumSelectESC;
+				if ( item <= mlen_col )
+				{
+					item += mlen;
+				}
 
-		case K_SHIFT:		
-			return	enumSelectXCH;
-			
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+				item -= mlen_col;
+				break;
+
+			case K_OK:
+				return	item;
+
+			case K_ESC:
+				return	enumSelectESC;
+
+			case K_SHIFT:
+				return	enumSelectXCH;
+
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			default:
+				break;
 		}
+
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
-		}		
+		}
 	}
 }
 
 
-uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction ) 
-{                                                                                           //TRUE 改纵向  FALSE 改横向 
+uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction )
+{
+	//TRUE 改纵向  FALSE 改横向
 	uint8_t	mlen, mlen_row, mlen_col;
 	uint16_t gray  = Configure.DisplayGray;
 	BOOL graychanged = FALSE;
@@ -574,6 +653,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 	for ( ; ; )
 	{
 		LcmMask ( menu[item].yx, strlen ( menu[item].sz ), menu[item].sz );
+
 		do
 		{
 			if ( NULL != pHook )
@@ -587,160 +667,190 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 
 		switch ( getKey() )
 		{
-				
-		case K_RIGHT:
-		  if((!Direction) && (!Flag))	
-			{
-        item += mlen_col;
-				if ( item > mlen )
-				{
-					item -= mlen;
-				}
-			}
-			else
-			{
-        if ( 0 == ( item % mlen_col ) )
-				{
-					item -= mlen_col;
-				}
-				++item;
-			}
-			
-			break;
 
-		case K_LEFT:
-			if((!Direction) && (!Flag))
-			{
-        if ( item <= mlen_col )
-				{
-					item += mlen;
-				}
-				item -= mlen_col;
-			}
-			else
-			{
-        --item;
-				if ( 0 == ( item % mlen_col ) )
+			case K_RIGHT:
+
+				if((!Direction) && (!Flag))
 				{
 					item += mlen_col;
+
+					if ( item > mlen )
+					{
+						item -= mlen;
+					}
 				}
-			}		
-			break;
-			
-		case K_DOWN:
-			if( Direction && (!Flag) )
-			{
-				 if ( 0 == ( item % mlen_col ) )
+				else
 				{
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item -= mlen_col;
+					}
+
+					++item;
+				}
+
+				break;
+
+			case K_LEFT:
+
+				if((!Direction) && (!Flag))
+				{
+					if ( item <= mlen_col )
+					{
+						item += mlen;
+					}
+
 					item -= mlen_col;
 				}
-				++item;
-			}		
-			else
-			{
-				item += mlen_col;
-				if ( item > mlen )
+				else
 				{
-					item -= mlen;
+					--item;
+
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item += mlen_col;
+					}
 				}
-			}
-      break;
-		case K_UP:
-			if( Direction && (!Flag) )
-			{
-				--item;
-				if ( 0 == ( item % mlen_col ) )
+
+				break;
+
+			case K_DOWN:
+
+				if( Direction && (!Flag) )
+				{
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item -= mlen_col;
+					}
+
+					++item;
+				}
+				else
 				{
 					item += mlen_col;
+
+					if ( item > mlen )
+					{
+						item -= mlen;
+					}
 				}
-			}		
-			else
-			{
-				if ( item <= mlen_col )
+
+				break;
+			case K_UP:
+
+				if( Direction && (!Flag) )
 				{
-					item += mlen;
+					--item;
+
+					if ( 0 == ( item % mlen_col ) )
+					{
+						item += mlen_col;
+					}
 				}
-				item -= mlen_col;
-			}
-			break;
+				else
+				{
+					if ( item <= mlen_col )
+					{
+						item += mlen;
+					}
 
-		case K_OK:
-			Flag = TRUE;
-			return	item;
+					item -= mlen_col;
+				}
 
-		case K_ESC:
-			Flag = FALSE;
-			return	enumSelectESC;
+				break;
 
-		case K_SHIFT:		
-			return	enumSelectXCH;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+			case K_OK:
+				Flag = TRUE;
+				return	item;
+
+			case K_ESC:
+				Flag = FALSE;
+				return	enumSelectESC;
+
+			case K_SHIFT:
+				return	enumSelectXCH;
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		case K_ESC_SHIFT:
-			if ( ! releaseKey( K_ESC_SHIFT, 200 ))
-			{
-				item = enumSelectESC;
-				beep();
-				delay( 100u );
-				beep();
-				cls();
-				Lputs( 0x0608u, "请输入出厂编号:" );
-				ConfigureLoad();
-				if( EditI32U( 0x0C0Cu, &Configure.ExNum, 0x0700u ))
+				if( ! releaseKey( K_OK_DOWN, 100 ))
 				{
-					if( vbYes == MsgBox("是否保存编号?",vbYesNo) )
-						ConfigureSave();
-					else
-						ConfigureLoad();		
-				}				
-			return	enumSelectESC;
-			}
-		default:
-			break;
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			case K_ESC_SHIFT:
+
+				if ( ! releaseKey( K_ESC_SHIFT, 200 ))
+				{
+					item = enumSelectESC;
+					beep();
+					delay( 100u );
+					beep();
+					cls();
+					Lputs( 0x0608u, "请输入出厂编号:" );
+					ConfigureLoad();
+
+					if( EditI32U( 0x0C0Cu, &Configure.ExNum, 0x0700u ))
+					{
+						if( vbYes == MsgBox("是否保存编号?",vbYesNo) )
+							ConfigureSave();
+						else
+							ConfigureLoad();
+					}
+
+					return	enumSelectESC;
+				}
+
+			default:
+				break;
 		}
+
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );
@@ -904,7 +1014,7 @@ uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 	static	const struct uMenu  menu_YesNoCancel[]		= { 0x0103u, NULL, 0x1205, " 是 ", 0x1210, " 否 ", 0x121B, "取消" };
 	static	const struct uMenu  menu_AbortRetryIgnore[]	= { 0x0103u, NULL, 0x1205, "终止", 0x1210, "重试", 0x121B, "忽略" };
 
-	static	const struct uMenu * const menu_list[] = 
+	static	const struct uMenu * const menu_list[] =
 	{
 		menu_OKOnly,
 		menu_OKCancel,
@@ -927,61 +1037,88 @@ uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 	WBMP( 0x0290,0x1802, STROCK); //显示HENG线
 	WBMP( 0x0290,0x1814, STROCK); //显示HENG线
 	WBMP( 0xA001,0x0502, STROCK3); //显示SHU线
- 	WBMP( 0xA001,0x0526, STROCK2); //显示SHU线
+	WBMP( 0xA001,0x0526, STROCK2); //显示SHU线
 	Response = Menu_Select( menu, buttons / 0x10 % 0x10 + 1, NULL );	//	Menu_Select程序会自动调整不合理的默认选项
 
 	switch( buttons & 0x0Fu )
 	{
-	default:
-	case vbOKOnly:
-		switch( Response )
-		{
-			default:	return	vbCancel;
-			case 1:		return	vbOK;
-		}
-		//	break;
-	case vbOKCancel:
-		switch( Response )
-		{
-			default:	return	vbCancel;
-			case 1:		return	vbOK;
-		//	case 2:		return	vbCancel;
-		}
-		//	break;
-	case vbAbortRetryIgnore:
-		switch( Response )
-		{
-			default:	return	vbRetry;
-			case 1:		return	vbAbort;
-		//	case 2:		return	vbRetry;
-			case 3:		return	vbIgnore; 
-		}
-		//	break;
-	case vbYesNoCancel:
-		switch( Response )
-		{
-			default:	return	vbCancel;
-			case 1:		return	vbYes;
-			case 2:		return	vbNo;
-		//	case 3:		return	vbCancel;
-		}
-		//	break;
-	case vbYesNo:
-		switch( Response )
-		{
-			default:	return	vbCancel;
-			case 1:		return	vbYes;
-			case 2:		return	vbNo;
-		}
-		//	break;
-	case vbRetryCancel:
-		switch( Response )
-		{
-			default:	return	vbCancel;
-			case 1:		return	vbRetry;
-		//	case 2:		return	vbCancel;
-		}
-		//	break;
+		default:
+		case vbOKOnly:
+
+			switch( Response )
+			{
+				default:
+					return	vbCancel;
+				case 1:
+					return	vbOK;
+			}
+
+			//	break;
+		case vbOKCancel:
+
+			switch( Response )
+			{
+				default:
+					return	vbCancel;
+				case 1:
+					return	vbOK;
+					//	case 2:		return	vbCancel;
+			}
+
+			//	break;
+		case vbAbortRetryIgnore:
+
+			switch( Response )
+			{
+				default:
+					return	vbRetry;
+				case 1:
+					return	vbAbort;
+					//	case 2:		return	vbRetry;
+				case 3:
+					return	vbIgnore;
+			}
+
+			//	break;
+		case vbYesNoCancel:
+
+			switch( Response )
+			{
+				default:
+					return	vbCancel;
+				case 1:
+					return	vbYes;
+				case 2:
+					return	vbNo;
+					//	case 3:		return	vbCancel;
+			}
+
+			//	break;
+		case vbYesNo:
+
+			switch( Response )
+			{
+				default:
+					return	vbCancel;
+				case 1:
+					return	vbYes;
+				case 2:
+					return	vbNo;
+			}
+
+			//	break;
+		case vbRetryCancel:
+
+			switch( Response )
+			{
+				default:
+					return	vbCancel;
+				case 1:
+					return	vbRetry;
+					//	case 2:		return	vbCancel;
+			}
+
+			//	break;
 	}
 }
 /***************************************/
@@ -992,7 +1129,7 @@ uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 // 		{ 0x0300u, "" },
 // 		{ 0x0500u, "" },
 // 	};
-// 	uint8_t item = 1u;	
+// 	uint8_t item = 1u;
 // 	cls();
 // 	Menu_Redraw( menu );
 // 	do {
@@ -1006,6 +1143,6 @@ uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 // 			break;
 // 		}
 // 	} while ( enumSelectESC != item );
-// 	
+//
 // 	}
 /********  (C) COPYRIGHT 2013 青岛金仕达电子科技有限公司  **** End Of File ****/

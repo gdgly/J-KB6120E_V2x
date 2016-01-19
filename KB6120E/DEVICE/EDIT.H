@@ -23,7 +23,7 @@ extern	uint8_t	Menu_Select_Ex  ( const struct uMenu * menu, uint8_t item, void (
 extern	uint8_t	Menu_Select_ExS ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ) );
 extern	uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook )( void ), BOOL Direction );
 extern	uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ), uint8_t timeout );
-extern	uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction ); 
+extern	uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHook ) ( void ),BOOL Direction );
 
 ///////////////////////////////////////////////////////////////////
 //	MsgBox

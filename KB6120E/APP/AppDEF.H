@@ -4,8 +4,8 @@
 * 描  述  : KB-6120E 的应用程序头文件
 * 最后修改: 2014年4月21日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "EDIT.H"
@@ -20,9 +20,9 @@ enum	enumTypeIdent
 };
 enum enumExNameIdent
 {
-  Name_None,
-  Name_JSD,
-//  ...	
+	Name_None,
+	Name_JSD,
+//  ...
 	Name_Max,
 
 };
@@ -74,25 +74,29 @@ extern  BOOL StateRead( enum	enumSamplerSelect SamplerSelect );
 *  系统配置
 *******************************************************************************/
 enum
-{	//	大气压力获取方式
+{
+	//	大气压力获取方式
 	enumUserInput,		//	用户输入
 	enumMeasureBa,		//	实时测量
 };
 
 enum
-{	//	运行时间控制方式
+{
+	//	运行时间控制方式
 	enumBySet,			//	按设置时间运行，遇停电自动扣除
 	enumBySum,			//	按累计时间运行，遇停电自动补足
 };
 
 enum
-{	//	启动时间延时方式
+{
+	//	启动时间延时方式
 	enumByAccurate,		//	定时开机
 	enumByDelay,		//	延时开机
 };
 
 enum
-{	//	流量传感器的类型
+{
+	//	流量传感器的类型
 	enumPumpNone, 		//	未安装
 	enumOrifice_1,		//	粉尘中流量孔板（泵） 或 1L的小流量孔板（泵）
 	enumOrifice_2,		//	粉尘大流量孔板（泵） 或 2L的小流量孔板（泵）
@@ -100,7 +104,8 @@ enum
 };
 
 enum
-{	//	恒温箱、加热器类型
+{
+	//	恒温箱、加热器类型
 	enumHeaterNone,		//	未安装恒温箱
 	enumHCBoxOnly,		//	只有恒温箱
 	enumHeaterOnly,		//	只有加热器
@@ -108,7 +113,8 @@ enum
 };
 
 enum
-{	//	恒温箱控制温度的方式
+{
+	//	恒温箱控制温度的方式
 	MD_Shut,
 	MD_Heat,
 	MD_Cool,
@@ -116,7 +122,8 @@ enum
 };
 
 enum	enumTstd
-{	//	标况流量的定义温度
+{
+	//	标况流量的定义温度
 	enum_273K,	//	标况流量定义为：标况大气压力下，温度273K（ 0℃）时的流量
 	enum_293K,	//	标况流量定义为：标况大气压力下，温度293K（20℃）时的流量
 	enum_298K,	//	标况流量定义为：标况大气压力下，温度298K（25℃）时的流量
@@ -134,34 +141,34 @@ struct	uConfigure
 	uint8_t		DisplayLight;		//	显示亮度设置
 	uint8_t		TimeoutLight;		//	背光延时时间：0＝关闭，255＝常亮
 
-	uint8_t		SetTstd;				//	标况流量的定义温度 
+	uint8_t		SetTstd;				//	标况流量的定义温度
 	uint8_t		Mothed_Ba;				//	大气压力获取方式
 	uint16_t	set_Ba;					//	保存用户输入气压
-	
+
 	uint16_t	SetFlow[SP_Max];		//	采样流量
-	uint16_t	Pr_Portect[SP_Max];			//	电机保护：计前压力设置	
+	uint16_t	Pr_Portect[SP_Max];			//	电机保护：计前压力设置
 	uint8_t		PumpType[SP_Max];		//	日均时均采样的流量计、泵的型号---->影响采样流量的设置范围，标定点的选择。
 
-	
-	uint8_t		HeaterType;				//	恒温箱/加热器的选配情况	
+
+	uint8_t		HeaterType;				//	恒温箱/加热器的选配情况
 	uint16_t	HCBox_SetTemp;			//	恒温箱恒温温度
-	uint8_t		HCBox_SetMode;			//	恒温箱控制模式	
+	uint8_t		HCBox_SetMode;			//	恒温箱控制模式
 	uint8_t		Heater_SW;          //	加热器开关
 	uint16_t	Heater_SetTemp;			//	加热器恒温温度
-	
+
 	uint8_t		shouldCalcPbv;		//	饱和水汽压是否参与计算。
-	
+
 	uint8_t   Battery_SW;
 	uint16_t	slope_Bat_Voltage;
 	uint16_t	slope_Bat_Current;
 	uint16_t	threshold_Current;
-		
-  uint32_t	Password;					//	维护密码 
-	
+
+	uint32_t	Password;					//	维护密码
+
 	uint32_t  ExNum;						//	出厂编号
 	uint8_t   ExName;           //	厂家名称
-	
-	uint16_t	DataValidMask;  
+
+	uint16_t	DataValidMask;
 };
 
 extern	struct	uConfigure	Configure;					//	系统配置
@@ -172,7 +179,7 @@ struct	uHCBox
 	FP32	SetTemp;		//	设定的控制温度：
 	FP32	RunTemp;		//	实测的运行温度：
 	FP32	OutValue;		//	控制信号输出值[-1000,0,+1000]，正数表示加热，负数表示制冷。
-}; 
+};
 
 extern	struct	uHCBox HCBox;
 /********************************** 功能说明 ***********************************
@@ -199,7 +206,7 @@ extern	struct	uSampleSet	SampleSet[SP_Max];	//	采样设置
 struct	uSamplerQuery
 {
 	enum enumSampleState state;
-	BOOL	xp_state;	//	开、关状态		
+	BOOL	xp_state;	//	开、关状态
 	FP32	vd, vnd;
 	uint16_t	sum_time;
 	int16_t		timer;
@@ -209,7 +216,7 @@ struct	uSamplerQuery
 extern	struct	uSamplerQuery	Q_Sampler[SP_Max];
 
 
-struct	uPID_Parament 
+struct	uPID_Parament
 {
 	uint16_t Kp;
 	uint16_t Ti;

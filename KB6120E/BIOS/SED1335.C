@@ -2,11 +2,11 @@
 * 文 件 名: SED1335.C
 * 创 建 者: Dean
 * 描  述  : LM2068E 液晶读写程序
-*         : 
+*         :
 * 最后修改: 2015年8月6日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "BIOS.H"
@@ -42,12 +42,12 @@ extern	uint8_t	SED1335_Read_Data( void );
 #define max_txt_col		40u		// 列
 static	void	moveto( uint8_t xx, uint8_t yy )
 {
-    uint16_t	locate;
-		locate = ( max_txt_col * (xx) ) + yy;
-		
-    SED1335_Write_Command( CSRW );
-    SED1335_Write_Data( locate % 0x100u );	// 显示内存低8位数值
-    SED1335_Write_Data( locate / 0x100u );	// 显示内存高8位数值
+	uint16_t	locate;
+	locate = ( max_txt_col * (xx) ) + yy;
+
+	SED1335_Write_Command( CSRW );
+	SED1335_Write_Data( locate % 0x100u );	// 显示内存低8位数值
+	SED1335_Write_Data( locate / 0x100u );	// 显示内存高8位数值
 }
 // static	void	moveto24( uint16_t xx, uint16_t yy )
 // {
@@ -60,7 +60,7 @@ static	void	moveto( uint8_t xx, uint8_t yy )
 static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32] )
 {
 	uint8_t i, j;
-	
+
 	for ( j = 0; j < 8; ++j )
 	{
 		uint8_t tmp = 0u;
@@ -69,10 +69,13 @@ static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot16x16[j] = tmp;
 	}
 
@@ -84,10 +87,13 @@ static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i+8] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot16x16[j+16] = tmp;
 	}
 
@@ -99,10 +105,13 @@ static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i+16] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot16x16[j+8] = tmp;
 	}
 
@@ -114,10 +123,13 @@ static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i+24] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot16x16[j+24] = tmp;
 	}
 
@@ -127,7 +139,7 @@ static	const uint8_t * transpose16x16( const uint8_t * pDot, uint8_t Dot16x16[32
 static	const uint8_t * transpose8x16( const uint8_t * pDot, uint8_t Dot8x16[16] )
 {
 	uint8_t i, j;
-	
+
 	for ( j = 0; j < 8; ++j )
 	{
 		uint8_t tmp = 0u;
@@ -136,10 +148,13 @@ static	const uint8_t * transpose8x16( const uint8_t * pDot, uint8_t Dot8x16[16] 
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot8x16[j] = tmp;
 	}
 
@@ -151,10 +166,13 @@ static	const uint8_t * transpose8x16( const uint8_t * pDot, uint8_t Dot8x16[16] 
 		for ( i = 0; i < 8; ++i )
 		{
 			tmp <<= 1;
+
 			if ( pDot[i+8] & mask )
-			{	tmp |= 1; }
+			{
+				tmp |= 1;
+			}
 		}
-		
+
 		Dot8x16[j+8] = tmp;
 	}
 
@@ -173,8 +191,9 @@ void	SED1335_puts( uint16_t yx, const CHAR * sz )
 	col = ( yx ) % 256u;
 	assert( row < max_txt_row );
 	assert( col < max_txt_col );
-	
+
 	col_end = col + strlen( sz );
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
@@ -182,41 +201,49 @@ void	SED1335_puts( uint16_t yx, const CHAR * sz )
 
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
 
-	do {
-			sDat = *sz++;
+	do
+	{
+		sDat = *sz++;
 
-			if (( sDat & 0x80u ) == 0u )
-			{ 	// DBC 半角英文
-				pDot = transpose8x16( DotSeekDBC( sDat ), DotArray );
-				moveto( Row_Height * row , col++ );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				for( i = 0u; i < 16u; ++i )
-				{
-						SED1335_Write_Data( *pDot++ );
-				}
+		if (( sDat & 0x80u ) == 0u )
+		{
+			// DBC 半角英文
+			pDot = transpose8x16( DotSeekDBC( sDat ), DotArray );
+			moveto( Row_Height * row , col++ );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 16u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
 			}
-			else
-			{	// SBC 全角汉字
-				pDot = transpose16x16( DotSeekSBC( sDat, *sz++ ), DotArray );
-				moveto( Row_Height * row , col++ );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				for( i = 0u; i < 16u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				moveto( Row_Height * row, col++ );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				for( i = 0u; i < 16u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
+		}
+		else
+		{
+			// SBC 全角汉字
+			pDot = transpose16x16( DotSeekSBC( sDat, *sz++ ), DotArray );
+			moveto( Row_Height * row , col++ );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 16u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
 			}
-	} while ( col < col_end  );
+
+			moveto( Row_Height * row, col++ );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 16u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
+			}
+		}
+	}
+	while ( col < col_end  );
 }
 
 void	SED1335_puts24( uint16_t yx, const CHAR * sz )
 {
- 	uint8_t i;
+	uint8_t i;
 	uint8_t row, col, szcol, col_end, slen;
 	CHAR		sDat;
 	CGROM		pDot;
@@ -228,6 +255,7 @@ void	SED1335_puts24( uint16_t yx, const CHAR * sz )
 	assert( col < max_txt_col );
 	slen = strlen( sz );
 	col_end = col + slen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
@@ -235,52 +263,66 @@ void	SED1335_puts24( uint16_t yx, const CHAR * sz )
 
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
 
-	do {
-			sDat = *sz++;
-			
-			if (( sDat & 0x80u ) == 0u )
-			{ 	// DBC 半角英文
-				moveto( Row_Height * row , szcol);	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				pDot = DotSeekDBC_12x24( sDat );		
-				for( i = 0u; i < 24u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				moveto( Row_Height * row , szcol + 1 );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入		
-				for( i = 0u; i < 24u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				col += 1;
-				szcol +=2;
+	do
+	{
+		sDat = *sz++;
+
+		if (( sDat & 0x80u ) == 0u )
+		{
+			// DBC 半角英文
+			moveto( Row_Height * row , szcol);	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+			pDot = DotSeekDBC_12x24( sDat );
+
+			for( i = 0u; i < 24u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
 			}
-			else
-			{	// SBC 全角汉字
-				pDot = ( DotSeekSBC_24x24( sDat, *sz++ ));
-				moveto( Row_Height * row , szcol );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入						
-				for( i = 0u; i < 24u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				moveto( Row_Height * row , szcol + 1 );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				for( i = 0u; i < 24u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				moveto( Row_Height * row , szcol + 2 );	//	设置地址
-				SED1335_Write_Command( MWRITE );	//	连续写入
-				for( i = 0u; i < 24u; ++i )
-				{
-					SED1335_Write_Data( *pDot++ );
-				}
-				col += 2;
-				szcol += 3;
-				}
-	} while ( ( col < col_end ) &&( szcol < max_txt_col ) );
+
+			moveto( Row_Height * row , szcol + 1 );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 24u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
+			}
+
+			col += 1;
+			szcol +=2;
+		}
+		else
+		{
+			// SBC 全角汉字
+			pDot = ( DotSeekSBC_24x24( sDat, *sz++ ));
+			moveto( Row_Height * row , szcol );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 24u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
+			}
+
+			moveto( Row_Height * row , szcol + 1 );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 24u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
+			}
+
+			moveto( Row_Height * row , szcol + 2 );	//	设置地址
+			SED1335_Write_Command( MWRITE );	//	连续写入
+
+			for( i = 0u; i < 24u; ++i )
+			{
+				SED1335_Write_Data( *pDot++ );
+			}
+
+			col += 2;
+			szcol += 3;
+		}
+	}
+	while ( ( col < col_end ) &&( szcol < max_txt_col ) );
 }
 
 void	SED1335_mask( uint16_t yx, uint8_t xlen )
@@ -296,6 +338,7 @@ void	SED1335_mask( uint16_t yx, uint8_t xlen )
 	assert( col < max_txt_col );
 
 	col_end = col + xlen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
@@ -303,32 +346,36 @@ void	SED1335_mask( uint16_t yx, uint8_t xlen )
 
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
 
-	do {
+	do
+	{
 		uint8_t	tmp[16u];
 
 		moveto( Row_Height * row, col );	//	设置地址
 		SED1335_Write_Command( MREAD ); 	//	连续 读
+
 		for( i = 0u; i < 16u; i++ )
 		{
 			tmp[i] = SED1335_Read_Data( );
 		}
-        
+
 		moveto( Row_Height * row, col );	//	设置地址
 		SED1335_Write_Command( MWRITE );	//	连续 写
+
 		for( i = 0u; i < 16u; i++ )
 		{
 			SED1335_Write_Data( ~ tmp[i] );
 		}
-	} while ( ++col < col_end );
+	}
+	while ( ++col < col_end );
 }
-const	CHAR	CHARsz[24]={"00000000000000000000000"};
+const	CHAR	CHARsz[24]= {"00000000000000000000000"};
 void	SED1335_mask24( uint16_t yx, uint8_t xlen, const CHAR * sz )
 {
 	uint8_t	t,i, row, col, szcol, col_end;
 	uint8_t	tmp[24u];
 	CHAR		sDat = 0;
 	assert( 0u != xlen );
-	
+
 	row = ( yx ) / 256u;
 	col = ( yx ) % 256u;
 	szcol = col;
@@ -336,57 +383,69 @@ void	SED1335_mask24( uint16_t yx, uint8_t xlen, const CHAR * sz )
 	assert( col < max_txt_col );
 
 	col_end = col + xlen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
 	}
 
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
-	 
-	do {		
-		sDat = * sz++  ;			
+
+	do
+	{
+		sDat = * sz++  ;
+
 		if ((( sDat & 0x80u ) != 0u ) && ( * sz != '0' ) )
 		{
 			for( t = 0; t < 3; t ++ )
 			{
 				moveto( Row_Height * row, szcol + t );	//	设置地址
 				SED1335_Write_Command( MREAD ); 	//	连续 读
+
 				for( i = 0u; i < 24u; i++ )
 				{
 					tmp[i] = SED1335_Read_Data( );
 				}
+
 				moveto( Row_Height * row, szcol + t );	//	设置地址
 				SED1335_Write_Command( MWRITE );	//	连续 写
+
 				for( i = 0u; i < 24u; i++ )
 				{
 					SED1335_Write_Data( ~ tmp[i] );
 				}
 			}
+
 			col   += 2;
 			szcol += 3;
-			sz++;	
-		}			
+			sz++;
+		}
 		else
 		{
 			for( t = 0; t < 2; t ++ )
 			{
 				moveto( Row_Height * row, szcol + t );	//	设置地址
 				SED1335_Write_Command( MREAD ); 	//	连续 读
+
 				for( i = 0u; i < 24u; i++ )
 				{
 					tmp[i] = SED1335_Read_Data( );
 				}
+
 				moveto( Row_Height * row, szcol + t );	//	设置地址
 				SED1335_Write_Command( MWRITE );	//	连续 写
+
 				for( i = 0u; i < 24u; i++ )
 				{
 					SED1335_Write_Data( ~ tmp[i] );
 				}
-			}	
+			}
+
 			col   += 1;
 			szcol += 2;
 		}
-	} while ( col < col_end );
+	}
+	while ( col < col_end );
 }
 void SED1335_WALL( const CHAR *sz )
 {
@@ -395,21 +454,24 @@ void SED1335_WALL( const CHAR *sz )
 	assert( sz );
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
 	row = col = 0;
+
 	for( c =0u; c < max_txt_col; c++  )//从上到下从左到右
 	{
 		row = 0;
 		moveto( row, col );	//	设置地址
 		SED1335_Write_Command( MWRITE );	//	连续 写
+
 		for( i = 0u; i < max_txt_row * 8 ; i++ )
 		{
 			SED1335_Write_Data( * sz++ );
 			moveto(  row++, col );	//	设置地址
 			SED1335_Write_Command( MWRITE );	//	连续 写
-      delay_us( 50u );
+			delay_us( 50u );
 		}
+
 		col++;
 		delay( 20u );
-	}	
+	}
 }
 void SED1335_WBMP( uint16_t bmpyx, uint16_t yx, const CHAR *sz )
 {
@@ -417,7 +479,7 @@ void SED1335_WBMP( uint16_t bmpyx, uint16_t yx, const CHAR *sz )
 	uint8_t row, col;
 	uint8_t brow, bcol;
 	brow = bmpyx / 256;
-	bcol = bmpyx % 256; 
+	bcol = bmpyx % 256;
 	row = ( yx ) / 256u;
 	col = ( yx ) % 256u;
 	assert( row < max_txt_row );
@@ -427,17 +489,19 @@ void SED1335_WBMP( uint16_t bmpyx, uint16_t yx, const CHAR *sz )
 	assert( bcol < max_txt_col );
 
 	SED1335_Write_Command( 0x4Fu );	//	设置连续读写的方向
+
 	for( c =0u; c < brow; c++  )
 	{
 		moveto( row * Row_Height + c, col);	//	设置地址
 		SED1335_Write_Command( MWRITE );	//	连续 写
+
 		for( i = 0u; i < ( bcol + 7 ) / 8; i++ )
 		{
 			moveto( row * Row_Height + c, col + i );	//	设置地址
 			SED1335_Write_Command( MWRITE );	//	连续 写
 			SED1335_Write_Data( * sz++ );
 		}
-	}	
+	}
 }
 
 void	SED1335_cls( void )
@@ -458,22 +522,24 @@ void	SED1335Part_cls( uint16_t clsyx, uint16_t yx )	//局部清屏
 	uint8_t i,c;
 	uint8_t row, col;
 	uint8_t brow, bcol;
-  
+
 	brow = clsyx / 256;
-	bcol = clsyx % 256; 
+	bcol = clsyx % 256;
 	row = ( yx ) / 256u;
 	col = ( yx ) % 256u;
 
 	SED1335_Write_Command( 0x4Cu );	//	设置连续读写的方向
+
 	for( c =0u; c < brow; c++  )
 	{
 		moveto( row * Row_Height + c, col);	//	设置地址
 		SED1335_Write_Command( MWRITE );	//	连续 写
+
 		for( i = 0u; i < ( bcol + 7 ) / 8; i++ )
 		{
 			SED1335_Write_Data( 0x00u );
 		}
-	}	
+	}
 }
 static	void	SystemSet( void )
 {
@@ -491,7 +557,7 @@ static	void	SystemSet( void )
 
 bool	SED1335_Init( void )
 {
-  SED1335_PortInit( );
+	SED1335_PortInit( );
 
 	SystemSet( );
 	delay( 10u );
@@ -500,15 +566,15 @@ bool	SED1335_Init( void )
 	//	显示区域设置指令
 	SED1335_Write_Command( 0x44 );	// Scroll(带10个参数)
 	SED1335_Write_Data( 0x00 ); 	//	SAD1=3000H
-	SED1335_Write_Data( 0x30 ); 	//	
+	SED1335_Write_Data( 0x30 ); 	//
 	SED1335_Write_Data( 0xEF );		//	SL1=240行
 	SED1335_Write_Data( 0x00 ); 	//	SAD2=0000H
-	SED1335_Write_Data( 0x00 ); 	//	
+	SED1335_Write_Data( 0x00 ); 	//
 	SED1335_Write_Data( 0xEF ); 	//	SL2=240行
 	SED1335_Write_Data( 0x00 ); 	//	SAD3=6000H
-	SED1335_Write_Data( 0x60 ); 	//	
+	SED1335_Write_Data( 0x60 ); 	//
 	SED1335_Write_Data( 0x00 ); 	//	SAD4=9000H
-	SED1335_Write_Data( 0x90 ); 	//	
+	SED1335_Write_Data( 0x90 ); 	//
 	//	显示功能设置
 	SED1335_Write_Command( 0x5A );	// HDOT SCR(带1个参数)
 	SED1335_Write_Data( 0x00 );		//
@@ -520,10 +586,10 @@ bool	SED1335_Init( void )
 	//	显示开关指令
 	SED1335_Write_Command( 0x59 );	// Display ON/OFF(带1个参数)
 	SED1335_Write_Data( 0x14 );		//	第1、2显示区显示开
-	
+
 	SED1335_cls();
 	LM2068E_GrayInit();
-	
+
 	return	true;
 }
 

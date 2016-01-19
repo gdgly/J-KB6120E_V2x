@@ -15,7 +15,8 @@
 *	液晶(TM12864)的背光、灰度控制
 *******************************************************************************/
 static	void	TM12864_SetLight( uint8_t setLight )
-{	//	调整电流调整背光亮度
+{
+	//	调整电流调整背光亮度
 	PWM1_SetOutput( setLight * PWM_Output_Max / 100u );
 }
 
@@ -40,14 +41,17 @@ void	Backlight_OFF( void )
 }
 
 void	DisplaySetLight( uint8_t ValueOfBrightness )
-{	//	背光亮度
+{
+	//	背光亮度
 	savLight = ValueOfBrightness;
+
 	if( Configure.TimeoutLight )
 		Backlight_ON();
 }
 
 void	DisplaySetGrayVolt( FP32 SetGrayVolt )
-{	//	灰度  或 对比度
+{
+	//	灰度  或 对比度
 
 	LCDSetGrayVolt = SetGrayVolt;
 
@@ -57,8 +61,8 @@ void	DisplaySetGrayVolt( FP32 SetGrayVolt )
  *	点阵显示功能
 *******************************************************************************/
 void	cls ( void )
-{ 
-	SED1335_cls();	
+{
+	SED1335_cls();
 }
 void Part_cls( void )
 {

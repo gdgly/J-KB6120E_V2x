@@ -34,7 +34,7 @@ extern	void	MeasureBattery_OutCmd( BOOL NewState );
 extern	void	AIRLightOutCmd( BOOL NewState );
 extern	void	delay( uint16_t m_sec );	//	!!具体实现方式取决于是否使用RTOS!!
 
-void	delay_us ( uint32_t us );	
+void	delay_us ( uint32_t us );
 extern	void	PumpAIR_OutCmd( BOOL NewState );
 extern	BOOL	PumpAIR_GetOutState( void );
 
@@ -48,7 +48,7 @@ enum	enumADC12_Channel
 	ADC_Cx_IntTemp,
 	ADC_Cx_IntVolt,
 	ADC_Cx_LCDVolt,	//	ADC_Cx_NTC10K,
-	ADC_Cx_BatCurr,	
+	ADC_Cx_BatCurr,
 	ADC_Cx_BatVolt,
 };
 extern	void	ADC12_Init( void );

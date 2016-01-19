@@ -4,8 +4,8 @@
 * 描  述  : KB-6120E 读取传感器
 * 最后修改: 2014年2月11日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "AppDEF.H"
 #include <math.h>
@@ -27,12 +27,12 @@ FP32	_CV_LCD_Volt( uint16_t ADCValue )
 #ifdef LCDisPlusVoltage
 	const FP32	Gain = 10.0f * 3.3f / 4096;
 	return	ADCValue * Gain;
-	
+
 #else
 	FP32  inVolt = 3.3f * ADCValue / 4096 ;	//	求输入脚的电压
 	FP32  current = ( 3.3f - inVolt ) / 3.0f;	//	求电流
 	FP32  outVolt = 3.3f - current * ( 3.0f + 27.0f );
-	
+
 	return	outVolt;
 #endif
 }
@@ -43,52 +43,68 @@ void	LCD_Volt_Adjust( void )
 {
 	extern	FP32	LCDSetGrayVolt ;
 	FP32	LCDVolt;
-	static	FP32	Up = 0.0f;	
+	static	FP32	Up = 0.0f;
 	static	FP32	Ui	 = 0.0f;
 	static	FP32	Ek   = 0.0f;
 	static	FP32	Kp, Ki, Kd;
 	static	FP32	Uout = 0.00f;
-	#ifdef LCDisPlusVoltage
-		static	FP32	Ud = 0.0f;
-		static	FP32	 Ek1 = 0.0f; 
+#ifdef LCDisPlusVoltage
+	static	FP32	Ud = 0.0f;
+	static	FP32	 Ek1 = 0.0f;
 
-		FP32  LCDSet; 	
-		Kp = ((uint16_t)1200) * 0.00001f;
-		Ki = Kp / (FP32)(90 * 0.01f);
-		Kd = Kp * (FP32)(40 * 0.01f);
+	FP32  LCDSet;
+	Kp = ((uint16_t)1200) * 0.00001f;
+	Ki = Kp / (FP32)(90 * 0.01f);
+	Kd = Kp * (FP32)(40 * 0.01f);
 // 			Kp = 0.010f;
 // 			Ki = 0.010f;
 // 			Kd = 0.003f;
-// 		LCDSet = 0; 
+// 		LCDSet = 0;
 // 		LCDSet = LCDSetGrayVolt + ( 38 - _CV_CPU_Temp( SensorLocal.CPU_IntTemp ) ) * 0.01f; //	温补
-		LCDSet = LCDSetGrayVolt;
-		if( LCDSet > 22.0f )
-			LCDSet = 22.0f;	 
-		LCDVolt = _CV_LCD_Volt( SensorLocal.LCD_Voltage );
-		Ek1	 = Ek;
-		Ek	 = ( LCDSet - LCDVolt ) * 1.0f;
-		Up	 = Kp * Ek;
-		Ui  += Ki * Ek;
-		Ud	 = Kd * ( Ek - Ek1 );
-		Uout = Uout * 0.3f + ( Up + Ui + Ud ) * 0.7f;
+	LCDSet = LCDSetGrayVolt;
 
-		if ( Uout > 0.667f ){ Uout = 0.667f;}	//	最大输出 66.7 %
-		if ( Uout < 0.02f )	{ Uout = 0.02f; }	//	最小输出  2 %
+	if( LCDSet > 22.0f )
+		LCDSet = 22.0f;
 
-		PWM2_SetOutput((uint16_t)( Uout * PWM_Output_Max ));
+	LCDVolt = _CV_LCD_Volt( SensorLocal.LCD_Voltage );
+	Ek1	 = Ek;
+	Ek	 = ( LCDSet - LCDVolt ) * 1.0f;
+	Up	 = Kp * Ek;
+	Ui  += Ki * Ek;
+	Ud	 = Kd * ( Ek - Ek1 );
+	Uout = Uout * 0.3f + ( Up + Ui + Ud ) * 0.7f;
 
-	#else
-		LCDSet = LCDSetGrayVolt;
-		LCDVolt = - _CV_LCD_Volt( SensorLocal.LCD_Voltage );
-		Ek = ( LCDSet - LCDVolt ) * 1.0f;
-		Ui += Ek * 0.010f;
-		Uout = Uout * 0.1f + ( Ek * 0.003f + Ui ) * 0.9f;
+	if ( Uout > 0.667f )
+	{
+		Uout = 0.667f; //	最大输出 66.7 %
+	}
 
-		if ( Uout > 0.20f ){ Uout = 0.20f; }	//	最大输出 20 %
-		if ( Uout < 0.02f ){ Uout = 0.02f; }	//	最小输出  2 %
+	if ( Uout < 0.02f )
+	{
+		Uout = 0.02f;  //	最小输出  2 %
+	}
 
-		PWM2_SetOutput((uint16_t)(  Uout * PWM_Output_Max );
-	#endif
+	PWM2_SetOutput((uint16_t)( Uout * PWM_Output_Max ));
+
+#else
+	LCDSet = LCDSetGrayVolt;
+	LCDVolt = - _CV_LCD_Volt( SensorLocal.LCD_Voltage );
+	Ek = ( LCDSet - LCDVolt ) * 1.0f;
+	Ui += Ek * 0.010f;
+	Uout = Uout * 0.1f + ( Ek * 0.003f + Ui ) * 0.9f;
+
+	if ( Uout > 0.20f )
+	{
+		Uout = 0.20f;  //	最大输出 20 %
+	}
+
+	if ( Uout < 0.02f )
+	{
+		Uout = 0.02f;  //	最小输出  2 %
+	}
+
+	PWM2_SetOutput((uint16_t)(  Uout * PWM_Output_Max );
+#endif
 }
 
 /********************************** 数据定义 ***********************************
@@ -114,8 +130,10 @@ __task  void	_task_SensorRead( void const * p_arg )
 	SensorLocal.LCD_Voltage = ADC12_Readout( ADC_Cx_LCDVolt );
 	SensorLocal.Bat_Current = ADC12_Readout( ADC_Cx_BatCurr );
 	SensorLocal.Bat_Voltage = ADC12_Readout( ADC_Cx_BatVolt );
+
 	if(	CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
 		CPS12[1] = TRUE;
+
 	if( CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
 		CPS12[0] = TRUE;
 
@@ -132,14 +150,15 @@ __task  void	_task_SensorRead( void const * p_arg )
 			MeasureBattery_OutCmd( true );
 		else
 			MeasureBattery_OutCmd( false );
+
 		delay( 300u );
 
 		sum[0] =
-		sum[1] =
-		sum[2] =
-		sum[3] =
-		sum[4] = 0u;
-		
+		  sum[1] =
+		    sum[2] =
+		      sum[3] =
+		        sum[4] = 0u;
+
 		for ( i = 0u; i < 8u; ++i )
 		{
 			sum[0] += ADC12_Readout( ADC_Cx_IntTemp );
@@ -151,13 +170,14 @@ __task  void	_task_SensorRead( void const * p_arg )
 
 		SensorLocal.CPU_IntTemp = sum[0] / 8u;
 		SensorLocal.CPU_IntVolt = sum[1] / 8u;
-		SensorLocal.LCD_Voltage = sum[2] / 8u; 
-		SensorLocal.Bat_Current = sum[3] / 8u;		
+		SensorLocal.LCD_Voltage = sum[2] / 8u;
+		SensorLocal.Bat_Current = sum[3] / 8u;
 		SensorLocal.Bat_Voltage = sum[4] / 8u;
 
 		if( CPS12[1] )
 			if( !CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
 				SensorLocal.CPS121_Ba = SensorLocal.CPS121_Temp = 0;
+
 		if( CPS12[0] )
 			if( !CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
 				SensorLocal.CPS120_Ba = SensorLocal.CPS120_Temp = 0;
@@ -177,7 +197,7 @@ __task  void	_task_SensorRead( void const * p_arg )
 #define	X_Base_SHI_C	30u
 #define	X_Base_SHI_D 	35u
 
-const uint16_t BaseList[SP_Max] = 
+const uint16_t BaseList[SP_Max] =
 {
 	15,	//	SP_TSP
 	20,	//	SP_R24_A
@@ -224,21 +244,23 @@ void	Motor_OutCmd( enum enumSamplerSelect PumpSelect, BOOL NewState )
 // 	if( PumpSelect == SP_AIR)
 // 		AIRLightOutCmd( NewState );
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+
 	if( ReadCopy() )
 	{
 		switch( PumpSelect )
 		{
-		default:
-		case SP_R24_A :
-			RegAddress = DO_Base + BaseList[SP_SHI_D];
-			break;
-		case SP_R24_B :
-			RegAddress = DO_Base + BaseList[SP_SHI_C];
-			break;
-		}		
+			default:
+			case SP_R24_A :
+				RegAddress = DO_Base + BaseList[SP_SHI_D];
+				break;
+			case SP_R24_B :
+				RegAddress = DO_Base + BaseList[SP_SHI_C];
+				break;
+		}
+
 		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 	}
-	
+
 }
 
 void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
@@ -247,21 +269,23 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 	uint16_t	RegValue   = OutValue;
 
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+
 	if( ReadCopy() )
 	{
 		switch( PumpSelect )
 		{
-		default:
-		case SP_R24_A :
-			RegAddress = AO_Base + BaseList[SP_SHI_D];
-			break;
-		case SP_R24_B :
-			RegAddress = AO_Base + BaseList[SP_SHI_C];
-			break;
-		}		
+			default:
+			case SP_R24_A :
+				RegAddress = AO_Base + BaseList[SP_SHI_D];
+				break;
+			case SP_R24_B :
+				RegAddress = AO_Base + BaseList[SP_SHI_C];
+				break;
+		}
+
 		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 	}
-	
+
 }
 /**************************************************/
 // uint16_t E_Resert;
@@ -275,8 +299,8 @@ static	uint16_t	AI_Buf[40];
 
 BOOL	ReadCopy( void )
 {
-	if(( AI_Buf[20] == 0 ) && ( AI_Buf[21] == 0 ) && ( AI_Buf[25] == 0 ) && ( AI_Buf[26] == 0 ) 
-	&& ( AI_Buf[30] != 0 ) && ( AI_Buf[31] != 0 ) && ( AI_Buf[35] != 0 ) && ( AI_Buf[36] != 0 ))
+	if(( AI_Buf[20] == 0 ) && ( AI_Buf[21] == 0 ) && ( AI_Buf[25] == 0 ) && ( AI_Buf[26] == 0 )
+	   && ( AI_Buf[30] != 0 ) && ( AI_Buf[31] != 0 ) && ( AI_Buf[35] != 0 ) && ( AI_Buf[36] != 0 ))
 		return TRUE;
 	else
 		return FALSE;
@@ -291,7 +315,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		uint8_t DI_Buf[(40+7)/8];
 
 		eMBErrorCode eStatus = eMBMRead( SubSlave, DI_Base, 40u, DI_Buf );
-		
+
 		if ( MB_ENOERR == eStatus )
 		{
 			SensorRemote.has_Heater = BITN( DI_Buf, 8 ) ? true : false;
@@ -309,14 +333,14 @@ __task	void	_task_ModbusRead( void const * p_arg )
 
 	for(;;)
 	{
-		
-		static	eMBErrorCode eStatus; 
+
+		static	eMBErrorCode eStatus;
 		eStatus= eMBMRead( SubSlave, AI_Base, 40u, AI_Buf );
-	
+
 		if ( MB_ENOERR == eStatus )
 		{
 			SensorRemote.iCounter = AI_Buf[0];
-			
+
 			SensorRemote.Ba = AI_Buf[1];	//	大气压力
 			SensorRemote.Te = AI_Buf[2];	//	环境温度
 			SensorRemote.Tm = AI_Buf[3];	//	电机温度
@@ -327,15 +351,15 @@ __task	void	_task_ModbusRead( void const * p_arg )
 
 			SensorRemote.HeaterRunTemp  = AI_Buf[8];
 			SensorRemote.HeaterOutValue = AI_Buf[9];
-			
+
 			SensorRemote.pf[SP_TSP] = AI_Buf[15];
 			SensorRemote.pr[SP_TSP] = AI_Buf[16];
 			SensorRemote.tr[SP_TSP] = AI_Buf[17];
-			
+
 			SensorRemote.pf[SP_R24_A] = AI_Buf[20];
 			SensorRemote.pr[SP_R24_A] = AI_Buf[21];
 			SensorRemote.tr[SP_R24_A] = AI_Buf[22];
-			
+
 			SensorRemote.pf[SP_R24_B] = AI_Buf[25];
 			SensorRemote.pr[SP_R24_B] = AI_Buf[26];
 			SensorRemote.tr[SP_R24_B] = AI_Buf[27];
@@ -343,22 +367,23 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			SensorRemote.pf[SP_SHI_C] = AI_Buf[30];
 			SensorRemote.pr[SP_SHI_C] = AI_Buf[31];
 			SensorRemote.tr[SP_SHI_C] = AI_Buf[32];
-			
+
 			SensorRemote.pf[SP_SHI_D] = AI_Buf[35];
 			SensorRemote.pr[SP_SHI_D] = AI_Buf[36];
 			SensorRemote.tr[SP_SHI_D] = AI_Buf[37];
-			
+
 			if( ReadCopy() )
 			{
 				SensorRemote.pf[SP_R24_A] = SensorRemote.pf[SP_SHI_D];
-			  SensorRemote.pr[SP_R24_A] = SensorRemote.pr[SP_SHI_D];
-			  SensorRemote.tr[SP_R24_A] = SensorRemote.tr[SP_SHI_D];
-				
+				SensorRemote.pr[SP_R24_A] = SensorRemote.pr[SP_SHI_D];
+				SensorRemote.tr[SP_R24_A] = SensorRemote.tr[SP_SHI_D];
+
 				SensorRemote.pf[SP_R24_B] = SensorRemote.pf[SP_SHI_C];
 				SensorRemote.pr[SP_R24_B] = SensorRemote.pr[SP_SHI_C];
 				SensorRemote.tr[SP_R24_B] = SensorRemote.tr[SP_SHI_C];
 			}
-			/*TODEL*/	
+
+			/*TODEL*/
 // 			REGx0.RS0 =	AI_Buf[45];
 // 			REGx0.RS1 =	AI_Buf[46];
 // 			REGx0.RS2 =	AI_Buf[47];
@@ -367,7 +392,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 // 			REGx0.RS5	=	AI_Buf[50];
 // 			REGx0.RS6 =	AI_Buf[51] <<16 | AI_Buf[52] <<8 | AI_Buf[53];
 // 			REGx0.RS7 =	AI_Buf[56] <<16 | AI_Buf[57] <<8 | AI_Buf[58];
-// 			
+//
 // 			REGx1.RS0 =	AI_Buf[60];
 // 			REGx1.RS1 =	AI_Buf[61];
 // 			REGx1.RS2 =	AI_Buf[62];
@@ -378,13 +403,15 @@ __task	void	_task_ModbusRead( void const * p_arg )
 // 			REGx1.RS7 =	AI_Buf[71] <<16 | AI_Buf[72] <<8 | AI_Buf[73];
 		}
 		else
-		{	/*TODEL*/	
+		{
+			/*TODEL*/
 // 			uint8_t * Status = 0;
 // 			*Status = eStatus;
 // 			Statu[err_count] = eStatus;
 // 			File_Save_Err( err_count++, Status );
 			err_count++;
 		}
+
 // 		Sensor_Resert();
 		delay( 200u );
 
@@ -438,10 +465,11 @@ void	menu_FactoryDebug( void )
 	uint16_t	OutValue[SP_Max];
 // 	static	uint8_t	err_Code[40] = {0};
 	enum enumSamplerSelect	PumpSelect = SP_TSP;
-	
+
 	CHAR	sbuffer[36];
 
 	uint8_t	i;
+
 // 	uint16_t	c = 0;
 // 	uint16_t	valueCon = 0x0000;
 	for ( i = 0u; i < SP_Max; ++i )
@@ -449,52 +477,87 @@ void	menu_FactoryDebug( void )
 		OutState[i] = FALSE;
 		OutValue[i] = 10000;
 	}
-	
+
 	RTC_IRQ_Init();
-	do {
+
+	do
+	{
 		cls();
 
 		switch ( option )
 		{
-		case opt_COMM:		Lputs( 0x0102u, "通信" );	break;
-		case opt_TSP:		  Lputs( 0x0102u, "粉尘" );		  PumpSelect = SP_TSP;	break;
-		case opt_R24_A:		Lputs( 0x0102u, "日均(A)" );	PumpSelect = SP_R24_A;	break;
-		case opt_R24_B:		Lputs( 0x0102u, "日均(B)" );	PumpSelect = SP_R24_B;	break;
-		case opt_SHI_C:		Lputs( 0x0102u, "时均(C)" );	PumpSelect = SP_SHI_C;	break;
-		case opt_SHI_D:		Lputs( 0x0102u, "时均(D)" );	PumpSelect = SP_SHI_D;	break;
+			case opt_COMM:
+				Lputs( 0x0102u, "通信" );
+				break;
+			case opt_TSP:
+				Lputs( 0x0102u, "粉尘" );
+				PumpSelect = SP_TSP;
+				break;
+			case opt_R24_A:
+				Lputs( 0x0102u, "日均(A)" );
+				PumpSelect = SP_R24_A;
+				break;
+			case opt_R24_B:
+				Lputs( 0x0102u, "日均(B)" );
+				PumpSelect = SP_R24_B;
+				break;
+			case opt_SHI_C:
+				Lputs( 0x0102u, "时均(C)" );
+				PumpSelect = SP_SHI_C;
+				break;
+			case opt_SHI_D:
+				Lputs( 0x0102u, "时均(D)" );
+				PumpSelect = SP_SHI_D;
+				break;
 // 		case opt_AIR:		  Lputs( 0x0102u, "大气" );	    PumpSelect = SP_AIR;	break;
 // 		case opt_TSPe:		valueCon = 0x0001;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
 // 		case opt_R24_Ae:	valueCon = 0x0002;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
 // 		case opt_R24_Be:	valueCon = 0x0003;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
 // 		case opt_SHI_Ce:	valueCon = 0x0004;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
 // 		case opt_SHI_De:	valueCon = 0x0005;eMBMWrite( SubSlave, 40013u, 1u, &valueCon );	break;
-		case opt_HCBox: Lputs( 0x0102u, "恒温箱" );Lputs( 0x1002u, "加热器" );	break;
-		
-		case opt_BAT:		Lputs( 0x0102u, "温度" );  Lputs( 0x1002u, "电池" );	 break;
-	
-		case opt_CPU:		Lputs( 0x0102u, " 其他" ); Lputs( 0x1002u, "CPS120" );break;
+			case opt_HCBox:
+				Lputs( 0x0102u, "恒温箱" );
+				Lputs( 0x1002u, "加热器" );
+				break;
+
+			case opt_BAT:
+				Lputs( 0x0102u, "温度" );
+				Lputs( 0x1002u, "电池" );
+				break;
+
+			case opt_CPU:
+				Lputs( 0x0102u, " 其他" );
+				Lputs( 0x1002u, "CPS120" );
+				break;
 		}
 
-		do {
+		do
+		{
 			switch ( option )
 			{
-			case opt_COMM:
-				sprintf( sbuffer, "Errors: %5u", err_count );						Lputs( 0x0600u, sbuffer );
+				case opt_COMM:
+					sprintf( sbuffer, "Errors: %5u", err_count );
+					Lputs( 0x0600u, sbuffer );
 // 				sprintf( sbuffer, "E_Resert: %5u", E_Count );						Lputs( 0x0B00u, sbuffer );
-				sprintf( sbuffer, " AI[0]: %5u", SensorRemote.iCounter );	 Lputs( 0x1000u, sbuffer );
-				
-				break;
+					sprintf( sbuffer, " AI[0]: %5u", SensorRemote.iCounter );
+					Lputs( 0x1000u, sbuffer );
 
-			case opt_TSP:
-			case opt_R24_A:
-			case opt_R24_B:
-			case opt_SHI_C:
-			case opt_SHI_D:
-				sprintf( sbuffer, "Tr: %.4f", _CV_DS18B20_Temp( SensorRemote.tr[PumpSelect] ));	Lputs( 0x0600u, sbuffer );
-				sprintf( sbuffer, "Pr: %04X", SensorRemote.pr[PumpSelect] );					Lputs( 0x0C00u, sbuffer );
-				sprintf( sbuffer, "Pf: %04X", SensorRemote.pf[PumpSelect] );					Lputs( 0x1200u, sbuffer );
-				sprintf( sbuffer, "调速:  [%s]%5u", ( OutState[PumpSelect] ? "+" :"-" ),OutValue[PumpSelect] );	Lputs( 0x1800u, sbuffer );
-				break;
+					break;
+
+				case opt_TSP:
+				case opt_R24_A:
+				case opt_R24_B:
+				case opt_SHI_C:
+				case opt_SHI_D:
+					sprintf( sbuffer, "Tr: %.4f", _CV_DS18B20_Temp( SensorRemote.tr[PumpSelect] ));
+					Lputs( 0x0600u, sbuffer );
+					sprintf( sbuffer, "Pr: %04X", SensorRemote.pr[PumpSelect] );
+					Lputs( 0x0C00u, sbuffer );
+					sprintf( sbuffer, "Pf: %04X", SensorRemote.pf[PumpSelect] );
+					Lputs( 0x1200u, sbuffer );
+					sprintf( sbuffer, "调速:  [%s]%5u", ( OutState[PumpSelect] ? "+" :"-" ),OutValue[PumpSelect] );
+					Lputs( 0x1800u, sbuffer );
+					break;
 // 			case opt_AIR:
 // 				sprintf( sbuffer, "  Ba:%6.3f", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));	Lputs( 0x0600u, sbuffer );
 // 				sprintf( sbuffer, "Temp:%6.4f", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x0C00u, sbuffer );
@@ -503,64 +566,86 @@ void	menu_FactoryDebug( void )
 // 				break;
 
 
-			case opt_HCBox:
-			{	
-				int16_t Output;
-				if ( ! SensorRemote.has_HCBox ) 
-					Lputs( 0x010Fu, "[?]");
-				else
-					Lputs( 0x010Fu, "[Y]");	
-					
-				sprintf( sbuffer, "温度:%6.2f",     SensorRemote.HCBoxRunTemp * 0.0625f );	Lputs( 0x0400u, sbuffer );
-				if( SensorRemote.HCBoxOutValue >= 1000 )
-				{
-					Output =  ( SensorRemote.HCBoxOutValue - 1000 );
-					sprintf( sbuffer, "输出: %5u", Output );			Lputs( 0x0800u, sbuffer );
-				}
-				else
-				{
-					Output =  ( 1000 - SensorRemote.HCBoxOutValue );
-					sprintf( sbuffer, "输出: -%5u", Output );			Lputs( 0x0800u, sbuffer );
-				}	
-				sprintf( sbuffer, "Fan: %5u rpm",  SensorRemote.HCBoxFanSpeed );			Lputs( 0x0C00u, sbuffer );
-				if ( ! SensorRemote.has_Heater ) 
-					Lputs( 0x100Fu, "[?]"); 
-				else 
-					Lputs( 0x100Fu, "[Y]");
-				sprintf( sbuffer, "温度:%6.2f",     SensorRemote.HeaterRunTemp * 0.0625f );	Lputs( 0x1400u, sbuffer );
-				sprintf( sbuffer, "输出: %5u",      SensorRemote.HeaterOutValue );			Lputs( 0x1800u, sbuffer );
-			}	
-				break;
-		
-			case opt_BAT:
-				sprintf( sbuffer, "CPU:%.2f ", _CV_CPU_Temp( SensorLocal.CPU_IntTemp ));	Lputs( 0x0400u, sbuffer );
-				sprintf( sbuffer, "电机:%.4f ", _CV_DS18B20_Temp( SensorRemote.Tm ));		Lputs( 0x0800u, sbuffer );
-				sprintf( sbuffer, "环境:%.4f ", _CV_DS18B20_Temp( SensorRemote.Te ));		Lputs( 0x0C00u, sbuffer );
-				sprintf( sbuffer, "电压:%6.3f V ", _CV_Bat_Voltage( SensorLocal.Bat_Voltage ));	Lputs( 0x1400u, sbuffer );
-				sprintf( sbuffer, "电流:%6.4f A ", _CV_Bat_Current( SensorLocal.Bat_Current ));	Lputs( 0x1800u, sbuffer );
-				break;
+				case opt_HCBox:
+					{
+						int16_t Output;
 
-			case opt_CPU:
-				sprintf( sbuffer, "[%04X]", Read_HSITrim());									Lputs( 0x010Fu, sbuffer );
-				sprintf( sbuffer, " MCLK : %7.4f", CalcMCLK() * 1.0e-6f  );						Lputs( 0x0400u, sbuffer );
-				sprintf( sbuffer, "CPU电压:%6.3f", _CV_CPU_Volt( SensorLocal.CPU_IntVolt ));	Lputs( 0x0800u, sbuffer );
-				sprintf( sbuffer, "LCD电压:%6.2f", _CV_LCD_Volt( SensorLocal.LCD_Voltage ));	Lputs( 0x0C00u, sbuffer );
-				sprintf( sbuffer, "    Ba :%6.3f ", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));		Lputs( 0x1400u, sbuffer );
-				sprintf( sbuffer, "   Temp:%6.4f ", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));	Lputs( 0x1800u, sbuffer );
-				break;
-// 			case opt_Err:/*TODEL*/	
+						if ( ! SensorRemote.has_HCBox )
+							Lputs( 0x010Fu, "[?]");
+						else
+							Lputs( 0x010Fu, "[Y]");
+
+						sprintf( sbuffer, "温度:%6.2f",     SensorRemote.HCBoxRunTemp * 0.0625f );
+						Lputs( 0x0400u, sbuffer );
+
+						if( SensorRemote.HCBoxOutValue >= 1000 )
+						{
+							Output =  ( SensorRemote.HCBoxOutValue - 1000 );
+							sprintf( sbuffer, "输出: %5u", Output );
+							Lputs( 0x0800u, sbuffer );
+						}
+						else
+						{
+							Output =  ( 1000 - SensorRemote.HCBoxOutValue );
+							sprintf( sbuffer, "输出: -%5u", Output );
+							Lputs( 0x0800u, sbuffer );
+						}
+
+						sprintf( sbuffer, "Fan: %5u rpm",  SensorRemote.HCBoxFanSpeed );
+						Lputs( 0x0C00u, sbuffer );
+
+						if ( ! SensorRemote.has_Heater )
+							Lputs( 0x100Fu, "[?]");
+						else
+							Lputs( 0x100Fu, "[Y]");
+
+						sprintf( sbuffer, "温度:%6.2f",     SensorRemote.HeaterRunTemp * 0.0625f );
+						Lputs( 0x1400u, sbuffer );
+						sprintf( sbuffer, "输出: %5u",      SensorRemote.HeaterOutValue );
+						Lputs( 0x1800u, sbuffer );
+					}
+					break;
+
+				case opt_BAT:
+					sprintf( sbuffer, "CPU:%.2f ", _CV_CPU_Temp( SensorLocal.CPU_IntTemp ));
+					Lputs( 0x0400u, sbuffer );
+					sprintf( sbuffer, "电机:%.4f ", _CV_DS18B20_Temp( SensorRemote.Tm ));
+					Lputs( 0x0800u, sbuffer );
+					sprintf( sbuffer, "环境:%.4f ", _CV_DS18B20_Temp( SensorRemote.Te ));
+					Lputs( 0x0C00u, sbuffer );
+					sprintf( sbuffer, "电压:%6.3f V ", _CV_Bat_Voltage( SensorLocal.Bat_Voltage ));
+					Lputs( 0x1400u, sbuffer );
+					sprintf( sbuffer, "电流:%6.4f A ", _CV_Bat_Current( SensorLocal.Bat_Current ));
+					Lputs( 0x1800u, sbuffer );
+					break;
+
+				case opt_CPU:
+					sprintf( sbuffer, "[%04X]", Read_HSITrim());
+					Lputs( 0x010Fu, sbuffer );
+					sprintf( sbuffer, " MCLK : %7.4f", CalcMCLK() * 1.0e-6f  );
+					Lputs( 0x0400u, sbuffer );
+					sprintf( sbuffer, "CPU电压:%6.3f", _CV_CPU_Volt( SensorLocal.CPU_IntVolt ));
+					Lputs( 0x0800u, sbuffer );
+					sprintf( sbuffer, "LCD电压:%6.2f", _CV_LCD_Volt( SensorLocal.LCD_Voltage ));
+					Lputs( 0x0C00u, sbuffer );
+					sprintf( sbuffer, "    Ba :%6.3f ", _CV_CPS120_Ba( SensorLocal.CPS120_Ba ));
+					Lputs( 0x1400u, sbuffer );
+					sprintf( sbuffer, "   Temp:%6.4f ", _CV_CPS120_Temp( SensorLocal.CPS120_Temp ));
+					Lputs( 0x1800u, sbuffer );
+					break;
+// 			case opt_Err:/*TODEL*/
 // 				{
 // // 				File_Load_Err( err_count-1, err_Code );
-// 				
+//
 // 				for( i = 0; i < err_count; i++ )
 // 				{
 // 					c = (( i * 3 )%30) * 256 + (i / 10) * 6;
 // 					sprintf( sbuffer, "%X",Statu[i] );
 // 					Lputs( c ,sbuffer);
-// 				}	
+// 				}
 // 				}
 // 				break;
-// 			case opt_TSPe:/*TODEL*/	
+// 			case opt_TSPe:/*TODEL*/
 // 			case opt_R24_Ae:
 // 			case opt_R24_Be:
 // 			case opt_SHI_Ce:
@@ -575,7 +660,7 @@ void	menu_FactoryDebug( void )
 // 				{
 // 					Cx[i-20+8] = (( i * 3 )%30) * 256 + (i / 10) * 10;
 // 				}
-// 			
+//
 // 						sprintf( sbuffer, "RS0:%X",REGx0.RS0 );
 // 				Lputs( Cx[0] ,sbuffer);
 // 						sprintf( sbuffer, "RS1:%X",REGx0.RS1 );
@@ -592,7 +677,7 @@ void	menu_FactoryDebug( void )
 // 				Lputs( Cx[6] ,sbuffer);
 // 						sprintf( sbuffer, "RS7:%X",REGx0.RS7 );
 // 				Lputs( Cx[7] ,sbuffer);
-// 				
+//
 // 							sprintf( sbuffer, "RS0:%X",REGx1.RS0 );
 // 				Lputs( Cx[0+8] ,sbuffer);
 // 							sprintf( sbuffer, "RS1:%X",REGx1.RS1 );
@@ -609,42 +694,48 @@ void	menu_FactoryDebug( void )
 // 				Lputs( Cx[6+8] ,sbuffer);
 // 							sprintf( sbuffer, "RS7:%X",REGx1.RS7 );
 // 				Lputs( Cx[7+8] ,sbuffer);
-// 			}	
-// 				break;			
+// 			}
+// 				break;
 			}
-			
-		} while( ! hitKey( 25u ));
-		
+
+		}
+		while( ! hitKey( 25u ));
+
 		switch( getKey())
 		{
-		case K_RIGHT:
-			++option;
-			if ( option >= opt_max )
-			{
-				option = opt_min;
-			}
-			break;
-		case K_LEFT:
-			if ( option <= opt_min )
-			{
-				option = opt_max;
-			}
-			--option;
-			break;
-			
-		case K_UP:
-			switch ( option )
-			{
-			case opt_TSP:
-			case opt_R24_A:
-			case opt_R24_B:
-			case opt_SHI_C:
-			case opt_SHI_D:
-				OutState[PumpSelect] = TRUE;
-				Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
-				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
+			case K_RIGHT:
+				++option;
+
+				if ( option >= opt_max )
+				{
+					option = opt_min;
+				}
+
 				break;
-// 			case opt_TSPe:/*TODEL*/	
+			case K_LEFT:
+
+				if ( option <= opt_min )
+				{
+					option = opt_max;
+				}
+
+				--option;
+				break;
+
+			case K_UP:
+
+				switch ( option )
+				{
+					case opt_TSP:
+					case opt_R24_A:
+					case opt_R24_B:
+					case opt_SHI_C:
+					case opt_SHI_D:
+						OutState[PumpSelect] = TRUE;
+						Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
+						Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
+						break;
+// 			case opt_TSPe:/*TODEL*/
 // 			case opt_R24_Ae:
 // 			case opt_R24_Be:
 // 			case opt_SHI_Ce:
@@ -654,28 +745,30 @@ void	menu_FactoryDebug( void )
 // 				eMBMWrite( SubSlave, 40014u, 1u, &value );
 // 				}
 // 				break;
-//       case opt_AIR:		
+//       case opt_AIR:
 // 				OutState[PumpSelect] = TRUE;
 // 				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
 // 				break;
-			}
-			break;
-		case K_DOWN:
-			switch ( option )
-			{
-			case opt_TSP:
-			case opt_R24_A:
-			case opt_R24_B:
-			case opt_SHI_C:
-			case opt_SHI_D:
-				OutState[PumpSelect] = FALSE;
-				Motor_SetOutput( PumpSelect, 0 );
-				Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
+				}
+
 				break;
-//      case opt_AIR:		
+			case K_DOWN:
+
+				switch ( option )
+				{
+					case opt_TSP:
+					case opt_R24_A:
+					case opt_R24_B:
+					case opt_SHI_C:
+					case opt_SHI_D:
+						OutState[PumpSelect] = FALSE;
+						Motor_SetOutput( PumpSelect, 0 );
+						Motor_OutCmd   ( PumpSelect, OutState[PumpSelect] );
+						break;
+//      case opt_AIR:
 // 				OutState[PumpSelect] = FALSE;
 // 				break;
-// 			case opt_TSPe:/*TODEL*/	
+// 			case opt_TSPe:/*TODEL*/
 // 			case opt_R24_Ae:
 // 			case opt_R24_Be:
 // 			case opt_SHI_Ce:
@@ -685,89 +778,105 @@ void	menu_FactoryDebug( void )
 // 				eMBMWrite( SubSlave, 40014u, 1u, &value );
 // 				}
 // 				break;
-			}
-			break;
-			
-		case K_ESC:
-			option = opt_exit;
-			break;
-
-		case K_OK:
-			switch ( option )
-			{
-			case opt_TSP:
-      case opt_R24_A: 
-      case opt_R24_B:
-      case opt_SHI_C:      
-      case opt_SHI_D:                 
-				if ( EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u ))
-				{
-					if ( OutState[PumpSelect] )
-					{
-						Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
-					}
 				}
-			
-			}
-			break;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+
+				break;
+
+			case K_ESC:
+				option = opt_exit;
+				break;
+
+			case K_OK:
+
+				switch ( option )
+				{
+					case opt_TSP:
+					case opt_R24_A:
+					case opt_R24_B:
+					case opt_SHI_C:
+					case opt_SHI_D:
+
+						if ( EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u ))
+						{
+							if ( OutState[PumpSelect] )
+							{
+								Motor_SetOutput( PumpSelect, OutValue[PumpSelect] );
+							}
+						}
+
+				}
+
+				break;
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			default:
+				break;
 		}
+
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
-		}		
+		}
 
-	} while ( opt_exit != option );
-	
+	}
+	while ( opt_exit != option );
+
 	for ( i = 0; i < SP_Max; ++i )
 	{
 		Motor_OutCmd((enum enumSamplerSelect)i,   FALSE );
@@ -779,12 +888,13 @@ void	menu_FactoryDebug( void )
 	由于程序需要访问传感器缓冲区中的原始数据，所以放在此处。
 *******************************************************************************/
 uint16_t	average( uint16_t const * pArray, const uint8_t count )
-{	//	计算缓冲区中前N个数的平均值
+{
+	//	计算缓冲区中前N个数的平均值
 	uint32_t	sum = 0u;
 	uint8_t 	i;
 
 	for ( i = 0u; i < count; ++i )
-	{	
+	{
 		sum += pArray[i];
 	}
 
@@ -793,7 +903,7 @@ uint16_t	average( uint16_t const * pArray, const uint8_t count )
 
 static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 {
-	#define	f_len 10u
+#define	f_len 10u
 	uint16_t	sensor[2][f_len];
 	uint8_t		index;
 	BOOL		cnt_full;
@@ -805,15 +915,17 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 
 	for(;;)
 	{
-		do {
+		do
+		{
 			sensor[0][index] = SensorRemote.pf[SamplerSelect];
 			sensor[1][index] = SensorRemote.pr[SamplerSelect];
+
 			if ( ++index == f_len )
 			{
 				index = 0u;
 				cnt_full = TRUE;
 			}
-	
+
 			CalibrateRemote.origin[esid_pf][SamplerSelect] = average( sensor[0], cnt_full ? f_len : index );
 			CalibrateRemote.origin[esid_pr][SamplerSelect] = average( sensor[1], cnt_full ? f_len : index );
 
@@ -825,69 +937,83 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 
 			Lputs( 0x0F1Cu, "计压:" );
 			ShowFP32( 0x151Bu, get_Pr( SamplerSelect ), 0x0602u, NULL );
-	
 
-		} while( ! hitKey( 40u ));
+
+		}
+		while( ! hitKey( 40u ));
 
 		switch( getKey())
 		{
-		case K_OK:	
-		case K_ESC:		CalibrateSave( );		return;
-		case K_OK_UP:	
-			if ( gray < 2200u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 1 ))
+			case K_OK:
+			case K_ESC:
+				CalibrateSave( );
+				return;
+			case K_OK_UP:
+
+				if ( gray < 2200u )
 				{
 					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
 				}
-			}
-			graychanged = true;		
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN, 100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
+					{
+						++gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
+
+				if ( gray >  200u )
 				{
 					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}			
-			}
-			graychanged = true;
-			break;
+				}
 
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
+					{
+						--gray;
+						DisplaySetGrayVolt( gray * 0.01f );
+					}
+				}
+
+				graychanged = true;
+				break;
+
+			case K_OK_RIGHT:
+
+				if ( gray < ( 2000u - 50u ))
+				{
+					gray += 100u;
+				}
+
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
+
+				if ( gray > ( 200 + 20u ))
+				{
+					gray -= 20u;
+				}
+
+				graychanged = true;
+				break;
+			default:
+				break;
 		}
+
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
-		}		
+		}
 
 	}
 }
@@ -896,14 +1022,26 @@ static	void	KB6102_CalibrateZero( enum enumSamplerSelect SamplerSelect )
 void	CalibrateZero_x( enum enumSamplerSelect SamplerSelect )
 {
 	Part_cls();
+
 	switch( SamplerSelect )
 	{
-	case SP_TSP:		Lputs( 0x080Eu, "粉 尘 自动调零" );	break;
-	case SP_R24_A:	Lputs( 0x080Eu, "日均A 自动调零" );	break;
-	case SP_R24_B:	Lputs( 0x080Eu, "日均B 自动调零" );	break;
-	case SP_SHI_C:	Lputs( 0x080Eu, "时均C 自动调零" );	break;
-	case SP_SHI_D:	Lputs( 0x080Eu, "时均D 自动调零" );	break;
+		case SP_TSP:
+			Lputs( 0x080Eu, "粉 尘 自动调零" );
+			break;
+		case SP_R24_A:
+			Lputs( 0x080Eu, "日均A 自动调零" );
+			break;
+		case SP_R24_B:
+			Lputs( 0x080Eu, "日均B 自动调零" );
+			break;
+		case SP_SHI_C:
+			Lputs( 0x080Eu, "时均C 自动调零" );
+			break;
+		case SP_SHI_D:
+			Lputs( 0x080Eu, "时均D 自动调零" );
+			break;
 	}
+
 	KB6102_CalibrateZero( SamplerSelect );
 }
 
@@ -984,22 +1122,23 @@ void	HCBox_Init( void )
 {
 	switch ( Configure.HeaterType )
 	{
-	default:
-	case enumHeaterNone:	break;	//	MsgBox( "未安装恒温箱", vbOKOnly );	break;
-	case enumHCBoxOnly:
-		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
-		break;
-	case enumHeaterOnly:
-		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
-		break;
-	case enumHCBoxHeater:
-		set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
-		set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
-		break;
+		default:
+		case enumHeaterNone:
+			break;	//	MsgBox( "未安装恒温箱", vbOKOnly );	break;
+		case enumHCBoxOnly:
+			set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
+			break;
+		case enumHeaterOnly:
+			set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
+			break;
+		case enumHCBoxHeater:
+			set_HCBoxTemp( Configure.HCBox_SetTemp * 0.1f, Configure.HCBox_SetMode );
+			set_HeaterTemp( Configure.Heater_SetTemp*0.1f);
+			break;
 	}
 
 }
-// void Sensor_Resert( void )/*TODEL*/	
+// void Sensor_Resert( void )/*TODEL*/
 // {
 // 	static	BOOL Flag = FALSE;
 // 	if( E_Resert == 0xFFFF )
@@ -1014,12 +1153,12 @@ void	HCBox_Init( void )
 // // 		uint8_t	i;
 // 		uint16_t	Value = 0x0000u;
 // 		eMBMWrite( SubSlave, 40010u, 1u, &Value );
-// 		HCBox_Init();	
+// 		HCBox_Init();
 // // 		for( i = 0; i < SP_Max; i ++ )
 // // 		{
 // // 			if( Sampler_isRunning( ( enum enumSamplerSelect ) i ) )
 // // 			{
-// // 	// 			Sample_Fatal( SamplerSelect );		
+// // 	// 			Sample_Fatal( SamplerSelect );
 // // 				Sample_Error( SamplerSelect );
 // // 			}
 // // 		}
@@ -1041,7 +1180,7 @@ void	HCBox_Init( void )
 
 // 		{ 0x0606, "加热 Kp:" 	},
 // 		{ 0x0906, "加热 Ti:" 	},
-// 		{ 0x0C06, "加热 Td:" 	},		
+// 		{ 0x0C06, "加热 Td:" 	},
 // 		{ 0x1006, "制冷 Kp:" 	},
 // 		{ 0x1306, "制冷 Ti:" 	},
 // 		{ 0x1606, "制冷 Td:" 	},
@@ -1051,16 +1190,16 @@ void	HCBox_Init( void )
 // 		PIDLoad();
 // 	do
 // 	{
-// 		
+//
 // 		ShowI16U( 0x0618, HCBoxPID.Kp[0], 0x0300, NULL );//EditI16U( 0x1812u, &OutValue[PumpSelect], 0x0500u )
 // 		ShowI16U( 0x0918, HCBoxPID.Ti[0], 0x0300, NULL );
 // 		ShowI16U( 0x0C18, HCBoxPID.Td[0], 0x0300, NULL );
 // 		ShowI16U( 0x1018, HCBoxPID.Kp[1], 0x0300, NULL );
 // 		ShowI16U( 0x1318, HCBoxPID.Ti[1], 0x0300, NULL );
 // 		ShowI16U( 0x1618, HCBoxPID.Td[1], 0x0300, NULL );
-// 		
+//
 // 		item = Menu_Select( menu, item + 1, NULL);
-// 		
+//
 // 		switch( item )
 // 		{
 // 			case 1:	EditI16U( 0x0618, &HCBoxPID.Kp[0], 0x0300 );	changed = TRUE;	break;
@@ -1071,15 +1210,15 @@ void	HCBox_Init( void )
 // 			case 6:	EditI16U( 0x1618, &HCBoxPID.Td[1], 0x0300 );	changed = TRUE;	break;
 // 		}
 // 	}while( enumSelectESC != item );
-// 	
+//
 // 	if( changed == TRUE )
 // 	{
 // 		eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
-// 		delay(100);                                       
+// 		delay(100);
 // 		eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
-// 		delay(100);                                       
+// 		delay(100);
 // 		eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
-// 		delay(100);                                       
+// 		delay(100);
 // 		eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
 // 		delay(100);
 // 		eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
@@ -1088,17 +1227,17 @@ void	HCBox_Init( void )
 // 		delay(100);
 // 		PIDSave();
 // 	}
-// 	
+//
 // }
 // void	PIDSet( void )
 // {
 // 	PIDLoad();
 // 	eMBMWrite( SubSlave, AO_Base + 0, 1u, &HCBoxPID.Kp[0] );
-// 	delay(100);                                       
+// 	delay(100);
 // 	eMBMWrite( SubSlave, AO_Base + 1, 1u, &HCBoxPID.Ti[0] );
-// 	delay(100);                                       
+// 	delay(100);
 // 	eMBMWrite( SubSlave, AO_Base + 2, 1u, &HCBoxPID.Td[0] );
-// 	delay(100);                                       
+// 	delay(100);
 // 	eMBMWrite( SubSlave, AO_Base + 10, 1u, &HCBoxPID.Kp[1] );
 // 	delay(100);
 // 	eMBMWrite( SubSlave, AO_Base + 11, 1u, &HCBoxPID.Ti[1] );
