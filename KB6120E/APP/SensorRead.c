@@ -236,8 +236,9 @@ void	Motor_OutCmd( enum enumSamplerSelect PumpSelect, BOOL NewState )
 			RegAddress = DO_Base + BaseList[SP_SHI_C];
 			break;
 		}		
+		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 	}
-	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+	
 }
 
 void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
@@ -246,7 +247,7 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 	uint16_t	RegValue   = OutValue;
 
 	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
-		if( ReadCopy() )
+	if( ReadCopy() )
 	{
 		switch( PumpSelect )
 		{
@@ -258,8 +259,9 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 			RegAddress = AO_Base + BaseList[SP_SHI_C];
 			break;
 		}		
+		eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
 	}
-	eMBMWrite( SubSlave, RegAddress, 1u, &RegValue );
+	
 }
 /**************************************************/
 // uint16_t E_Resert;

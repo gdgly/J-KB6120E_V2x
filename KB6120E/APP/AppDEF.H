@@ -202,7 +202,7 @@ struct	uSamplerQuery
 	BOOL	xp_state;	//	开、关状态		
 	FP32	vd, vnd;
 	uint16_t	sum_time;
-	uint16_t	timer;
+	int16_t		timer;
 	uint8_t 	loops;
 };
 
