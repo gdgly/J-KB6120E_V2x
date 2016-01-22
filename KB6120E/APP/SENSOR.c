@@ -199,13 +199,28 @@ static	FP32	fetch_flow( enum enumSamplerSelect SamplerSelect )
 		case enumOrifice_1:	//	1L孔板流量计
 		case enumOrifice_2:	//	2L孔板流量计
 			{
-				FP32	Ba, Tr, Pr;
+				FP32	Ba, Tr, Pr, Te;
 				FP32	pf;
 				Ba = get_Ba();
+				Te = get_Te();
 				Tr = get_Tr( SamplerSelect );
 				Pr = get_Pr( SamplerSelect );
 				pf = get_pf( SamplerSelect );
-				f_org = Calc_fstd( pf, Tr, Pr, Ba );
+				switch ( SamplerSelect )
+				{
+					case SP_TSP:
+						f_org = Calc_fstd( pf, Te, Pr, Ba );
+						break;
+					case SP_R24_A:
+					case SP_R24_B:				
+					case SP_SHI_C:
+					case SP_SHI_D:
+						f_org = Calc_fstd( pf, Tr, Pr, Ba );
+						break;
+					default:
+						f_org = 0.0f;
+						break;
+				}	
 			}
 			break;
 	}

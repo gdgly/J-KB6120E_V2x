@@ -69,7 +69,7 @@ extern	void	Sample_Terminate ( enum enumSamplerSelect SamplerSelect );
 extern	void	Sample_Fatal( enum enumSamplerSelect SamplerSelect );
 extern	void	Sample_Error( enum enumSamplerSelect SamplerSelect );
 extern	BOOL	Sampler_isRunning( enum	enumSamplerSelect SamplerSelect );
-extern  BOOL StateRead( enum	enumSamplerSelect SamplerSelect );
+extern  BOOL	StateRead( enum	enumSamplerSelect SamplerSelect );
 /********************************** 功能说明 ***********************************
 *  系统配置
 *******************************************************************************/

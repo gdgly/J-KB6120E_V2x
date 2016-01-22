@@ -486,9 +486,6 @@ uint8_t	SED1335_Read_Data( )
 {
 	uint8_t	InData;
 
-	//	Pin_LCD1335_RD = 1;
-	//	Pin_LCD1335_WR = 1;
-	//	Pin_LCD1335_CE = 1;
 	__NOP();
 	Pin_LCD1335_A0 = 1;
 	P8P_ModeInput();
@@ -517,8 +514,6 @@ void	LM2068E_GrayInit( void )
 
 BOOL	OW_0_Init( void )
 {
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x70000000u );
@@ -769,65 +764,65 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	return	cInByte;
 }
 
-// /********************************** 功能说明 ***********************************
-// *	访问 SPI 总线( SPI1x )
-// *******************************************************************************/
-// #ifdef	SimulationSPI
+/********************************** 功能说明 ***********************************
+*	访问 SPI 总线( SPI1x )
+*******************************************************************************/
+#ifdef	SimulationSPI
 
-// #define	Pin_SPIxSCK			PinBB( GPIOB->ODR,  3U )
-// #define	Pin_SPIxMISO		PinBB( GPIOB->IDR,  4U )
-// #define	Pin_SPIxMOSI		PinBB( GPIOB->ODR,  5U )
+#define	Pin_SPIxSCK			PinBB( GPIOB->ODR,  3U )
+#define	Pin_SPIxMISO		PinBB( GPIOB->IDR,  4U )
+#define	Pin_SPIxMOSI		PinBB( GPIOB->ODR,  5U )
 
-// uint8_t bus_SPIxShift( uint8_t OutByte )
-// {
-// 	uint8_t i;
+uint8_t bus_SPIxShift( uint8_t OutByte )
+{
+	uint8_t i;
 //
-// 	for ( i = 8u; i != 0u; --i )
-// 	{
-// 		delay_us( 1 );
-// 		if ( OutByte & 0x80u )
-// 		{
-// 			Pin_SPIxMOSI = 1;
-// 		}
-// 		else
-// 		{
-// 			Pin_SPIxMOSI = 0;
-// 		}
+	for ( i = 8u; i != 0u; --i )
+	{
+		delay_us( 1 );
+		if ( OutByte & 0x80u )
+		{
+			Pin_SPIxMOSI = 1;
+		}
+		else
+		{
+			Pin_SPIxMOSI = 0;
+		}
 
-// 		delay_us( 1 );
-// 		Pin_SPIxSCK = 0;
+		delay_us( 1 );
+		Pin_SPIxSCK = 0;
 
-// 		delay_us( 1 );
+		delay_us( 1 );
 
-// 		OutByte <<= 1;
-// 		if ( Pin_SPIxMISO )
-// 		{
-// 			OutByte |= 0x01u;
-// 		}
-// 		else
-// 		{
-// 			OutByte &= 0xFEu;
-// 		}
+		OutByte <<= 1;
+		if ( Pin_SPIxMISO )
+		{
+			OutByte |= 0x01u;
+		}
+		else
+		{
+			OutByte &= 0xFEu;
+		}
 
-// 		delay_us( 1 );
-// 		Pin_SPIxSCK = 1;
-// 	}
+		delay_us( 1 );
+		Pin_SPIxSCK = 1;
+	}
 //
-// 	return	OutByte;
-// }
+	return	OutByte;
+}
 
 
-// void	bus_SPIxPortInit( void )
-// {
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-//  	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+void	bus_SPIxPortInit( void )
+{
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );	//关闭PB345原有的JTAG功能
 
-//  	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
-// 	Pin_SPI1xSCK = 1;
-//  	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
-// }
+ 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+	Pin_SPI1xSCK = 1;
+ 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
+}
 
-// #else
+#else
 
 uint8_t bus_SPIxShift( uint8_t IOByte )
 {
@@ -863,12 +858,12 @@ void	bus_SPIxPortInit( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
-	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );	//关闭PB345原有的JTAG功能
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
 }
 
-// #endif
+#endif
 
 /********************************** 功能说明 ***********************************
 *	访问 USART1，实现RS232，主要用于实现与微打或上位机进行通讯
@@ -1052,11 +1047,7 @@ static	void	TIM3_Init( void )
 	//	配置输出管脚
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
-//	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
-//	MODIFY_REG( GPIOC->CRL, 0x0F000000u, 0x0B000000u );		//	PC.6, T3CH1
-//	MODIFY_REG( GPIOC->CRL, 0xF0000000u, 0xB0000000u );		//	PC.7, T3CH2
-// 	MODIFY_REG( GPIOC->CRH, 0x0000000Fu, 0x0000000Bu );		//	PC.8, T3CH3
-// 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x000000B0u );		//	PC.9, T3CH4
+
 }
 
 void	PWM1_SetOutput( uint16_t OutValue )
@@ -1090,6 +1081,26 @@ void	PWM4_SetOutput( uint16_t OutValue )
 /********************************** 功能说明 ***********************************
 *	访问 GPIO
 *******************************************************************************/
+
+/******************************************************************************
+* 函  数  名      : bus_SPIxNSS
+* 描      述      : SPI3的片选线
+*
+* 输      入      : 高低电平
+* 返      回      : 无
+*******************************************************************************/
+void	bus_SPIxNSS( BOOL NewOutLevel )
+{
+	if ( NewOutLevel )
+	{
+		GPIOA->BSRR = ( 1 << 15 );
+	}
+	else
+	{
+		GPIOA->BRR  = ( 1 << 15 );
+	}
+}
+
 void	MeasureBattery_OutCmd( BOOL NewState )
 {
 	//	PC8 高电平有效
@@ -1115,14 +1126,14 @@ void	Speaker_OutCmd( BOOL NewState )
 
 void	beep( void )
 {
-	Speaker_OutCmd( TRUE );
+// 	Speaker_OutCmd( TRUE );
 	delay( 200u );
 	Speaker_OutCmd( FALSE );
 }
 
 void	tick( void )
 {
-	Speaker_OutCmd( TRUE );
+// 	Speaker_OutCmd( TRUE );
 	delay( 20u );
 	Speaker_OutCmd( FALSE );
 }
@@ -1151,51 +1162,51 @@ BOOL	UART1_RX_Pin_State( void )
 /********************************** 功能说明 ***********************************
 *	读取 JTAG 上的两个跳线，如果插着跳线，返回1，否则返回0。
 *******************************************************************************/
-uint8_t	get_Jumper( void )
-{
-	uint8_t		JumperState;
-	uint16_t	portState, prevState;
-	uint8_t 	i, iRetryMax = 100u;
+// uint8_t	get_Jumper( void )
+// {
+// 	uint8_t		JumperState;
+// 	uint16_t	portState, prevState;
+// 	uint8_t 	i, iRetryMax = 100u;
 
-	//	PA.13 - JTMS/SWDIO, 默认内部上拉，但插跳线时与VCC相连
-	//	PA.14 - JTCK/SWCLK, 默认内部下拉，但插跳线时与GND相连
+// 	//	PA.13 - JTMS/SWDIO, 默认内部上拉，但插跳线时与VCC相连
+// 	//	PA.14 - JTCK/SWCLK, 默认内部下拉，但插跳线时与GND相连
 
-	//	暂时关闭调试功能
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_DISABLE );		/*!< JTAG-DP Disabled and SW-DP Disabled */
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
-	GPIOA->BSRR = GPIO_BSRR_BR13;	//	改为内部下拉
-	GPIOA->BSRR = GPIO_BSRR_BS14;	//	改为内部上拉
-	MODIFY_REG( GPIOA->CRH, 0x0FF00000u, 0x08800000u );
+// 	//	暂时关闭调试功能
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+// 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_DISABLE );		/*!< JTAG-DP Disabled and SW-DP Disabled */
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
+// 	GPIOA->BSRR = GPIO_BSRR_BR13;	//	改为内部下拉
+// 	GPIOA->BSRR = GPIO_BSRR_BS14;	//	改为内部上拉
+// 	MODIFY_REG( GPIOA->CRH, 0x0FF00000u, 0x08800000u );
 
-	//	读取跳线状态，持续30ms状态不变，才确认读取结果有效。
-	portState = 0u;
-	i = 0u;
-	prevState = portState;
+// 	//	读取跳线状态，持续30ms状态不变，才确认读取结果有效。
+// 	portState = 0u;
+// 	i = 0u;
+// 	prevState = portState;
 
-	do
-	{
-		delay_us( 300u );
-		portState = READ_BIT( GPIOA->IDR, GPIO_IDR_IDR13 | GPIO_IDR_IDR14 );
+// 	do
+// 	{
+// 		delay_us( 300u );
+// 		portState = READ_BIT( GPIOA->IDR, GPIO_IDR_IDR13 | GPIO_IDR_IDR14 );
 
-		if ( prevState != portState )
-		{
-			i = 0u;
-			prevState = portState;
-		}
-	}
-	while ( ++i < iRetryMax );
+// 		if ( prevState != portState )
+// 		{
+// 			i = 0u;
+// 			prevState = portState;
+// 		}
+// 	}
+// 	while ( ++i < iRetryMax );
 
-	JumperState = ((( portState >> 13 ) & 0x03u ) ^ 0x02u );	//	不插跳线结果为0，插跳线结果为1。
+// 	JumperState = ((( portState >> 13 ) & 0x03u ) ^ 0x02u );	//	不插跳线结果为0，插跳线结果为1。
 
-	//	重新打开调试功能
-	GPIOA->BSRR = GPIO_BSRR_BS13;		//	改回默认上拉
-	GPIOA->BSRR = GPIO_BSRR_BR14;		//	改回默认下拉
-	CLEAR_BIT( AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
-	SET_BIT(   AFIO->MAPR, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );	/*!< JTAG-DP Disabled and SW-DP Enabled */
+// 	//	重新打开调试功能
+// 	GPIOA->BSRR = GPIO_BSRR_BS13;		//	改回默认上拉
+// 	GPIOA->BSRR = GPIO_BSRR_BR14;		//	改回默认下拉
+// 	CLEAR_BIT( AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
+// 	SET_BIT(   AFIO->MAPR, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );	/*!< JTAG-DP Disabled and SW-DP Enabled */
 
-	return	JumperState;
-}
+// 	return	JumperState;
+// }
 
 /********************************** 功能说明 ***********************************
  *　Brief:	Enters SLEEP mode.

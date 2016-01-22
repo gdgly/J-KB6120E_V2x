@@ -398,10 +398,10 @@ void SD_Init(void)
 			}
 		}
 
-
+		SD_File_Creat();
 	}
 
-	SD_File_Creat();
+	
 }
 
 // #define	FilePageSize_TSP_SHI_R24  40u
