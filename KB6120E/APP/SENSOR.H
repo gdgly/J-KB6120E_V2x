@@ -90,11 +90,6 @@ extern	struct	uCalibrateLocal		CalibrateLocal;
 /********************************** 功能说明 ***********************************
 *  远程传感器读数及标定数据访问
 *******************************************************************************/
-//	enum	enumSamplerSelect
-//	{
-//		PP_TSP, PP_R24_A, PP_R24_B, PP_SHI_C, PP_SHI_D, PP_AIR,
-//		SP_Max
-//	};
 
 enum
 {

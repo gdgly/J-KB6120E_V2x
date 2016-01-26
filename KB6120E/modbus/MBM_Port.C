@@ -182,7 +182,7 @@ void	vMBM_EventPut_Post( void )
 BOOL	xMBM_EventPut_Poll( void )
 {
 	//	等待发送完成标志
-	return	( osSemaphoreWait( semaphore_TX, 300u ) > 0 );
+	return	( osSemaphoreWait( semaphore_TX, 500u ) > 0 );
 }
 
 void	vMBM_EventGet_Post( void )
@@ -194,7 +194,7 @@ void	vMBM_EventGet_Post( void )
 BOOL	xMBM_EventGet_Poll( void )
 {
 	//	等待接收完成标志
-	return	( osSemaphoreWait( semaphore_RX, 500u ) > 0 );
+	return	( osSemaphoreWait( semaphore_RX, 700u ) > 0 );
 }
 
 void	vMBM_Event_Init( void )

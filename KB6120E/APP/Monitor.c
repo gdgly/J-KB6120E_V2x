@@ -547,24 +547,18 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 	{
 		switch ( getKey() )
 		{
-// 		case K_UP:
-// 			switch ( SamplerSelect )
-// 			{
-// 			case SP_R24_A:	SamplerSelect = SP_R24_A;	break;
-// 			case SP_R24_B:	SamplerSelect = SP_R24_A;	break;
-// 			case SP_SHI_C:	SamplerSelect = SP_SHI_C;	break;
-// 			case SP_SHI_D:	SamplerSelect = SP_SHI_C;	break;
-// 			default:	break;
-// 			}
-// 			break;
-// 		case K_DOWN:
-// 			switch ( SamplerSelect )
-// 			{
-// 			case SP_R24:	SamplerSelect = SP_R24_B;	break;
-// 			case SP_SHI:	SamplerSelect = SP_SHI_D;	break;
-// 			default:	break;
-// 			}
-// 			break;
+		case K_UP:
+			{
+				SamplerTypeSwitchBack();
+				option = opt_exit;
+			}
+			break;
+		case K_DOWN:
+			{
+				SamplerTypeSwitch();
+				option = opt_exit;
+			}
+			break;
 
 			case K_RIGHT:
 				++option;
@@ -1068,7 +1062,26 @@ void	SamplerTypeSwitch( void )
 	else
 		SamplerSelect = (enum	enumSamplerSelect)SamplerTypeHas[SamplerExchange];
 }
+void	SamplerTypeSwitchBack( void )
+{
+	static	uint8_t SamplerExchange;
 
+	if( SamplerSelect == SamplerTypeHas[0] )
+		SamplerSelect = (enum enumSamplerSelect )SamplerTypeHas[SamplerHasMax - 1u];
+	else
+	{
+		for( SamplerExchange = SamplerHasMax-1; SamplerExchange > 0; SamplerExchange -- )
+		{
+			if( SamplerSelect == SamplerTypeHas[SamplerExchange] )
+			{
+				SamplerExchange -= 1u;
+				break;
+			}
+		}
+		SamplerSelect = (enum enumSamplerSelect )SamplerTypeHas[SamplerExchange];
+	}	
+
+}
 void	menu_show_env_state( void )
 {
 

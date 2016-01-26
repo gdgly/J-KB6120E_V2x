@@ -35,7 +35,7 @@ static	BOOL	Print_File_TSP( uint16_t FileNum, struct uFile_TSP_SHI_R24 const * p
 
 	sprintf( sbuffer, "\r\n%s型%s\r\n",szTypeIdent[Configure.InstrumentType],szNameIdent[Configure.InstrumentName] );
 	PrinterPutString( sbuffer );
-	PrinterPutString( "日均采样记录" );
+	PrinterPutString( "粉尘采样记录" );
 	sprintf( sbuffer, "文件:%3u [第%2u次/共%2u次]", FileNum, pFile->run_loops, pFile->set_loops );
 	PrinterPutString( sbuffer );
 
@@ -297,7 +297,7 @@ void	Query_File_TSP( void )
 		return;	//	中止 查询
 	}
 
-	File_Load_TSP_SHI_R24 (SamplerSelect, FileNum, &File );
+	File_Load_TSP_SHI_R24 ( SamplerSelect, FileNum, &File );
 
 	do
 	{

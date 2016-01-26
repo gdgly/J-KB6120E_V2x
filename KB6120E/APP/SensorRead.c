@@ -234,12 +234,13 @@ void	Motor_OutCmd( enum enumSamplerSelect PumpSelect, BOOL NewState )
 	{
 		switch( PumpSelect )
 		{
-			default:
 			case SP_R24_A :
 				RegAddress = DO_Base + BaseList[SP_SHI_D];
 				break;
 			case SP_R24_B :
 				RegAddress = DO_Base + BaseList[SP_SHI_C];
+				break;
+			default:
 				break;
 		}
 
@@ -257,12 +258,13 @@ void	Motor_SetOutput( enum enumSamplerSelect PumpSelect, uint16_t OutValue )
 	{
 		switch( PumpSelect )
 		{
-			default:
 			case SP_R24_A :
 				RegAddress = AO_Base + BaseList[SP_SHI_D];
 				break;
 			case SP_R24_B :
 				RegAddress = AO_Base + BaseList[SP_SHI_C];
+				break;
+			default:
 				break;
 		}
 
@@ -304,9 +306,7 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		}
 		else
 		{
-			uint8_t * Status = 0;
-			*Status = eStatus;
-			File_Save_Err( err_count++, Status );
+			err_count++;
 		}
 	}
 

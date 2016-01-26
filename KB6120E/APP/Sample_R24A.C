@@ -306,7 +306,7 @@ void  _task_Sample_R24_A( void )
 				}
 
 				File.sample_begin = 0u;		//	清空文件, 标志本次采样循环结束
-				File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );
+				File_Save_TSP_SHI_R24( SamplerSelect,fname, &File );	//	为下一次采样创建新文件
 				//	记录泵累计运行
 				PumpSumTimeSave( SamplerSelect, PumpSumTimeLoad( SamplerSelect ) + File.sum_min );
 

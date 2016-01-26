@@ -67,9 +67,9 @@ BOOL	SDEsave( const char * BUF_Name, uint32_t address,   uint8_t * buffer, uint3
 #define	x_SumTime		0x0780u
 //	3.保留地址空间( 起始地址：2K，区域大小：2K )
 #define	x_Reserve		0x0800u
-//	4.文件存储空间( 起始地址：4K，区域大小：无限 )
+//	4.文件存储空间( 起始地址：4K，区域大小：1K )
 #define	x_File_Base		0x1000u
-#define	x_PID 	0x1100u	//	配置参数
+#define	x_PID 	0x1400u	//	配置参数
 /********************************** 功能说明 ***********************************
 *	文件存取
 *******************************************************************************/
@@ -83,6 +83,7 @@ const	char	* const Save_NameChar[SP_Max] =
 	"\\SAMPLER\\R24_B",
 	"\\SAMPLER\\SHI_C",
 	"\\SAMPLER\\SHI_D",
+// 	"\\SAMPLER\\AIR",
 };
 void	File_Load_TSP_SHI_R24( enum	enumSamplerSelect SamplerSelect, uint16_t FileNum, struct	uFile_TSP_SHI_R24	* pFile )
 {

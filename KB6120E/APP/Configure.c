@@ -930,7 +930,7 @@ static	void 	menu_Pr_Portect( void )
 		for( i = 0; i < SamplerHasMax; i ++ )
 		{
 			Lputs		( (Table[i] * 256 + 0x0D ), ":" );
-			ShowI16U( (Table[i] * 256 + 0x12 ), Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[i]], 0x0402u, " KPa" );
+			ShowI16U( (Table[i] * 256 + 0x12 ), Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[i]], 0x0502u, " KPa" );
 		}
 
 		Menu_Redraw( menu[SamplerHasMax-2] );
@@ -941,7 +941,7 @@ static	void 	menu_Pr_Portect( void )
 		{
 			case 1:
 
-				if(  EditI16U( ( Table[0] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]], 0x0402 ))
+				if(  EditI16U( ( Table[0] * 256 + 0x12 ), &Configure.Pr_Portect[(enum enumSamplerSelect)SamplerTypeHas[0]], 0x0502 ))
 				{
 // 				if( SamplerSelect == SP_TSP )
 // 				{

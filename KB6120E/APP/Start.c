@@ -201,7 +201,7 @@ __task	int32_t	main( void )
 	PowerLog_Init();	//	开关机存取，时间初始化之后
 
 	SENSOR_Local_Init();
-	delay( 800u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
+	delay( 1000u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
 	SENSOR_Remote_Init();		//	modbus通信初始化
 
 	delay( 200u );

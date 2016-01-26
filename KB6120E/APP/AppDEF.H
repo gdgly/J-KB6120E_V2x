@@ -238,6 +238,7 @@ extern	void	Configure_ShowNameIdent( void );
 extern	void	SamplerTypeSelect( void );
 extern	void	SamplerTypeShow( uint16_t yx );
 extern	void	SamplerTypeSwitch( void );
+extern	void	SamplerTypeSwitchBack( void );
 extern	uint8_t	SamplerTypeHas[SP_Max];
 extern	uint8_t SamplerHasMax;
 

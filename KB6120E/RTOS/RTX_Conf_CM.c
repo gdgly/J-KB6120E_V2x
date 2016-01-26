@@ -83,7 +83,7 @@
 // <i> Includes the stack checking code for stack overflow.
 // <i> Note that additional code reduces the Kernel performance.
 #ifndef OS_STKCHECK
-#define OS_STKCHECK    0
+#define OS_STKCHECK    1
 #endif
 
 // <o>Processor mode for thread execution

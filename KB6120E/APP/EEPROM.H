@@ -28,8 +28,8 @@ extern	void	CalibrateSave( void );
 extern	void	CalibrateLoad( void );
 extern	void	SampleSetSave( void );
 extern	void	SampleSetLoad( void );
-extern	void	KB6102_CalibrateSave( void );	//	enum enumBoardSelect Board );
-extern	void	KB6102_CalibrateLoad( void );	//	enum enumBoardSelect Board );
+// extern	void	KB6102_CalibrateSave( void );	//	enum enumBoardSelect Board );
+// extern	void	KB6102_CalibrateLoad( void );	//	enum enumBoardSelect Board );
 
 
 //	//	2014年2月22日	使用函数名重载

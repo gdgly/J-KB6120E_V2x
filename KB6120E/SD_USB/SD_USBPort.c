@@ -7,27 +7,25 @@
 * 版  本:
 * 修订人:
 *******************************************************************************/
-#include "string.h"
 #include "AppDEF.H"
+#include "string.h"
 #include "SD_USBPort.h"
-#define SD_Card       	0x03
-#define USB_Flash_disk	0x06
-UINT8			buf[100];
-UINT8			USBbuf[100];
-UINT8			bufread[100];
-UINT8			TarName[100];
-uint8_t 		i,s;
+
+#define SD_Card         0x03
+#define USB_Flash_Disk  0x06
+
+UINT8     bufread[100];
+uint8_t     i,s;
 uint16_t xy;
 
 //创建根目录下的目录并打开 (目录名必须为大写英文数字或者特殊符号且不能超过8个字节)
 void Byte_CREAT_CON_DIR(const char * BUF_Name)
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	s = CH376DirCreate( TarName ); /* 在根目录下新建目录(文件夹)并打开,如果目录已经存在那么直接打开 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+
+	s = CH376DirCreate( (PUINT8)BUF_Name );       /* 在根目录下新建目录(文件夹)并打开,如果目录已经存在那么直接打开 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -35,12 +33,11 @@ void Byte_CREAT_CON_DIR(const char * BUF_Name)
 void Byte_CREAT_WRITE_DIR(const char * BUF_Name, uint8_t * Content, uint32_t offset )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
-	CH376FileCreate( TarName );
-	CH376ByteWrite( Content, offset, NULL );  /* 以字节为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+
+	CH376FileCreate( (PUINT8)BUF_Name );          /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+	CH376ByteWrite( Content, offset, NULL );      /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -48,14 +45,14 @@ void Byte_CREAT_WRITE_DIR(const char * BUF_Name, uint8_t * Content, uint32_t off
 void  Byte_OPEN_READ_DIR (const char * BUF_Name , uint32_t Addr, uint8_t * bufread , uint32_t offset  )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpen( TarName );  /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
+
+	CH376FileOpen( (PUINT8)BUF_Name );            /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
 	CH376ByteLocate( Addr );
 
-	CH376ByteRead( bufread, offset , NULL );/* 以字节为单位从当前位置读取数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+	CH376ByteRead( bufread, offset , NULL );      /* 以字节为单位从当前位置读取数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -63,28 +60,28 @@ void  Byte_OPEN_READ_DIR (const char * BUF_Name , uint32_t Addr, uint8_t * bufre
 void  Byte_OPEN_WRITE_DIR (const char * BUF_Name, uint8_t * Content , uint32_t Addr, uint32_t offset  )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpen( TarName );  /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
+
+	CH376FileOpen( (PUINT8)BUF_Name );            /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
 
 	CH376ByteLocate( Addr );
-	CH376ByteWrite( Content , offset, NULL );  /* 以字节为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+	CH376ByteWrite( Content, offset, NULL );      /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 }
 /***/
 //创建多级目录下的文件并写
 void Byte_CREAT_WRITE_PATH(const char * BUF_Name, uint8_t * Content , uint32_t offset )
 {
-	//													文件名                文件内容
+	//                          文件名                文件内容
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name ); /* 目标文件名 */
-	s = CH376FileCreatePath( TarName );  	/* 新建多级目录下的文件,支持多级目录路径,输入缓冲区必须在RAM中 */
-	s = CH376ByteWrite( Content , offset, NULL ); /* 以字节为单位向当前位置写入数据块 */
-	s = CH376FileClose( TRUE );   /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+	/* 目标文件名 */
+	CH376FileCreatePath( (PUINT8)BUF_Name );      /* 新建多级目录下的文件,支持多级目录路径,输入缓冲区必须在RAM中 */
+	CH376ByteWrite( Content, offset, NULL );      /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -92,14 +89,14 @@ void Byte_CREAT_WRITE_PATH(const char * BUF_Name, uint8_t * Content , uint32_t o
 uint8_t  Byte_OPEN_READ_PATH (const char * BUF_Name , uint32_t Addr , uint8_t * bufread , uint32_t offset )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 
 	CH376ByteLocate( Addr );
-	s = CH376ByteRead(  bufread , offset ,NULL );/* 以字节为单位从当前位置读取数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+	s = CH376ByteRead( bufread, offset, NULL );   /* 以字节为单位从当前位置读取数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 	return s;
 }
@@ -108,14 +105,14 @@ uint8_t  Byte_OPEN_READ_PATH (const char * BUF_Name , uint32_t Addr , uint8_t * 
 uint8_t Byte_OPEN_WRITE_PATH (const char * BUF_Name, uint8_t * Content , uint32_t Addr ,uint32_t offset)
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 
 	CH376ByteLocate( Addr );
-	s = CH376ByteWrite(Content, offset, &xy ); /* 以字节为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+	s = CH376ByteWrite( Content, offset, &xy );   /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 	return s;
 }
@@ -141,7 +138,7 @@ BOOL ByteLoad( const char * B_Name , uint32_t Addr, uint8_t * bufread, uint32_t 
 //字节存
 BOOL ByteSave( const char * BUF_Name ,  uint8_t * Content , uint32_t Addr, uint32_t offset  )
 {
-	//		文件名称 				要写的内容 		写起始地址
+	//    文件名称        要写的内容    写起始地址
 	bus_SPI_mutex_apply();
 	s = Byte_OPEN_WRITE_PATH ( BUF_Name , Content , Addr, offset );
 	bus_SPI_mutex_release();
@@ -160,15 +157,17 @@ BOOL ByteSave( const char * BUF_Name ,  uint8_t * Content , uint32_t Addr, uint3
 //字节填充
 BOOL ByteFill( const char * BUF_Name , uint32_t Addr , uint16_t size)
 {
-	bus_SPI_mutex_apply();								//		文件名称 			写起始地址					要写的数量
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+	//    文件名称      写起始地址          要写的数量
+	UINT8     buf[100];
+	bus_SPI_mutex_apply();
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 	CH376ByteLocate( Addr );
-	memset( buf, 0x00, 100 );
-	s = CH376ByteWrite( buf, size, NULL ); /* 以字节为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( buf, 0, 100 );
+//  memset( buf, 0x00, 100 );
+	s = CH376ByteWrite( buf, size, NULL );        /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
+
 	bus_SPI_mutex_release();
 
 	if( s == USB_INT_SUCCESS )
@@ -186,9 +185,9 @@ uint32_t ByteGetSize(const char * BUF_Name)
 {
 	uint32_t bufoffset;
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName, BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
-	bufoffset =	CH376GetFileSize( );
+//  strcpy( (char *)TarName, BUF_Name );
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+	bufoffset = CH376GetFileSize( );
 	bus_SPI_mutex_release();
 	return bufoffset;
 }
@@ -196,10 +195,10 @@ uint32_t ByteGetSize(const char * BUF_Name)
 void Sec_CREAT_CON_DIR(const char * BUF_Name)
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	s=CH376DirCreate( TarName ); /* 在根目录下新建目录(文件夹)并打开,如果目录已经存在那么直接打开 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+
+	s=CH376DirCreate( (PUINT8)BUF_Name );         /* 在根目录下新建目录(文件夹)并打开,如果目录已经存在那么直接打开 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -208,12 +207,12 @@ void Sec_CREAT_CON_DIR(const char * BUF_Name)
 void Sec_CREAT_WRITE_DIR(const char * BUF_Name, uint8_t * Content, uint8_t offset )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
-	CH376FileCreate( TarName );
+
+	CH376FileCreate( (PUINT8)BUF_Name );          /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 	CH376SecLocate( 0 );
-	CH376SecWrite( Content, offset, NULL );  /* 以扇区为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于扇区读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+	CH376SecWrite( Content, offset, NULL );       /* 以扇区为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于扇区读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -222,13 +221,13 @@ void Sec_CREAT_WRITE_DIR(const char * BUF_Name, uint8_t * Content, uint8_t offse
 void  Sec_OPEN_READ_DIR (const char * BUF_Name , uint32_t Addr, uint8_t * bufread , uint8_t offset  )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpen( TarName );  /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
+
+	CH376FileOpen( (PUINT8)BUF_Name );            /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
 	CH376SecLocate( Addr );
 
-	CH376SecRead( bufread, offset , NULL );/* 以扇区为单位从当前位置读取数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于扇区读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+	CH376SecRead( bufread, offset , NULL );       /* 以扇区为单位从当前位置读取数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于扇区读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /***/
@@ -237,12 +236,12 @@ void  Sec_OPEN_READ_DIR (const char * BUF_Name , uint32_t Addr, uint8_t * bufrea
 void  Sec_OPEN_WRITE_DIR (const char * BUF_Name, uint8_t * Content , uint32_t Addr, uint8_t offset  )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpen( TarName );  /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
+
+	CH376FileOpen( (PUINT8)BUF_Name );            /* 在根目录或者当前目录下打开文件或者目录(文件夹) */
 	CH376SecLocate( Addr );
-	CH376SecWrite( Content , offset, NULL );  /* 以扇区为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于扇区读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+	CH376SecWrite( Content , offset, NULL );      /* 以扇区为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于扇区读写建议自动更新文件长度 */
+
 	bus_SPI_mutex_release();
 }
 /**/
@@ -252,12 +251,12 @@ void Sec_CREAT_WRITE_PATH(const char * BUF_Name, uint8_t * Content , uint8_t off
 {
 	//													文件名                文件内容               文件大小
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name ); /* 目标文件名 */
-	s = CH376FileCreatePath( TarName );  	/* 新建多级目录下的文件,支持多级目录路径,输入缓冲区必须在RAM中 */
+	
+	s = CH376FileCreatePath( (PUINT8)BUF_Name );  	/* 新建多级目录下的文件,支持多级目录路径,输入缓冲区必须在RAM中 */
 
 	s = CH376SecWrite( Content , offset, NULL ); /* 以扇区为单位向当前位置写入数据块 */
 	s = CH376FileClose( TRUE );   /* 关闭文件,对于扇区读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+
 	bus_SPI_mutex_release();
 }
 /**/
@@ -266,8 +265,8 @@ void Sec_CREAT_WRITE_PATH(const char * BUF_Name, uint8_t * Content , uint8_t off
 uint8_t  Sec_OPEN_READ_PATH (const char * BUF_Name , uint32_t Addr , uint8_t * bufread , uint8_t offset )
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 	//bufoffset =	CH376GetFileSize( );
 	CH376SecLocate( Addr );
 	s = CH376SecRead(  bufread , offset ,NULL );/* 以扇区为单位从当前位置读取数据块 */
@@ -280,14 +279,13 @@ uint8_t  Sec_OPEN_READ_PATH (const char * BUF_Name , uint32_t Addr , uint8_t * b
 uint8_t Sec_OPEN_WRITE_PATH (const char * BUF_Name, uint8_t * Content , uint32_t Addr ,uint8_t offset)
 {
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+	
+	CH376FileOpenPath( (PUINT8)BUF_Name );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 
 	CH376SecLocate( Addr );
 	s = CH376SecWrite(Content, offset, NULL ); /* 以扇区为单位向当前位置写入数据块 */
 	CH376FileClose( TRUE ); /* 关闭文件,对于扇区读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
-	memset( USBbuf, 0, 100 );
+
 	bus_SPI_mutex_release();
 	return s;
 }
@@ -330,15 +328,16 @@ BOOL SecSave( const char * BUF_Name,  uint8_t * Content, uint32_t Addr, uint8_t 
 //以扇区为单位填充
 BOOL SecFill( const char * BUF_Name , uint32_t Addr , uint8_t size)
 {
-	//		文件名称 			写起始地址					要写的数量
+	//    文件名称      写起始地址          要写的数量
+	UINT8     buf[100];
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
 	CH376ByteLocate( Addr );
 	memset( buf, 0xaa, 100 );
-	s = CH376ByteWrite( buf, size, NULL ); /* 以字节为单位向当前位置写入数据块 */
-	CH376FileClose( TRUE ); /* 关闭文件,对于字节读写建议自动更新文件长度 */
-	memset( TarName, 0, 100 );
+	s = CH376ByteWrite( buf, size, NULL );        /* 以字节为单位向当前位置写入数据块 */
+	CH376FileClose( TRUE );                       /* 关闭文件,对于字节读写建议自动更新文件长度 */
+
 	memset( buf, 0, 100 );
 	bus_SPI_mutex_release();
 
@@ -357,14 +356,12 @@ uint32_t SecGetSize(const char * BUF_Name)
 {
 	uint32_t bufoffset;
 	bus_SPI_mutex_apply();
-	strcpy( (char *)TarName,  BUF_Name );
-	CH376FileOpenPath( TarName );/* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
-	bufoffset =	CH376GetFileSize( );
+
+	CH376FileOpenPath( (PUINT8)BUF_Name );        /* 打开多级目录下的文件或者目录(文件夹),支持多级目录路径,支持路径分隔符,路径长度不超过255个字符 */
+	bufoffset = CH376GetFileSize( );
 	bus_SPI_mutex_release();
 	return bufoffset;
 }
-
-
 
 
 /*
@@ -504,7 +501,7 @@ uint8_t USB_Init(void)
 {
 	uint8_t s;
 
-	s = mInitCH376Host(USB_Flash_disk);   /* 初始化CH376--USB卡模式*/
+	s = mInitCH376Host(USB_Flash_Disk);   /* 初始化CH376--USB卡模式*/
 
 	if( s != USB_INT_SUCCESS )
 		return 1;														  //	硬件故障!
