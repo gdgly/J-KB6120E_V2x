@@ -202,23 +202,23 @@ __task	int32_t	main( void )
 
 	SENSOR_Local_Init();
 	delay( 1000u );		//配合下位机初始化	<注意！要进行下位机测试来确定参数！>300
-	SENSOR_Remote_Init();		//	modbus通信初始化
-
-	delay( 200u );
-	HCBox_Init();
-	delay( 1000u );
-
+	
 	Animation();		//	开机动画
-	delay( 1500u );
+	delay( 1600u );
 
 	ShowEdition();	//	确定型号之后，显示初始化之后
-	delay( 1000u );
+	delay( 1400u );
 
-	Sampler_BootResume();	//	时间配置完成之后，设置参数读入之后。
+	SENSOR_Remote_Init();		//	modbus通信初始化
 	delay( 100u );
 
+	HCBox_Init();
+	delay( 100u );
+	
+	Sampler_BootResume();	//	时间配置完成之后，设置参数读入之后。
+	delay( 100u );
+	
 	SamplerTypeSelect();
-
 	delay( 100u );
 
 	for(;;)

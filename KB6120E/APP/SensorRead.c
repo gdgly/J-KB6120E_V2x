@@ -286,7 +286,7 @@ BOOL	ReadCopy( void )
 	else
 		return FALSE;
 }
-
+// static	uint32_t	lostTick, SaveTick;;
 __task	void	_task_ModbusRead( void const * p_arg )
 {
 	(void)p_arg;
@@ -368,8 +368,17 @@ __task	void	_task_ModbusRead( void const * p_arg )
 			err_count++;
 		}
 
-		delay( 200u );
-
+		delay( 160u );
+// 		{
+// 			const	uint32_t	oneTick = osKernelSysTickMicroSec( 1000u );
+// 			uint32_t	now = osKernelSysTick();
+// 			
+// 			//	计算已经逝去的tick计时单位
+// 			lostTick = (uint32_t)( now - SaveTick ) / oneTick;
+// 			lostTick = lostTick;
+// 			SaveTick = now;
+// 			
+// 		}
 	}
 }
 void	SENSOR_Local_Init( void )
