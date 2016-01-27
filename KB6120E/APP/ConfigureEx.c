@@ -234,14 +234,12 @@ void	menu_ConfigureDisplay( void )
 	uint16_t light = Configure.DisplayLight;
 	uint8_t  ltime = Configure.TimeoutLight;
 	BOOL	changed = FALSE;
-	uint32_t Gray;
 	cls();
 	Menu_Redraw( menu );
-	Gray = (FP32)(gray * 10) / 22u;
 
 	do
 	{
-		ShowI16U( 0x080Du, Gray,  0x0401u, "% " );
+		ShowI16U( 0x080Du, gray,  0x0401u, "% " );
 		ShowI16U( 0x100Cu, light, 0x0300u, " % " );
 
 		switch ( ltime )
@@ -270,19 +268,19 @@ void	menu_ConfigureDisplay( void )
 		{
 			case 1:
 
-				if ( EditI32U( 0x080Du, &Gray, 0x0401u ))
+				if ( EditI16U( 0x080Du, &gray, 0x0401u ))
 				{
-					if ( Gray > 1000u )
+					if ( gray > 1000u )
 					{
-						Gray = 1000u;
+						gray = 1000u;
 					}
 
-					if ( Gray <  1u )
+					if ( gray <  1u )
 					{
-						Gray =  1u;
+						gray =  1u;
 					}
 
-					DisplaySetGrayVolt( Gray * 0.022f );
+					DisplaySetGrayVolt( gray * 2.2f );
 					changed = TRUE;
 				}
 
@@ -318,7 +316,7 @@ void	menu_ConfigureDisplay( void )
 
 	if ( changed )
 	{
-		Configure.DisplayGray  = Gray * 22 /10;
+		Configure.DisplayGray  = gray;
 		Configure.DisplayLight = light;
 		Configure.TimeoutLight = ltime;
 		ConfigureSave();

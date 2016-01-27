@@ -233,8 +233,14 @@ void	CalibrateLoad( void )
 		CalibrateRemote.slope_flow[SP_TSP  ][0] = 1000u;
 
 		CalibrateRemote.slope_flow[SP_R24_A][0] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_A][1] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_A][2] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_A][3] = 1000u;
 
 		CalibrateRemote.slope_flow[SP_R24_B][0] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_B][1] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_B][2] = 1000u;
+		CalibrateRemote.slope_flow[SP_R24_B][3] = 1000u;
 
 		CalibrateRemote.slope_flow[SP_SHI_C][0] = 1000u;
 		CalibrateRemote.slope_flow[SP_SHI_C][1] = 1000u;

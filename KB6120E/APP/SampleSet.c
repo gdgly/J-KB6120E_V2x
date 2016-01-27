@@ -155,14 +155,10 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 
 	do
 	{
-// 		if ( need_redraw )
-// 		{
+
 		SamplerTypeShow( 0x010Eu );
 		Part_cls();
 		Menu_Redraw( menu );
-
-// 			need_redraw = FALSE;
-// 		}
 
 		ShowTIME( 0x081Cu, SampleSet[SamplerSelect].sample_time );
 		ShowTIME( 0x101Cu, SampleSet[SamplerSelect].suspend_time );
@@ -209,10 +205,6 @@ static	BOOL	setup_TSP( enum	enumSamplerSelect SamplerSelect, struct uMenu const 
 	}
 	while ( enumSelectESC != item );
 
-// 	if ( changed )
-// 	{
-// 		SampleSetSave();
-// 	}
 	return	TRUE;
 }
 
