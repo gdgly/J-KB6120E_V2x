@@ -448,7 +448,7 @@ void	Query_File_TSP( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -458,7 +458,7 @@ void	Query_File_TSP( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -466,7 +466,7 @@ void	Query_File_TSP( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -476,7 +476,7 @@ void	Query_File_TSP( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -485,18 +485,18 @@ void	Query_File_TSP( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -507,7 +507,7 @@ void	Query_File_TSP( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -754,7 +754,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -764,7 +764,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -772,7 +772,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -782,7 +782,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -791,18 +791,18 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -813,7 +813,7 @@ void	Query_File_SHI_R24( enum enumSamplerSelect SamplerSelect )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -913,66 +913,66 @@ void	PowerLog_Query( void )
 
 				case K_OK_UP:
 
-					if ( gray < 2200u )
+				if ( gray < 999 )
+				{
+					++gray;
+				}
+
+				if( ! releaseKey( K_OK_UP,100 ))
+				{
+					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
+				}
 
-					if( ! releaseKey( K_OK_UP,100 ))
-					{
-						while( ! releaseKey( K_OK_UP, 1 ))
-						{
-							++gray;
-							DisplaySetGrayVolt( gray * 0.01f );
-						}
-					}
+				graychanged = true;
+				break;
+			case K_OK_DOWN:
 
-					graychanged = true;
-					break;
-				case K_OK_DOWN:
+				if ( gray >  10u )
+				{
+					--gray;
+				}
 
-					if ( gray >  200u )
+				if( ! releaseKey( K_OK_DOWN, 100 ))
+				{
+					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
+				}
 
-					if( ! releaseKey( K_OK_DOWN, 100 ))
-					{
-						while( ! releaseKey( K_OK_DOWN, 1 ))
-						{
-							--gray;
-							DisplaySetGrayVolt( gray * 0.01f );
-						}
-					}
+				graychanged = true;
+				break;
 
-					graychanged = true;
-					break;
+			case K_OK_RIGHT:
 
-				case K_OK_RIGHT:
+				if ( gray < ( 1000u - 50u ))
+				{
+					gray += 50u;
+				}
 
-					if ( gray < ( 2000u - 50u ))
-					{
-						gray += 100u;
-					}
+				graychanged = true;
+				break;
+			case K_OK_LEFT:
 
-					graychanged = true;
-					break;
-				case K_OK_LEFT:
+				if ( gray > ( 10 + 50u ))
+				{
+					gray -= 50u;
+				}
 
-					if ( gray > ( 200 + 20u ))
-					{
-						gray -= 20u;
-					}
-
-					graychanged = true;
-					break;
+				graychanged = true;
+				break;
 				default:
 					break;
 			}
 
 			if( graychanged == true )
 			{
-				DisplaySetGrayVolt( gray * 0.01f );
+				DisplaySetGrayVolt( gray * 0.022f );
 				Configure.DisplayGray = gray;
 				ConfigureSave();
 				graychanged = FALSE;

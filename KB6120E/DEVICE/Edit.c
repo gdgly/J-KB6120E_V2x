@@ -351,7 +351,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -361,7 +361,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -369,7 +369,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -379,7 +379,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -388,29 +388,27 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
-				break;
-			default:
 				break;
 		}
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -579,7 +577,7 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -589,7 +587,7 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -597,7 +595,7 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -607,28 +605,27 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
 				graychanged = true;
 				break;
 
-
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -639,7 +636,7 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -778,7 +775,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -788,7 +785,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -796,7 +793,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -806,7 +803,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -815,18 +812,18 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -837,7 +834,7 @@ BOOL	EditTIME( uint16_t yx, uint16_t * pTime )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -973,7 +970,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 				return FALSE;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -983,7 +980,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -991,7 +988,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -1001,7 +998,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1010,18 +1007,18 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1032,7 +1029,7 @@ BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;

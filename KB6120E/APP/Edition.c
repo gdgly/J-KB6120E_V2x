@@ -157,7 +157,7 @@ void	ConfigureLoadDefault_KB6120E( void )
 	Configure.Mothed_Ba = enumMeasureBa;	//	大气压力获取方式
 	Configure.set_Ba    = 10133u;			//	保存用户输入气压
 
-	Configure.DisplayGray  = 940u;	//	显示灰度设置
+	Configure.DisplayGray  = 930u;	//	显示灰度设置93%
 	Configure.DisplayLight = 50u;	//	显示亮度设置
 	Configure.TimeoutLight = 2u;	//	背光延时时间
 
@@ -470,7 +470,7 @@ static	void	PumpConfigure( void )
 // 				while( ! releaseKey( K_OK_UP, 1 ))
 // 				{
 // 					++gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
+// 					DisplaySetGrayVolt( gray * 0.022f );
 // 				}
 // 			}
 // 			graychanged = true;
@@ -485,7 +485,7 @@ static	void	PumpConfigure( void )
 // 				while( ! releaseKey( K_OK_DOWN, 1 ))
 // 				{
 // 					--gray;
-// 					DisplaySetGrayVolt( gray * 0.01f );
+// 					DisplaySetGrayVolt( gray * 0.022f );
 // 				}
 // 			}
 // 			graychanged = true;
@@ -510,7 +510,7 @@ static	void	PumpConfigure( void )
 // 		}
 // 		if( graychanged == true )
 // 		{
-// 			DisplaySetGrayVolt( gray * 0.01f );
+// 			DisplaySetGrayVolt( gray * 0.022f );
 // 			Configure.DisplayGray = gray;
 // 			ConfigureSave();
 // 			graychanged = FALSE;

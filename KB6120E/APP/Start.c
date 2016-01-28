@@ -191,7 +191,7 @@ __task	int32_t	main( void )
 	SampleSetLoad();	//	恢复采样前执行
 
 	Display_Init();
-	DisplaySetGrayVolt( Configure.DisplayGray * 0.01f );
+	DisplaySetGrayVolt( Configure.DisplayGray * 0.022f );
 	DisplaySetLight( Configure.DisplayLight );
 	DisplaySetTimeout( Configure.TimeoutLight );
 	Keyboard_Init();	//	配置完背光超时时间后再初始化

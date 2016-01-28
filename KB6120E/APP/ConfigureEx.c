@@ -155,72 +155,6 @@ void  menu_Sample_Sum( void )
 
 void	menu_ConfigureDisplay( void )
 {
-// 	static	struct  uMenu  const  menu[] =
-// 	{
-// 		{ 0x0301u, "≈‰÷√ œ‘ æ" },
-// 		{ 0x0802u, "ª“∂»" },
-// 		{ 0x1002u, "¡¡∂»" },
-// 		{ 0x1802u, "∂® ±" }
-// 	};
-// 	uint8_t item = 1u;
-//
-// 	uint16_t gray  = Configure.DisplayGray;
-// 	uint16_t light = Configure.DisplayLight;
-// 	uint8_t  ltime = Configure.TimeoutLight;
-// 	BOOL	changed = FALSE;
-//
-// 	cls();
-// 	Menu_Redraw( menu );
-// 	do {
-// 		ShowI16U( 0x080Cu, gray,  0x0502u, " V " );
-// 		ShowI16U( 0x100Cu, light, 0x0300u, " % " );
-// 		switch ( ltime )
-// 		{
-// 		case 0:	Lputs( 0x180Cu, "[πÿ±’] " );	break;
-// 		case 1:	Lputs( 0x180Cu, "[15√Î] " );	break;
-// 		case 2:	Lputs( 0x180Cu, "[30√Î] " );	break;
-// 		case 3:	Lputs( 0x180Cu, "[60√Î] " );	break;
-// 		default:
-// 		case 4:	Lputs( 0x180Cu, "[≥£¡¡] " );	break;
-// 		}
-// 		item = Menu_Select( menu, item, NULL );
-
-// 		switch( item )
-// 		{
-// 		case 1:
-// 			if ( EditI16U( 0x080Cu, &gray, 0x0502u ))
-// 			{
-// 				if ( gray > 2200u ){ gray = 2200u; }
-// 				if ( gray <  200u ){ gray =  200u; }
-// 				DisplaySetGrayVolt( gray * 0.01f );
-// 				changed = TRUE;
-// 			}
-// 			break;
-// 		case 2:
-// 			if ( EditI16U( 0x100Cu, &light, 0x0300u ))
-// 			{
-// 				if ( light > 100u ){ light = 100u; }
-// 				DisplaySetLight( light );
-// 				changed = TRUE;
-// 			}
-// 			break;
-// 		case 3:
-// 			if ( ++ltime > 4 ){  ltime = 0u; }
-// 			DisplaySetTimeout( ltime );
-// 			changed = TRUE;
-// 			break;
-// 		}
-//
-// 	} while ( enumSelectESC != item );
-//
-// 	if ( changed )
-// 	{
-// 		Configure.DisplayGray  = gray;
-// 		Configure.DisplayLight = light;
-// 		Configure.TimeoutLight = ltime;
-// 		ConfigureSave();
-// 	}
-
 	static	struct  uMenu  const  menu[] =
 	{
 		{ 0x0301u, "≈‰÷√ œ‘ æ" },
@@ -280,7 +214,7 @@ void	menu_ConfigureDisplay( void )
 						gray =  1u;
 					}
 
-					DisplaySetGrayVolt( gray * 2.2f );
+					DisplaySetGrayVolt( gray * 0.022f );
 					changed = TRUE;
 				}
 

@@ -109,7 +109,7 @@ static	void	menu_SetupClock( void )
 				break;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -119,7 +119,7 @@ static	void	menu_SetupClock( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -127,7 +127,7 @@ static	void	menu_SetupClock( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -137,7 +137,7 @@ static	void	menu_SetupClock( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -146,18 +146,18 @@ static	void	menu_SetupClock( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -168,7 +168,7 @@ static	void	menu_SetupClock( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -261,7 +261,7 @@ void	menu_SetDisplay( void )
 						gray =  1u;
 					}
 
-					DisplaySetGrayVolt( gray * 2.2f );
+					DisplaySetGrayVolt( gray * 0.022f );
 					changed = TRUE;
 				}
 

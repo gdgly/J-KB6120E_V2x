@@ -76,7 +76,7 @@ uint8_t	Menu_SelectOnly  ( const struct uMenu * menu, uint8_t item, BOOL Directi
 			while( ! releaseKey( K_OK_DOWN, 1 ))
 			{
 				--gray;
-				DisplaySetGrayVolt( gray * 0.01f );
+				DisplaySetGrayVolt( gray * 0.022f );
 // 					ShowPercent( 0x080B, (FP32) gray / 2200 );
 			}
 // 				while ( ! hitKey ( 50u ));
@@ -173,7 +173,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -183,7 +183,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -191,7 +191,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -201,7 +201,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -210,18 +210,18 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -232,7 +232,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -386,9 +386,9 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 			case K_SHIFT:
 				return	enumSelectXCH;
-			case K_OK_UP:
+				case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -398,7 +398,7 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -406,7 +406,7 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -416,7 +416,7 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -425,18 +425,18 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -447,7 +447,7 @@ uint8_t	Menu_Select_Ex2 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -558,7 +558,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -568,7 +568,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -576,7 +576,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -586,7 +586,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -595,18 +595,18 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -617,7 +617,7 @@ uint8_t	Menu_Select_Ex3 ( const struct uMenu * menu, uint8_t item, void ( *pHook
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -771,7 +771,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 				return	enumSelectXCH;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -781,7 +781,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -789,7 +789,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -799,7 +799,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -808,18 +808,18 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -853,7 +853,7 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -862,156 +862,16 @@ uint8_t	Menu_SelectOnlyEx ( const struct uMenu * menu, uint8_t item, void ( *pHo
 }
 
 
-
-//		///////////////////////////////////////////////////////////////////
-//		//	模拟VB的MsgBox函数
-//		///////////////////////////////////////////////////////////////////
-//		//	buttons 参数有下列设置值：
-//		//	vbOKOnly			0 只显示 OK 按钮。
-//		//	vbOKCancel			1 显示 OK 及 Cancel 按钮。
-//		//	vbAbortRetryIgnore	2 显示 Abort、Retry 及 Ignore 按钮。
-//		//	vbYesNoCancel		3 显示 Yes、No 及 Cancel 按钮。
-//		//	vbYesNo				4 显示 Yes 及 No 按钮。
-//		//	vbRetryCancel		5 显示 Retry 及 Cancel 按钮。
-//		//
-//		//	vbDefaultButton1	0x00 第一个按钮是缺省值。
-//		//	vbDefaultButton2	0x10 第二个按钮是缺省值。
-//		//	vbDefaultButton3	0x20 第三个按钮是缺省值。
-//		//	vbDefaultButton4	0x30 第四个按钮是缺省值。
-
-//		//	返回值
-//		//	0x00	K_ESC press
-//		//	vbOK		1 OK
-//		//	vbCancel	2 Cancel
-//		//	vbAbort		3 Abort
-//		//	vbRetry		4 Retry
-//		//	vbIgnore	5 Ignore
-//		//	vbYes		6 Yes
-//		//	vbNo 		7 No
-
-//		//	enum {
-//		//		vbOKOnly,
-//		//		vbOKCancel,
-//		//		vbAbortRetryIgnore,
-//		//		vbYesNoCancel,
-//		//		vbYesNo,
-//		//		vbRetryCancel,
-//		//	};
-//		//	enum {
-//		//		vbDefaultButton1 = 0x00,	//	 第一个按钮是缺省值。
-//		//		vbDefaultButton2 = 0x10,	//	 第二个按钮是缺省值。
-//		//		vbDefaultButton3 = 0x20,	//	 第三个按钮是缺省值。
-//		//		vbDefaultButton4 = 0x30,	//	 第四个按钮是缺省值。
-//		//	};
-
-//		//	MsgBox的返回值
-//		//	enum {	vbOK, vbCancel, vbAbort, vbRetry, vbIgnore, vbYes, vbNo }
-//		uint8_t	MsgBox ( const char * szPrompt, uint16_t buttons )
-//		{
-//			static	const struct uMenu  menu_OKOnly[]			= { 0x0101u, NULL, 0x050B, "确定" };
-//			static	const struct uMenu  menu_OKCancel[]			= { 0x0102u, NULL, 0x0503, "确定", 0x0509, "取消" };
-//			static	const struct uMenu  menu_YesNo[]			= { 0x0102u, NULL, 0x0503, " 是 ", 0x0509, " 否 " };
-//			static	const struct uMenu  menu_RetryCancel[]		= { 0x0102u, NULL, 0x0503, "重试", 0x0509, "取消" };
-//			static	const struct uMenu  menu_YesNoCancel[]		= { 0x0103u, NULL, 0x0501, " 是 ", 0x0506, " 否 ", 0x050B, "取消" };
-//			static	const struct uMenu  menu_AbortRetryIgnore[]	= { 0x0103u, NULL, 0x0501, "终止", 0x0506, "重试", 0x050B, "忽略" };
-
-//			static	const struct uMenu * const menu_lst[] =
-//			{
-//				menu_OKOnly,
-//				menu_OKCancel,
-//				menu_AbortRetryIgnore,
-//				menu_YesNoCancel,
-//				menu_YesNo,
-//				menu_RetryCancel
-//			};
-//			const struct uMenu * menu;
-//			uint8_t	Response;
-
-//			cls();
-//			//	if( szTitle  != NULL )	Lputs( 0x0000u, szTitle );
-//			if ( szPrompt != NULL )
-//			{
-//				Lputs ( 0x0000u, szPrompt );
-//			}
-
-//			menu = menu_lst[buttons & 0x0F];
-//			Menu_Redraw ( menu );
-//			Response = Menu_Select ( menu, buttons / 0x10 % 0x10 + 1 );	//	Menu_Select程序会自动调整不合理的默认选项
-//			switch ( buttons & 0x0F )
-//			{
-//			default:
-//			case vbOKOnly:				switch ( Response )
-//				{
-//				default:	return	vbCancel;
-//				case 1:		return	vbOK;
-//				}
-//				//	break;
-//			case vbOKCancel:			switch ( Response )
-//				{
-//				default:	return	vbCancel;
-//				case 1:		return	vbOK;
-//					//	case 2:		return	vbCancel;
-//				}
-//				//	break;
-//			case vbAbortRetryIgnore:	switch ( Response )
-//				{
-//				default:	return	vbRetry;
-//				case 1:		return	vbAbort;
-//					//	case 2:		return	vbRetry;
-//				case 3:		return	vbIgnore;
-//				}
-//				//	break;
-//			case vbYesNoCancel:			switch ( Response )
-//				{
-//				default:	return	vbCancel;
-//				case 1:		return	vbYes;
-//				case 2:		return	vbNo;
-//					//	case 3:		return	vbCancel;
-//				}
-//				//	break;
-//			case vbYesNo:				switch ( Response )
-//				{
-//				default:	return	vbCancel;
-//				case 1:		return	vbYes;
-//				case 2:		return	vbNo;
-//				}
-//				//	break;
-//			case vbRetryCancel:			switch ( Response )
-//				{
-//				default:	return	vbCancel;
-//				case 1:		return	vbRetry;
-//					//	case 2:		return	vbCancel;
-//				}
-//				//	break;
-//			}
-//		}
-
-//		///////////////////////////////////////////////////////////////////
-//		//	uint8_t	Confirm( const char const * prompt ){
-//		//	//	struct	uMenu const menu[] = {
-//		//	//		0x03, NULL, 0x0501, "是", 0x0505, "否", 0x050A, "取消",
-//		//	//	};
-//		//	//	cls();	Lputs( 0x0000, prompt );
-//		//	//	Menu_Redraw( menu );
-//		//	//	return	Menu_Select( menu, 3 );
-//		//
-//		//		return	MsgBox( prompt, vbYesNoCancel + vbDefaultButton3 );
-//		//	}
-//		///////////////////////////////////////////////// End of File /////
-
-
-
-
 ///////////////////////////////////////////////////////////////////
 //	模拟VB的MsgBox函数
 ///////////////////////////////////////////////////////////////////
 uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 {
-	static	const struct uMenu  menu_OKOnly[]			= { 0x0101u, NULL, 0x121B, "确定" };
-	static	const struct uMenu  menu_OKCancel[]			= { 0x0102u, NULL, 0x1207, "确定", 0x1216, "取消" };
-	static	const struct uMenu  menu_YesNo[]			= { 0x0102u, NULL, 0x1207, " 是 ", 0x1216, " 否 " };
-	static	const struct uMenu  menu_RetryCancel[]		= { 0x0102u, NULL, 0x1207, "重试", 0x1216, "取消" };
-	static	const struct uMenu  menu_YesNoCancel[]		= { 0x0103u, NULL, 0x1205, " 是 ", 0x1210, " 否 ", 0x121B, "取消" };
+	static	const struct uMenu  menu_OKOnly[]						= { 0x0101u, NULL, 0x121B, "确定" };
+	static	const struct uMenu  menu_OKCancel[]					= { 0x0102u, NULL, 0x1207, "确定", 0x1216, "取消" };
+	static	const struct uMenu  menu_YesNo[]						= { 0x0102u, NULL, 0x1207, " 是 ", 0x1216, " 否 " };
+	static	const struct uMenu  menu_RetryCancel[]			= { 0x0102u, NULL, 0x1207, "重试", 0x1216, "取消" };
+	static	const struct uMenu  menu_YesNoCancel[]			= { 0x0103u, NULL, 0x1205, " 是 ", 0x1210, " 否 ", 0x121B, "取消" };
 	static	const struct uMenu  menu_AbortRetryIgnore[]	= { 0x0103u, NULL, 0x1205, "终止", 0x1210, "重试", 0x121B, "忽略" };
 
 	static	const struct uMenu * const menu_list[] =
@@ -1034,10 +894,11 @@ uint8_t	MsgBox( const CHAR  * sPrompt, uint16_t buttons )
 
 	menu = menu_list[buttons & 0x0Fu];
 	Menu_Redraw( menu );
-	WBMP( 0x0290,0x1802, STROCK); //显示HENG线
-	WBMP( 0x0290,0x1814, STROCK); //显示HENG线
-	WBMP( 0xA001,0x0502, STROCK3); //显示SHU线
-	WBMP( 0xA001,0x0526, STROCK2); //显示SHU线
+	//外部框线
+	WBMP( 0x0290,0x1802, STROCK); 	//	横线
+	WBMP( 0x0290,0x1814, STROCK);  
+	WBMP( 0xA001,0x0502, STROCK3);	//	竖线
+	WBMP( 0xA001,0x0526, STROCK2);  
 	Response = Menu_Select( menu, buttons / 0x10 % 0x10 + 1, NULL );	//	Menu_Select程序会自动调整不合理的默认选项
 
 	switch( buttons & 0x0Fu )

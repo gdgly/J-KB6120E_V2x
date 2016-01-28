@@ -204,7 +204,7 @@ static	void	menu_Calibrate_Ba( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -214,7 +214,7 @@ static	void	menu_Calibrate_Ba( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -222,7 +222,7 @@ static	void	menu_Calibrate_Ba( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -232,7 +232,7 @@ static	void	menu_Calibrate_Ba( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -241,18 +241,18 @@ static	void	menu_Calibrate_Ba( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -263,7 +263,7 @@ static	void	menu_Calibrate_Ba( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -392,7 +392,7 @@ void	menu_Calibrate_Te( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -402,7 +402,7 @@ void	menu_Calibrate_Te( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -410,7 +410,7 @@ void	menu_Calibrate_Te( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -420,7 +420,7 @@ void	menu_Calibrate_Te( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -429,18 +429,18 @@ void	menu_Calibrate_Te( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -451,7 +451,7 @@ void	menu_Calibrate_Te( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -580,7 +580,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -590,7 +590,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -598,7 +598,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -608,7 +608,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -617,18 +617,18 @@ void	menu_Calibrate_HCBox_Temp( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -639,7 +639,7 @@ void	menu_Calibrate_HCBox_Temp( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -768,7 +768,7 @@ void	menu_Calibrate_Heater_Temp( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -778,7 +778,7 @@ void	menu_Calibrate_Heater_Temp( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -786,7 +786,7 @@ void	menu_Calibrate_Heater_Temp( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -796,7 +796,7 @@ void	menu_Calibrate_Heater_Temp( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -805,18 +805,18 @@ void	menu_Calibrate_Heater_Temp( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -827,7 +827,7 @@ void	menu_Calibrate_Heater_Temp( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -965,7 +965,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -975,7 +975,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -983,7 +983,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -993,7 +993,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1002,18 +1002,18 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1024,7 +1024,7 @@ static	void	Calibrate_Tr ( enum enumSamplerSelect SamplerSelect )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -1161,7 +1161,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -1171,7 +1171,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1179,7 +1179,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -1189,7 +1189,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1198,18 +1198,18 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1220,7 +1220,7 @@ static	void	Calibrate_Pr( enum enumSamplerSelect SamplerSelect )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -1358,7 +1358,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -1368,7 +1368,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1376,7 +1376,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -1386,7 +1386,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1395,18 +1395,18 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1417,7 +1417,7 @@ static	void	Calibrate_pf(  enum enumSamplerSelect SamplerSelect )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -1536,7 +1536,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 				break;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -1546,7 +1546,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1554,7 +1554,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -1564,7 +1564,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1573,18 +1573,18 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1595,7 +1595,7 @@ BOOL	CalibrateFLOW_4_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -1740,7 +1740,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 				break;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -1750,7 +1750,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1758,7 +1758,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -1768,7 +1768,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -1777,18 +1777,18 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -1799,7 +1799,7 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumSamplerSelect SamplerSelect, uint16_t
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -2238,7 +2238,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 				return;
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -2248,7 +2248,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -2256,7 +2256,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -2266,7 +2266,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -2275,18 +2275,18 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -2297,7 +2297,7 @@ void	CalibrateZero_main_x( enum enumSamplerSelect SamplerSelect )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
@@ -2536,7 +2536,7 @@ void	menu_Calibrate_Battery( void )
 
 			case K_OK_UP:
 
-				if ( gray < 2200u )
+				if ( gray < 999 )
 				{
 					++gray;
 				}
@@ -2546,7 +2546,7 @@ void	menu_Calibrate_Battery( void )
 					while( ! releaseKey( K_OK_UP, 1 ))
 					{
 						++gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -2554,7 +2554,7 @@ void	menu_Calibrate_Battery( void )
 				break;
 			case K_OK_DOWN:
 
-				if ( gray >  200u )
+				if ( gray >  10u )
 				{
 					--gray;
 				}
@@ -2564,7 +2564,7 @@ void	menu_Calibrate_Battery( void )
 					while( ! releaseKey( K_OK_DOWN, 1 ))
 					{
 						--gray;
-						DisplaySetGrayVolt( gray * 0.01f );
+						DisplaySetGrayVolt( gray * 0.022f );
 					}
 				}
 
@@ -2573,18 +2573,18 @@ void	menu_Calibrate_Battery( void )
 
 			case K_OK_RIGHT:
 
-				if ( gray < ( 2000u - 50u ))
+				if ( gray < ( 1000u - 50u ))
 				{
-					gray += 100u;
+					gray += 50u;
 				}
 
 				graychanged = true;
 				break;
 			case K_OK_LEFT:
 
-				if ( gray > ( 200 + 20u ))
+				if ( gray > ( 10 + 50u ))
 				{
-					gray -= 20u;
+					gray -= 50u;
 				}
 
 				graychanged = true;
@@ -2595,7 +2595,7 @@ void	menu_Calibrate_Battery( void )
 
 		if( graychanged == true )
 		{
-			DisplaySetGrayVolt( gray * 0.01f );
+			DisplaySetGrayVolt( gray * 0.022f );
 			Configure.DisplayGray = gray;
 			ConfigureSave();
 			graychanged = FALSE;
